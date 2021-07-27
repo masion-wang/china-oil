@@ -1,0 +1,68 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" @onExportAllExcel="onExportAllExcel"
+    :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 统计日期 -->
+        <gv-form-item key-name="zbStatisticsdate" isThree="true" requires>
+          <div style="display: flex;width: 320px">
+            <el-form-item prop="startReportDate" style="flex: 1; margin: 0 ;">
+              <el-date-picker @change="list(scope.search.endReportDate,scope.search.startReportDate)"
+                v-model="scope.search.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date"
+                :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="endReportDate" style="flex: 1; margin: 0">
+              <el-date-picker @change="list(scope.search.endReportDate,scope.search.startReportDate)"
+                format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date" v-model="scope.search.endReportDate"
+                :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+
+        <!-- 项目名称 -->
+        <gv-form-item key-name="projectName2" isThree="true" prop="projectNameList">
+          <el-select v-model="scope.search.projectNameList" multiple clearable filterable
+            class="noLeftMg selecttagstexBYLDL eltagBYLDL" style="width: 320px;"
+            @change="changeriskcode(scope.search.projectNameList,'projectNameList')"
+            @focus="changeprojectNameList(scope.search.endReportDate,scope.search.startReportDate)">
+            <el-option v-for="item in options" :key="item.projectName" :label="item.projectName"
+              :value="item.projectName">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+
+      </div>
+      <div class="gv-row">
+        <!-- 投保单位 -->
+        <gv-form-item key-name="proposalCom" prop="insuredList">
+          <el-select clearable filterable v-model="scope.search.insuredList"
+            class="noLeftMg selecttagstexBYLDL eltagBYLDL" multiple style="width: 320px;"
+            @change="changeriskcode(scope.search.insuredList,'insuredList')">
+            <el-option v-for="item in insuredlist" :key="item.insured" :label="item.insured" :value="item.insured">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+
+        <!-- 前端公司  -->
+        <gv-form-item key-name="zbfrontendcompany" isThree="true" prop="cedingCompanyList">
+          <el-select clearable filterable v-model="scope.search.cedingCompanyList"
+            class="noLeftMg selecttagstexBYLDL eltagBYLDL" multiple style="width: 320px;"
+            @change="changeriskcode(scope.search.cedingCompanyList,'cedingCompanyList')">
+            <el-option v-for="item in CompanyList" :key="item.cedingCompany" :label="item.cedingCompany"
+              :value="item.cedingCompany">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500">{{'Queryresults'|translate('Query results')}}</span>
+    </template>
+  </gv-filter-table>
+</section>

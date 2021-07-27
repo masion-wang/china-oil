@@ -1,0 +1,70 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <!--工具条-->
+            <el-form :inline="true" ref="exchangeVoFilters" :model="exchangeVoFilters" class="table-line">
+                <table  cellpadding="0" cellspacing="0" class="tp-table">
+                    <tr>
+                        <!--币别-->
+                        <gv-form-label keyName="receivablePayableVoARCCY" defaultName="Currency" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="currencyCode">
+                            <gv-select size="mini" options-set="1" po-name="ggCurrency" code-name="currencyCode" label-name="currencyCode" label-name-ex="currencyName" :filterable="true" v-model.trim="exchangeVoFilters.currencyCode"></gv-select>
+                        </gv-form-input>
+
+                        <!--开始生效日期-->
+                        <gv-form-label keyName="ExchangeVoStartDate" defaultName="Start Valid Date" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="startValidDate">
+                            <el-date-picker  format="dd-MM-yyyy" size="mini" type="date" @change="validateDate" v-model="exchangeVoFilters.startValidDate" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                        </gv-form-input>
+
+                        <!--结束生效日期-->
+                        <gv-form-label keyName="ExchangeVoEndDate" defaultName="End Valid Date" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="endValidDate">
+                            <el-date-picker format="dd-MM-yyyy" size="mini" type="date" @change="validateDate" v-model="exchangeVoFilters.endValidDate" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-input width="8" colspan="6" align="center">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('exchangeVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+
+    <!--工具条-->
+    <div class="table-toolbar">
+        <!--导出excel-->
+        <el-button size="mini" :disabled="exchangeVoList.length == 0" type="primary" @click="onHandleExport()">{{ 'gBtnExport' | translate('Export') }}</el-button>
+        <el-button size="mini" type="primary" @click="onAddExchange()" v-if="!dialogProp">
+            {{ 'gBtnCreate' | translate('add') }}
+        </el-button>
+    </div>
+
+    <!--列表-->
+    <template>
+        <el-table :data="exchangeVoList" id="exchangeVoList" ref="exchangeVoListRef" highlight-current-row border stripe >
+            <!-- <el-table-column type="selection"></el-table-column> -->
+            <el-table-column align="center" type="index" :label="'gNo'| translate('No')" ></el-table-column>
+            <!-- <el-table-column prop="currencyCode" sortable label="币别" > -->
+            <el-table-column prop="currencyCode" sortable :label="'currencyCode'| translate('Currency Code')" >
+            </el-table-column>
+            <el-table-column prop="currencyName" sortable :label="'currencyName'| translate('Currency Name')" >
+            </el-table-column>
+            <!-- <el-table-column prop="exrate" sortable label="兑换率" > -->
+            <el-table-column prop="exrate" sortable :label="'receivablePayableVoExchangeRate'| translate('Exchange Rate')" >
+            </el-table-column>
+             <!-- <el-table-column prop="time" sortable label="有效时间" > -->
+            <el-table-column prop="validDate" sortable :label="'validDateFactor'| translate('Valid Date')" >
+            </el-table-column>
+        </el-table>
+    </template> 
+    
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 100, 350, 1000, 3000]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

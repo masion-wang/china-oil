@@ -1,0 +1,76 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <!--工具条-->
+            <el-form class="table-line" :inline="true" ref="logAuditRequestVoFilters" :model="logAuditRequestVoFilters" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="User Name" defaultName="User Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="userCode" :width="5">
+                            <el-input size="mini" v-model="logAuditRequestVoFilters.userCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="Api Name" defaultName="Api Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="apiName" :width="5">
+                            <!-- <gv-dbclick po-name="pubViewObject" v-model="logAuditRequestVoFilters.apiName" table-one-params="viewObjectForm" :table-one-title="'pubViewObjectVoViewObjectForm' | translate" table-two-params="formTitleKey" :table-two-title="'pubViewObjectVoFormTitleKey' | translate" search-one-params="viewObjectForm" :search-one-title="'pubViewObjectVoViewObjectForm' | translate">
+                            </gv-dbclick> -->
+                            <gv-dbclick :isFuzzy="true" code="findApiCode" context-name="system" table-one-params="taskEName" table-one-title='taskEName'
+                                table-two-params="taskCode" table-two-title='taskCode' search-one-params="taskEName" search-one-title="taskCode"
+                                v-model="logAuditRequestVoFilters.apiName">
+                            </gv-dbclick>
+                            
+                        </gv-form-input>
+                        <gv-form-label keyName="logAuditRequestVoOperateTime" defaultName="Operate Time" :width="3"></gv-form-label>
+                        <gv-form-input prop="operateTime" :width="5">
+                            <el-date-picker size="mini" style="width:47%" v-model="logAuditRequestVoFilters.greaterThanDate" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss"
+                                type="date">
+                            </el-date-picker> -
+                            <el-date-picker size="mini" style="width:47%" v-model="logAuditRequestVoFilters.lowerThanDate" format="dd-MM-yyyy" value-format="yyyy-MM-dd 23:59:59"
+                                type="date">
+                            </el-date-picker>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('logAuditRequestVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--列表-->
+    <template>
+        <el-table :data="logAuditRequestVoList" highlight-current-row border stripe>
+            <!-- <el-table-column prop="clientIp" :label="'logAuditRequestVoClientIp' | translate('IP Address')" width="200">
+            </el-table-column> -->
+            <!-- <el-table-column prop="port" :label="'logAuditRequestVoPort' | translate('Port')" width="100">
+            </el-table-column>
+            <el-table-column prop="sysCode" :label="'sysMenuSystemCode' | translate('System Code')" width="150">
+            </el-table-column> -->
+            <el-table-column prop="content.apiName" sortable label="Api Name">
+            </el-table-column>
+            <el-table-column prop="content.userCode" sortable label="User Name">
+            </el-table-column>
+            <el-table-column prop="content.url" sortable label="Request Url">
+            </el-table-column>
+            <el-table-column prop="content.clientIp" sortable label="Client Ip">
+            </el-table-column>
+            <!-- <el-table-column prop="startTime" align="right" :formatter="formatDate" :label="'logAuditRequestVoStartTime' | translate('Operating Time')">
+            </el-table-column> -->
+            <el-table-column :formatter="formatDate" sortable prop="content.operateTime" align="right" :label="'logAuditRequestVoStartTime' | translate('Operating Time')">
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="120">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

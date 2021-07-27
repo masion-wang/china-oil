@@ -1,0 +1,109 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 自保保单号UAT -->
+        <gv-form-item key-name="selfinsurancepolicyno" isThree="true" prop="policyNo">
+          <el-input v-model="scope.search.policyNo"> </el-input>
+        </gv-form-item>
+        <!-- 原保单号 -->
+        <gv-form-item key-name="originalWarrantyNumber" isThree="true" prop="cedingPolicyNo">
+          <el-input v-model="scope.search.cedingPolicyNo"> </el-input>
+        </gv-form-item>
+        <!-- 自保险种 -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCode">
+          <gv-select options-set="1" size="mini" code-type="RiskType" v-model="scope.search.riskCode" filterable
+            label-name-ex="codeCode" code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 新保／续保 -->
+        <gv-form-item key-name="newRenewedInsurance" isThree="true" prop="renewalSign">
+          <gv-select size="mini" options-set="1" code-type="ResumeRemark" v-model="scope.search.renewalSign"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 保险起期 -->
+        <gv-form-item key-name="proposalCommonStartDate" isThree="true" class="forInput">
+          <div style="display: flex">
+            <!-- 保险起期 的起期-->
+            <el-form-item prop="effectiveDateStart" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.effectiveDateStart" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="effectiveDateEnd" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="scope.search.effectiveDateEnd"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!-- 保险止期 -->
+        <gv-form-item key-name="expiryDateInsurance" isThree="true">
+          <div style="display: flex">
+            <el-form-item prop="expiryDateStart" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.expiryDateStart" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="expiryDateEnd" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="scope.search.expiryDateEnd"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 保单状态-->
+        <gv-form-item key-name="policyStatus" isThree="true" prop="policyStatus" requires>
+          <gv-select disabled size="mini" code-type="PolicyStatus" v-model="scope.search.policyStatus"
+            code-name="codeCode" label-name="codeName"></gv-select>
+
+        </gv-form-item>
+        <!-- 费用状态 -->
+        <gv-form-item key-name="Stateofcharge" isThree="true" prop="feeStatus">
+          <gv-select size="mini" code-type="ExpenseStatus" v-model="scope.search.feeStatus" code-name="codeCode"
+            label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 费用类型 -->
+        <gv-form-item key-name="feeType" isThree="true" prop="feeTypeName">
+          <el-select v-model="scope.search.feeTypeName" filterable clearable class="selectWidth">
+            <el-option v-for="item in feetypecode" :key="item.feetypeCode"
+              :label="item.billTypeCode+'-'+item.inwardInd+'-'+item.feetypeName"
+              :value="item.billTypeCode+'-'+item.inwardInd+'-'+item.feetypeName">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--工具条-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500">{{'Queryresults'|translate('Query results')}}</span>
+    </template>
+  </gv-filter-table>
+  <!--自保保单号详情 -->
+  <el-dialog append-to-body :title="'policyDetails'| translate" :visible.sync="projectVisible" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px">
+    <expense-detail ref="expenseDetail" @close="projectVisible = false"></expense-detail>
+    <template slot="footer">
+      <div style="text-align: center">
+        <!-- 关闭 -->
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="projectVisible = false">{{'gBtnClose' | translate}}
+        </el-button>
+        <!-- 补录文档资料 -->
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click="UPfile()">{{'zbaddDocumentsClaim'|translate}}
+        </el-button>
+        <!-- 打印 -->
+        <el-button v-if="printfeeButton" class="gv-btn gv-btn-primary" type="primary" @click="getPrint()">{{'gBtnPrint'
+          | translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</section>

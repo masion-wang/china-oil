@@ -1,0 +1,4 @@
+{
+    "upr_cannotBeEmpty": "Data must not be empty",
+    "upr_alreadyExist":"membership fee information already exists, can not be added!"
+}

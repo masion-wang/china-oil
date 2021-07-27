@@ -1,0 +1,113 @@
+<section>
+    <el-dialog title="选择邮件模板" :visible.sync="selectEmailDialog" width="70%" append-to-body>
+        12
+        <select-topic></select-topic>
+    </el-dialog>
+    <el-dialog title="编辑邮箱" :visible.sync="editEmailDialog" width="70%" append-to-body>
+        <el-card>
+            <el-table  class="centerTable" :data="editEmails"
+                :header-cell-class-name="must">
+            
+                <el-table-column :label="'receiver' | translate('receiver')">
+            
+            
+                    <template slot-scope="scope">
+                        <!-- <el-form-item :prop="'guPurchaseReinsuranceList.' + scope.$index + '.reinsurerName'"
+                            :rules='tableDataRules.reinsurerName'> -->
+                            <el-input :readonly="true" v-model="scope.row.userName">
+                            </el-input>
+                        <!-- </el-form-item> -->
+                    </template>
+            
+                </el-table-column>
+                <el-table-column :label="'email' | translate('email')">
+                    <template slot-scope="scope">
+                        <!-- <el-form-item :prop="'guPurchaseReinsuranceList.' + scope.$index + '.reinsuranceRate'"
+                            :rules='tableDataRules.reinsuranceRate'> -->
+                            <el-input size="mini" v-model="scope.row.email"
+                                ></el-input>
+                        <!-- </el-form-item> -->
+            
+                    </template>
+                </el-table-column>
+                <el-table-column :label="'operation'| translate">
+                    <template slot-scope="scope">
+                        <!-- <el-form-item :prop="'guPurchaseReinsuranceList.' + scope.$index + '.reinsuranceRate'"
+                                            :rules='tableDataRules.reinsuranceRate'> -->
+                       <el-button type="primary" @click="deleteEmail(scope.$index)">删除</el-button>
+                        <!-- </el-form-item> -->
+                
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row style="float:right;margin-top: 5px;margin-bottom: 5px;">
+                <el-button type="primary" @click="confirmEmail">确定</el-button>
+
+            </el-row>
+            
+        </el-card>
+       
+        
+    </el-dialog>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" label-width="109px" @submit.prevent="onSubmit">
+        <card>
+                <table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="receiver" defaultName="receiver" requires :width="2"></gv-form-label>
+                        <gv-form-input prop="modelCode" >
+                            <!-- <el-input size="mini" style="width:95%" :readonly="isReadonly" v-model="form.modelCode"></el-input> -->
+                            <el-select  style="width:90%" multiple v-model="emails" filterable placeholder="请选择">
+                                <el-option v-for="item in options" :key="item.userName" :label="item.userName+'<'+item.email+'>'" :value="item.userName">
+                                </el-option>
+                            </el-select>
+                        <el-button style="margin-left:10px" type="primary" size="mini" @click="editEmail">编辑</el-button>
+                        </gv-form-input>
+                        </tr>
+                        <tr>
+                        <gv-form-label keyName="copyFor" defaultName="Model Name"  :width="2"></gv-form-label>
+                        <gv-form-input prop="modelName" :width="20">
+                        <el-select style="width:90%" multiple v-model="emailsCopy" filterable placeholder="请选择">
+                            <el-option v-for="item in options" :key="item.userName" :label="item.userName+'<'+item.email+'>'"
+                                :value="item.userName">
+                            </el-option>
+                        </el-select>
+                        </gv-form-input>
+                        </tr>
+                        <tr>
+                        <gv-form-label keyName="topic" defaultName="Topic" requires :width="2"></gv-form-label>
+                        <gv-form-input prop="modelType" :width="20">
+                            <el-input style="width:90%" v-model="topic"></el-input>
+                            <el-button style="margin-left:10px" type="primary" size="mini" @click="checkTopic('02')">选择</el-button>
+                        </gv-form-input>
+                        </tr>
+
+                        <tr>
+                            <gv-form-input prop="ggMessageModelModelContent" colspan="8">
+                                <gv-quill-editor style="min-height:150px;margin-bottom: -16px;" colspan="10" :isEmail="true" v-model="value" :content="content" :insertkeys="insertkeys" showMessage
+                                    @change="onEditorChange"></gv-quill-editor>
+                                    <el-row :span="24">
+                                        <el-col :span="8" :offset="2">
+                                    <el-upload   multiple style="padding-right: 8px;padding-left: 9px;width:70%"  ref="upload" class="upload-demo emailupload" action="#"  :on-preview="handlePreview" :on-remove="handleRemove"
+                                        :file-list="fileList" :http-request='uploadEmail' :on-change="handleChange" :file-list="fileList"
+                                        :auto-upload="false">
+                                        <el-button size="small" type="primary">添加附件</el-button>
+                                    </el-upload>
+                                    </el-col>
+                                    </el-row>
+
+
+                            </gv-form-input>
+                        </tr>
+                       
+                </table>
+                </card>
+           
+        <div class="block mrgt5 toolbar-btn txt-center" >
+            <el-form-item>
+                <el-button class="gv-btn gv-btn-save"  type="primary" @click.native="sendEmail()">{{ 'gBtnSend' | translate('send') }}</el-button>
+                <el-button class="gv-btn gv-btn-warning"  @click="reset">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button class="gv-btn gv-btn-warning" @click="closeEmail()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>    

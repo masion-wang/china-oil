@@ -1,0 +1,64 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <!--工具条-->
+            <el-form :inline="true" ref="sysPrinterVoFilters" :model="sysPrinterVoFilters" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysPrinterVoPrinterIp" defaultName="Printer Ip" :width="3"></gv-form-label>
+                        <gv-form-input prop="printerIp" :width="5">
+                            <el-input size="mini" v-model.trim="sysPrinterVoFilters.printerIp"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="sysPrinterVoPrinterName" defaultName="Printer Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="printerName" :width="5">
+                            <el-input size="mini" v-model.trim="sysPrinterVoFilters.printerName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="gValidStatus" defaultName="Valid Status" :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" optionsSet="1" codeType="ValidInd" v-model="sysPrinterVoFilters.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('sysPrinterVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <!--列表-->
+    <template>
+        <el-table :data="sysPrinterVoList" highlight-current-row border stripe >
+            <el-table-column prop="printerIp" sortable :label="'sysPrinterVoPrinterIp' | translate('Printer Ip')">
+            </el-table-column>
+            <el-table-column prop="printerName" sortable :label="'sysPrinterVoPrinterName' | translate('Printer Name')">
+            </el-table-column>
+            <el-table-column prop="printerSlotStr" sortable :label="'sysPrinterVopPrinterSlot' | translate('Printer Slot')">
+            </el-table-column>
+            <el-table-column prop="validInd" :label="'gValidStatus' | translate('Valid Status')" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd==true?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                <template slot-scope="scope">
+                    <el-button v-if="scope.row.validInd == true" size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button v-else size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')" style="visibility:hidden">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

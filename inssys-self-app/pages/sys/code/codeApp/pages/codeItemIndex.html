@@ -1,0 +1,63 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="ggCodeVoFilters" :model="ggCodeVoFilters" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="ggCodeItemCode" defaultName="Item Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="codeCode" :width="5">
+                            <el-input size="mini" v-model.trim="ggCodeVoFilters.codeCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ggCodeItemCodeName" defaultName="Item Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="codeName" :width="5">
+                            <el-input size="mini" v-model.trim="ggCodeVoFilters.codeName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ggCodeValidInd" defaultName="Valid Ind" :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="ggCodeVoFilters.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                        </gv-form-label>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('ggCodeVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                            <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <template>
+        <el-table :data="ggCodeVoList" highlight-current-row border stripe>
+            <el-table-column prop="codeCode" sortable :label="'ggCodeItemCode' | translate('Item Code')">
+            </el-table-column>
+            <el-table-column prop="codeName" sortable :label="'ggCodeItemCodeName' | translate('Item Code Name')">
+            </el-table-column>
+            <el-table-column prop="validInd" :label="'ggCodeValidInd' | translate('Code ValidInd') | translate">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd=='1'?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column width="220" :label="'gTitleOperation' | translate('Operation')">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-if="scope.row.validInd == '1'" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button v-else size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')" style="visibility:hidden">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

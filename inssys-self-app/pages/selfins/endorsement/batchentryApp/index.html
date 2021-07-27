@@ -1,0 +1,87 @@
+<section>
+    <gv-form :model="numberValidateForm" ref="numberValidateForm" :statusIcon="false" :rules='rules'
+        style="padding-bottom: 20px;">
+        <!-- 输入框 -->
+        <div class="formbasic">
+            <!-- 第一行 -->
+            <div class="gv-row" style="padding-right:0">
+                <p style="border-bottom: 1px solid #eee; color:#556677;font-size: 19px; height: 40px;  line-height: 40px; padding-left: 20px;
+               font-weight: 500;">{{'Batchsheettoapplyfor'| translate('Batch sheet to apply for')}}</p>
+                <div class="gv-row" style="margin-top: 20px;">
+                    <!-- 保单号  @row-select="changeschemeName2" -->
+                    <gv-form-item key-name="policyNo" isThree="true" prop="policyNo" requires>
+                        <el-select filterable size="mini" v-model='numberValidateForm.policyNo' @change="changeschemeName2">
+                            <el-option v-for="item in PolicyNoList" :key="item" :label="item" :value="item">
+                            </el-option>
+                        </el-select>
+                        
+                    </gv-form-item>
+                </div>
+                <!--批单生效日期  -->
+                <div class="gv-row" v-if='isReadonly'>
+                    <gv-form-item key-name="Effectivedatebatch" isThree="true" prop="endorsementEffectiveDate" requires>
+                        <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+                            v-model="numberValidateForm.endorsementEffectiveDate" type="datetime"
+                            :placeholder="'nyr' | translate">
+                        </el-date-picker>
+                    </gv-form-item>
+                   
+                </div>
+                <!--批改类型  -->
+                <div class="gv-row" v-if='isReadonly'>
+                    <gv-form-item key-name="correctionType" isThree="true" prop="policyNo" requires
+                        style="width: 100%;">
+                        <!-- 金批 -->
+                        <el-checkbox v-if="isShow" v-model="numberValidateForm.PremiumRelated" label="1" @change='a1'
+                            style="width:  15%;margin-right: 10px">
+                            {{'Goldgroup'| translate('Gold group')}}</el-checkbox>
+                        <!-- 文批 -->
+                        <el-checkbox v-if="isShow" v-model="numberValidateForm.NonPremiumRelated" label="2" @change='a2'
+                            style="width:  15%;margin-right: 10px"> {{'Articlenumber'| translate('Article number')}}
+                        </el-checkbox>
+                        <!-- 退保 -->
+                        <el-checkbox v-if="isShow" v-model="numberValidateForm.Cancellation" label="3" @change='a3'
+                            style="width: 15%;margin-right: 10px">{{'surrender'| translate('surrender')}}</el-checkbox>
+                        <!-- 冲销 -->
+                        <el-checkbox v-model="numberValidateForm.Write " label="4"
+                            style="width:  15%;margin-right: 10px" @change='a4'>
+                            {{'sterilisation'| translate('sterilisation')}}</el-checkbox>
+                    </gv-form-item>
+                    <gv-form-item key-name="自保批单号" isThree="true" prop="policyNoByWriteOff" requires v-if='Write'>
+                        <el-row :gutter="20">
+                            <!-- 自保批单号-->
+                            <el-col :span="22">
+                                <el-input v-model='numberValidateForm.policyNoByWriteOff' placeholder="请输入批单号">
+                                </el-input>
+                            </el-col>
+                            <el-col :span="2" style="padding-left: 0;">
+                                <!-- 查询 -->
+                                <el-button type="primary" style="height: 32px;border-radius: 3px;"
+                                    @click="addProjectName()">{{ 'gBtnSearch' | translate('Search')}} </el-button>
+
+                            </el-col>
+                    </gv-form-item>
+                </div>
+                <br><br><br>
+                <!-- 下一步 -->
+                <div v-if="!isReadonly" style="float: right;padding-right: 200px;padding-bottom: 10px;">
+                    <el-button type="primary" style="height: 32px;border-radius: 3px;"
+                        @click="submitForm('numberValidateForm')">{{ 'gBtnNext' | translate('Next')}}</el-button>
+                </div>
+                <!-- 下一步2 -->
+                <div v-if="isReadonly" style="float: right;padding-right: 200px;padding-bottom: 10px;">
+                    <el-button type="primary" style="height: 32px;border-radius: 3px;"
+                        @click="jumpto">{{ 'gBtnNext' | translate('Next')}}</el-button>
+                </div>
+                <!--审核-->
+                <!-- <div style="float: right;padding-right: 200px;padding-bottom: 10px;">
+                    <el-button type="primary" style="height: 32px;border-radius: 3px;" @click="jumpto2">审核(待开发)
+                    </el-button>
+                </div> -->
+            </div>
+
+        </div>
+
+    </gv-form>
+
+</section>

@@ -1,0 +1,469 @@
+<!-- 公估/理算信息组件 -->
+<div>
+  <gv-form :model="lossAdInfo" ref="lossAdInfo" :rules="rules">
+    <gv-panel :title="'commonInfo' | translate">
+      <!-- <gv-form :model="lossAdInfo" ref="lossAdInfo" :rules="rules"> -->
+      <div class="gv-row">
+        <!--赔案号-->
+        <gv-form-item key-name="claimNo" prop="claimNo" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.claimNo}}
+          </div>
+        </gv-form-item>
+        <!--险种-->
+        <gv-form-item key-name="riskCode" prop="riskName" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.riskName}}
+          </div>
+        </gv-form-item>
+        <!--索赔状态-->
+        <gv-form-item key-name="claimStatus" prop="claimStatus" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{Vue.gvUtil.translationData('InsuredAdvice',
+            lossAdInfo.claimStatus)}}
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--是否属于保单保障范围-->
+        <gv-form-item
+          key-name="withinPolicyCoverage"
+          prop="withinPolicyCoverage"
+          isThree="true"
+          requires
+        >
+          <gv-select
+            ref="withinPolicyCoverage"
+            size="mini"
+            code-type="ViewUnder"
+            code-name="codeCode"
+            label-name="codeName"
+            v-model="lossAdInfo.withinPolicyCoverage"
+            :disabled="isReadonly"
+          ></gv-select>
+        </gv-form-item>
+        <!--保险利益-->
+        <gv-form-item
+          key-name="insurableInterest"
+          prop="insuranceInterest"
+          isThree="true"
+          requires
+        >
+          <gv-select
+            ref="insuranceInterest"
+            size="mini"
+            code-type="InsuranceBenefit"
+            code-name="codeCode"
+            label-name="codeName"
+            v-model="lossAdInfo.insuranceInterest"
+            :disabled="isReadonly"
+          ></gv-select>
+        </gv-form-item>
+        <!--提交人-->
+        <gv-form-item key-name="submitname" prop="submitterName" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.submitterName}}
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--审核人-->
+        <gv-form-item key-name="checker" prop="approvedName" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.approvedName}}
+          </div>
+        </gv-form-item>
+        <!--审核日期-->
+        <gv-form-item key-name="checkTime" prop="approvalDate" isThree="true">
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.approvalDate}}
+          </div>
+        </gv-form-item>
+        <!--提交日期-->
+        <gv-form-item
+          key-name="proposalSubmitTime"
+          prop="submissionDate"
+          isThree="true"
+        >
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{lossAdInfo.submissionDate}}
+          </div>
+        </gv-form-item>
+      </div>
+      <!-- </gv-form> -->
+    </gv-panel>
+    <gv-panel :title="'AdjustmentInfo' | translate">
+      <template v-slot:subBtn v-if="showSubBtn">
+        <!-- 审核轨迹 -->
+        <!-- <el-button type="primary" class="gv-btn-primary gv-btn-xs" style="margin-left: 20px;" @click="openTrail">{{'auditTrail' | translate}}</el-button> -->
+      </template>
+      <!-- <gv-form :model="lossAdInfo" ref="lossAdInfo" :rules="rules"> -->
+      <div class="gv-row">
+        <!--索赔币别-->
+        <gv-form-item
+          key-name="claimCurrency"
+          prop="claimCurrency"
+          isThree="true"
+        >
+          <gv-select
+            size="mini"
+            code-type="Currency"
+            v-model="lossAdInfo.claimCurrency"
+            @row-select="changeRate"
+            :disabled="isReadonly"
+          ></gv-select>
+        </gv-form-item>
+        <!--默认币别-->
+        <gv-form-item
+          key-name="defaultCurrency"
+          prop="defaultCurrency"
+          isThree="true"
+        >
+          <gv-select
+            size="mini"
+            code-type="Currency"
+            v-model="lossAdInfo.defaultCurrency"
+            @row-select="changeRate"
+            :disabled="isReadonly"
+          ></gv-select>
+        </gv-form-item>
+        <!--汇率-->
+        <gv-form-item
+          key-name="exchangeRate"
+          prop="exchangeRate"
+          isThree="true"
+        >
+          <!-- <el-input placeholder="汇率" v-model="lossAdInfo.exchangeRate" :disabled="true"> </el-input> -->
+          <gv-input
+            class="centerInput"
+            size="mini"
+            :thou="true"
+            pattern-key="Zero"
+            v-model="lossAdInfo.exchangeRate"
+            num-len="7"
+            :readonly="true"
+          ></gv-input>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--理算汇总金额-->
+        <gv-form-item
+          key-name="totalAdjustmentAmount"
+          prop="claimCurrency"
+          isThree="true"
+        >
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{Vue.gvUtil.translationData('Currency', lossAdInfo.claimCurrency)}}
+            {{Vue.filter('money')(lossAdInfo.totalAdjustmentAmount, true, 2) ||
+            0}}
+          </div>
+        </gv-form-item>
+        <!--理算汇总金额-->
+        <gv-form-item
+          key-name="totalAdjustmentAmount"
+          prop="defaultCurrency"
+          isThree="true"
+        >
+          <div style="height: 32px; line-height: 32px; text-align: center">
+            {{Vue.gvUtil.translationData('Currency',
+            lossAdInfo.defaultCurrency)}}
+            {{Vue.filter('money')(lossAdInfo.adjustmentAmount, true, 2) || 0}}
+          </div>
+        </gv-form-item>
+      </div>
+      <!-- </gv-form> -->
+    </gv-panel>
+  </gv-form>
+  <el-form :rules="formData.rules" :model="formData" ref="formDom">
+    <el-table
+      :data="formData.lossAmountList"
+      :summary-method="getSummaries"
+      show-summary
+    >
+      <el-table-column prop="instalmentCount">
+        <template slot="header" slot-scope="scope">
+          <!-- 期数 -->
+          <span style="color: red">*</span>{{'qs' | translate}}
+        </template>
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'lossAmountList.' + scope.$index + '.instalmentCount'"
+            :rules="formData.rules.instalmentCount"
+          >
+            <el-input
+              :ref="'lossAmountList.' + scope.$index + '.instalmentCount'"
+              v-model="scope.row.instalmentCount"
+              :disabled="true"
+            ></el-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column prop="estimatedLossAmount">
+        <template slot="header" slot-scope="scope">
+          <!-- 估损金额 -->
+          <span style="color: red">*</span>{{'estimatedLossAmount' |
+          translate}}({{Vue.gvUtil.translationData('Currency',
+          lossAdInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'lossAmountList.' + scope.$index + '.estimatedLossAmount'"
+            :rules="formData.rules.estimatedLossAmount"
+          >
+            <gv-input
+              :ref="'lossAmountList.' + scope.$index + '.estimatedLossAmount'"
+              @blur="countReceivableAmount(scope.row,'gs')"
+              v-model="scope.row.estimatedLossAmount"
+              :thou="true"
+              num-len="2"
+              :readonly="isReadonly || cantChange"
+            ></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column prop="adjustmentAmount">
+        <template slot="header" slot-scope="scope">
+          <!-- 理算金额 -->
+          <span style="color: red">*</span>{{'adjustmentAmount' |
+          translate}}({{Vue.gvUtil.translationData('Currency',
+          lossAdInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'lossAmountList.' + scope.$index + '.adjustmentAmount'"
+            :rules="formData.rules.adjustmentAmount"
+          >
+            <gv-input
+              :ref="'lossAmountList.' + scope.$index + '.adjustmentAmount'"
+              @blur="countReceivableAmount(scope.row,'ls')"
+              v-model="scope.row.adjustmentAmount"
+              :thou="true"
+              num-len="2"
+              :readonly="isReadonly || cantChange"
+            ></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'deductiblesText' | translate" prop="deductible">
+        <template slot-scope="scope">
+          <el-input
+            v-model="scope.row.deductible"
+            :disabled="isReadonly || cantChange"
+          ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="Vue.filter('translate')('prepaidAmount')+'('+Vue.gvUtil.translationData('Currency', lossAdInfo.claimCurrency)+')'"
+        prop="prepaidAmount"
+      >
+        <template slot-scope="scope">
+          <gv-input
+            v-model="scope.row.prepaidAmount"
+            :thou="true"
+            @blur="countReceivableAmount(scope.row,'yf')"
+            num-len="2"
+            :readonly="isReadonly || cantChange"
+          ></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column prop="receivableAmount">
+        <template slot="header" slot-scope="scope">
+          <!-- 本次应收金额 -->
+          <span style="color: red">*</span>{{'receivableAmount' |
+          translate}}({{Vue.gvUtil.translationData('Currency',
+          lossAdInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'lossAmountList.' + scope.$index + '.receivableAmount'"
+            :rules="formData.rules.receivableAmount"
+          >
+            <gv-input
+              :ref="'lossAmountList.' + scope.$index + '.receivableAmount'"
+              @blur="countReceivableAmount(scope.row,'bcys')"
+              v-model="scope.row.receivableAmount"
+              :thou="true"
+              num-len="2"
+              :readonly="isReadonly || cantChange"
+            ></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'gValidStatus' | translate" width="150">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('AdjustmentStatus', scope.row.status)}}
+        </template>
+      </el-table-column>
+      <el-table-column width="150">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            class="gv-btn-primary gv-btn-xs"
+            @click="openOther(scope.row,scope.$index)"
+            >{{'other' | translate}}</el-button
+          >
+          <el-button
+            type="primary"
+            class="gv-btn-warning gv-btn-xs"
+            @click="removeLossAmount(scope.$index)"
+            v-if="isAudit != 'auditAdjusting'"
+            :disabled="isReadonly || cantChange"
+            v-if="!isReadonly && !cantChange"
+            >-</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-form>
+  <div style="padding: 15px 0 15px 15px" v-if="isAudit != 'auditAdjusting'">
+    <el-button
+      type="primary"
+      class="gv-btn gv-btn-primary"
+      @click="addlossAmount"
+      :disabled="isReadonly || cantChange"
+      v-if="!isReadonly && !cantChange"
+      >+</el-button
+    >
+  </div>
+  <div
+    style="width: 100%; text-align: center; padding: 15px 0"
+    v-if="isAudit != 'auditAdjusting'"
+  >
+    <el-button
+      type="primary"
+      class="gv-btn gv-btn-save"
+      @click="saveLossAdjustingInfo('1')"
+      :disabled="isReadonly"
+      v-if="!isReadonly"
+      >{{'gBtnSave' | translate}}</el-button
+    >
+    <el-button
+      type="primary"
+      class="gv-btn gv-btn-submit"
+      @click="saveLossAdjustingInfo('0')"
+      :disabled="isReadonly"
+      v-if="!isReadonly"
+      >{{'gBtnSubmit' | translate}}</el-button
+    >
+  </div>
+  <el-dialog
+    :title="'AdjustmentOther' | translate"
+    :visible.sync="otherVisible"
+    width="50%"
+    :close-on-click-modal="false"
+    append-to-body
+  >
+    <gv-form
+      :model="lossAdOtherForm"
+      ref="lossAdOtherForm"
+      :rules="lossAdOtherRules"
+    >
+      <div class="gv-row">
+        <!--出险通知单号-->
+        <gv-form-item
+          key-name="AdjusterAssessor"
+          prop="adjusterAssessorName"
+          requires
+        >
+          <el-input
+            :placeholder="(isReadonly || cantChange)? '' : '请输入理算人/公估人'"
+            ref="adjusterAssessorName"
+            v-model="lossAdOtherForm.adjusterAssessorName"
+            :disabled="isReadonly || cantChange"
+          >
+          </el-input>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 备注 -->
+        <el-row :gutter="20" class="cellfou ia_im_area">
+          <el-col :span="4" style="padding-right: 4.3%">
+            <div class="gvinput"><span>{{'gRemarks' | translate}}:</span></div>
+          </el-col>
+          <el-col :span="20" class="ia_im_describ">
+            <el-input
+              type="textarea"
+              :rows="3"
+              style="width: 100%"
+              :placeholder="(isReadonly || cantChange)? '' : '请输入备注'"
+              v-model="lossAdOtherForm.remark"
+              :disabled="isReadonly || cantChange"
+            >
+            </el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <!-- lossAdInfo.claimCurrency -->
+    </gv-form>
+    <el-table :data="lossAdOtherTable">
+      <el-table-column
+        :label="Vue.filter('translate')('estimatedLossAmount')+'('+Vue.gvUtil.translationData('Currency', lossAdInfo.defaultCurrency)+')'"
+      >
+        <template slot-scope="scope">
+          <gv-input
+            v-model="scope.row.estimatedLossAmountOther"
+            :thou="true"
+            num-len="2"
+            :readonly="true"
+          ></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="Vue.filter('translate')('adjustmentAmount')+'('+Vue.gvUtil.translationData('Currency', lossAdInfo.defaultCurrency)+')'"
+      >
+        <template slot-scope="scope">
+          <gv-input
+            v-model="scope.row.adjustmentAmountOther"
+            :thou="true"
+            num-len="2"
+            :readonly="true"
+          ></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="Vue.filter('translate')('prepaidAmount')+'('+Vue.gvUtil.translationData('Currency', lossAdInfo.defaultCurrency)+')'"
+      >
+        <template slot-scope="scope">
+          <gv-input
+            v-model="scope.row.prepaidAmountOther"
+            :thou="true"
+            num-len="2"
+            :readonly="true"
+          ></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="Vue.filter('translate')('receivableAmount')+'('+Vue.gvUtil.translationData('Currency', lossAdInfo.defaultCurrency)+')'"
+      >
+        <template slot-scope="scope">
+          <gv-input
+            v-model="scope.row.receivableAmountOther"
+            :thou="true"
+            num-len="2"
+            :readonly="true"
+          ></gv-input>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div
+      style="width: 100%; text-align: center; padding: 15px"
+      v-if="isAudit != 'auditAdjusting'"
+    >
+      <el-button
+        type="primary"
+        class="gv-btn gv-btn-save"
+        @click="saveAdjOther"
+        v-if="!isReadonly && !cantChange"
+        :disabled="isReadonly || cantChange"
+        >{{'gBtnSave' | translate}}</el-button
+      >
+      <el-button
+        v-else
+        class="gv-btn-back gv-btn-xs"
+        type="primary"
+        @click="otherVisible = false"
+        >{{ 'gBtnReturn' | translate}}</el-button
+      >
+    </div>
+  </el-dialog>
+</div>

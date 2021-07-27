@@ -1,0 +1,302 @@
+<section>
+  <!--查询条件-->
+  <gv-form :table="commonList" class="gv-query-table">
+    <div class="clearfix query-title" style="
+            padding: 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+      <!-- 搜索数据 -->
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+
+        {{'gTitleSearchData'| translate}}
+      </h1>
+    </div>
+
+    <div class="gv-row" style='padding-top: 15px;'>
+      <!-- 统计日期 -->
+      <gv-form-item key-name="zbStatisticsdate" isThree="true" prop="positionDate" requires>
+        <div style="display: flex;width: 320px;">
+          <el-form-item prop="startReportDate" style="flex: 1; margin: 0">
+            <el-date-picker v-model="commonList.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              type="date" :placeholder="'ryn' | translate">
+            </el-date-picker>
+          </el-form-item>
+          <div style="width: 10px; text-align: center; line-height: 32px">
+            -
+          </div>
+          <el-form-item prop="endReportDate" style="flex: 1; margin: 0">
+            <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date" v-model="commonList.endReportDate"
+              :placeholder="'ryn' | translate">
+            </el-date-picker>
+          </el-form-item>
+        </div>
+      </gv-form-item>
+
+      <!-- 是否显示分期 -->
+      <gv-form-item key-name="zbShowstaging" isThree="true" prop="reportCode">
+        <el-select v-model="commonList.reportCode" @change='changereport()' style=" width: 320px">
+          <el-option v-for="item in IsnotInstalment" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+      <!-- 自保险种  -->
+      <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCodeList">
+        <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+          v-model="commonList.riskCodeList" multiple @change="changeriskcode(commonList.riskCodeList,'riskCodeList')">
+          <el-option v-for="item in riskCodeListoption" :key="item.codeCode" :label="item.codeName"
+            :value="item.codeCode">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!-- 项目打印名称 -->
+      <gv-form-item key-name="projectPrintName" isThree="true" prop="projectNameList">
+        <el-select v-model="commonList.projectNameList" multiple clearable filterable
+          class="noLeftMg selecttagstexBYLDL eltagBYLDL" style="width: 320px;"
+          @change="changeriskcode(commonList.projectNameList,'projectNameList')"
+          @focus="changeprojectNameList(commonList.endReportDate,commonList.startReportDate)">
+          <el-option v-for="item in options" :key="item.projectName" :label="item.projectName"
+            :value="item.projectName">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+    </div>
+    <div class="query-bottom">
+      <div class="pull-left">
+        <el-button class="gv-btn gv-btn-white" @click="dialogFormVisible = true">{{ 'gBtnSaveFi' | translate }}
+        </el-button>
+        <el-button class="gv-btn gv-btn-white" @click="dialogTableVisible = true">{{ 'gBtnMaFi' | translate }}
+        </el-button>
+        <el-select @change="getFilterEx" size="small" :placeholder="'gSelectFi' | translate" class="gv-filter-select"
+          filterable v-model="filterEx">
+          <el-option v-for="item in optionsFieldsEx" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="pull-right">
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click='handleSearch'>
+          {{ 'gBtnSearch' | translate('Search') }}</el-button>
+        <el-button class="gv-btn gv-btn-warning" @click='handleReset'>
+          {{ 'gBtnClear' | translate('Clear') }}</el-button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </gv-form>
+
+
+  <!-- 查询结果 -->
+  <gv-form class="gv-query-table">
+    <div class="clearfix query-title" style="
+      padding: 5px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    ">
+      <!--    查询结果 -->
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        {{'queryResult'| translate}}
+      </h1>
+      <div class="pull-right">
+        <el-button class="gv-btn-primary gv-btn-xs" icon="el-icon-download" @click="onExportAllExcel">
+          {{ 'gBtnToExecl' | translate('ToExecl') }}</el-button>
+      </div>
+    </div>
+    <el-tabs v-model="activeName" type="border-card" class="planTabs" @tab-click="handleClick"
+      v-if="editableTabs.length>0">
+      <el-tab-pane v-for="(itemx,index) in editableTabs" :key="itemx.index" :label="itemx.name" :name="itemx.name">
+        <!-- 汇总 -->
+        <template v-if="index=='0'">
+          <el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" stripe>
+            <!--  Insurance Category-->
+            <el-table-column label="Insurance Category" prop="insuranceCategory"> </el-table-column>
+            <!--  Currency-->
+            <el-table-column label="Currency" prop="currency"> </el-table-column>
+            <!-- Receivable Amount -->
+            <el-table-column label="Receivable Amount" prop="receivableAmountString" show-overflow-tooltip="true">
+            </el-table-column>
+            <!-- Received Amount -->
+            <el-table-column label="Received Amount" prop="receivedAmountString"> </el-table-column>
+            <!-- O/S Receivable Amount -->
+            <el-table-column label="O/S Receivable Amount" prop="osReceivedAmountString" show-overflow-tooltip="true">
+            </el-table-column>
+            <!-- Payable Amount -->
+            <el-table-column label="Payable Amount" prop="payableAmountString"></el-table-column>
+            <!-- Paid Amount -->
+            <el-table-column label="Paid Amount" prop="paidAmountString"></el-table-column>
+            <!-- O/S Payable Amount -->
+            <el-table-column label="O/S Payable Amount" prop="osPayableAmountString"></el-table-column>
+
+          </el-table>
+          <el-pagination style="float: right" @size-change="tableDataonHandleSizeChange"
+            @current-change="tableDataonHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="tableData.length" :current-page.sync="currentPage">
+          </el-pagination>
+        </template>
+        <!-- 分期 -->
+        <template v-if="index!='0'&&commonList.reportCode=='R012'">
+          <el-table ref="multipleTable"
+            :data="NoInstalmenttableData.slice((NoInscurrentPage-1)*pageSize,NoInscurrentPage*NoInspageSize)" stripe>
+            <!--  Settlement Reference-->
+            <el-table-column label="Settlement Reference" prop="settlementReference" width='180'> </el-table-column>
+            <!-- Project Name -->
+            <el-table-column label="Project Name" prop="projectName" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Fee Type -->
+            <el-table-column label="Fee Type" prop="feeName"> </el-table-column>
+            <!-- Debit Note# -->
+            <el-table-column label="Debit Note#" prop="billNo" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Corresp -->
+            <el-table-column label="Corresp" prop="shorterCorrespon"></el-table-column>
+            <!--  Due Date -->
+            <el-table-column label=" Due Date" prop="dueDate"></el-table-column>
+            <!-- Received Date -->
+            <el-table-column label="Received Date" prop="settledDate"></el-table-column>
+            <!-- Aging days -->
+            <el-table-column label="Aging days" prop="accountDay"></el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!--Original Amount-->
+            <el-table-column label="Original Amount" prop="amountString">
+            </el-table-column>
+            <!--  Original Currency-->
+            <el-table-column label="Original Currency" prop="originalCurrency" show-overflow-tooltip="true">
+            </el-table-column>
+            <!-- Payment Amount -->
+            <el-table-column label="Payment Amount" prop="financeSettledAmountString"> </el-table-column>
+            <!--Given Currency-->
+            <el-table-column label="Given Currency" prop="currency"> </el-table-column>
+            <!-- Given Amount -->
+            <el-table-column label="Given Amount" prop="paidAmountString"> </el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!-- O/S Amount -->
+            <el-table-column label="O/S Amount" prop="unpaidAmountString"></el-table-column>
+          </el-table>
+          <el-pagination style="float: right" @size-change="NoInonHandleSizeChange"
+            @current-change="NoInonHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="NoInspageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="NoInstalmenttableData.length"
+            :current-page.sync="NoInscurrentPage">
+          </el-pagination>
+        </template>
+        <!--  不分期-->
+        <template v-if="index!='0'&&commonList.reportCode=='R010'">
+          <el-table ref="multipleTable"
+            :data="NoInstalmenttableData.slice((NoInscurrentPage-1)*pageSize,NoInscurrentPage*NoInspageSize)">
+            <!--  Settlement Reference-->
+            <el-table-column label="Settlement Reference" prop="settlementReference" width='180'> </el-table-column>
+            <!-- Project Name -->
+            <el-table-column label="Project Name" prop="projectName" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Debit Note# -->
+            <el-table-column label="Debit Note#" prop="billNo" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Corresp -->
+            <el-table-column label="Corresp" prop="shorterCorrespon"></el-table-column>
+            <!-- Due Date -->
+            <el-table-column label="Due Date" prop="dueDate"></el-table-column>
+            <!--   Received Date -->
+            <el-table-column label="Received Date" prop="settledDate"></el-table-column>
+            <!--    Aging days -->
+            <el-table-column label="Aging days" prop="accountDay"></el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!--Original Amount-->
+            <el-table-column label="Original Amount" prop="receivableAmountString">
+            </el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!--  Payment Amount -->
+            <el-table-column label=" Payment Amount" prop="receivedBillAmountString"></el-table-column>
+            <!--Given Currency-->
+            <el-table-column label="Given Currency" prop="currency"> </el-table-column>
+            <!-- Given Amount -->
+            <el-table-column label="Given Amount" prop="receivedAmountString"> </el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!-- O/S Amount -->
+            <el-table-column label="O/S Amount" prop="uncollectedAmountString"></el-table-column>
+            <!-- Settlement Reference -->
+            <el-table-column label="Settlement Reference" prop="settlementReference" width='180'></el-table-column>
+            <!-- Project Name -->
+            <el-table-column label="Project Name" prop="projectName" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Debit Note# -->
+            <el-table-column label="Debit Note#" prop="billNoPay" show-overflow-tooltip="true"> </el-table-column>
+            <!-- Corresp -->
+            <el-table-column label="Corresp" prop="shorterCorresponPay"></el-table-column>
+            <!-- Due Date -->
+            <el-table-column label="Due Date" prop="dueDatePay"></el-table-column>
+            <!-- Payment Date -->
+            <el-table-column label="Payment Date" prop="settledDatePay"></el-table-column>
+            <!-- Aging days -->
+            <el-table-column label="Aging days" prop="accountDayPay"></el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!--Original Amount-->
+            <el-table-column label="Original Amount" prop="payableAmountString">
+            </el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!--  Payment Amount -->
+            <el-table-column label=" Payment Amount" prop="paidBillAmountString"></el-table-column>
+            <!--Given Currency-->
+            <el-table-column label="Given Currency" prop="currency"> </el-table-column>
+            <!-- Given Amount -->
+            <el-table-column label="Given Amount" prop="paidAmountString"> </el-table-column>
+            <!-- Original Currency -->
+            <el-table-column label="Original Currency" prop="originalCurrency"></el-table-column>
+            <!-- O/S Amount -->
+            <el-table-column label="O/S Amount" prop="unpaidAmountString"></el-table-column>
+          </el-table>
+          <el-pagination style="float: right" @size-change="NoInonHandleSizeChange"
+            @current-change="NoInonHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="NoInspageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="NoInstalmenttableData.length"
+            :current-page.sync="NoInscurrentPage">
+          </el-pagination>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
+    <el-tabs v-else>
+      <div class="el-table__empty-block">
+        <!-- 暂无数据 -->
+        <span class="el-table__empty-text">{{ 'zbemptyText' | translate }}</span>
+      </div>
+    </el-tabs>
+
+
+
+
+
+  </gv-form>
+  <el-dialog :title="'gTitlePrompt' | translate" custom-class="gv-dialog" :visible.sync="dialogFormVisible">
+    <gv-form :model="fromFiltersEx" ref="fromFiltersEx" :inline="false">
+      <el-form-item :label="'gName' | translate" label-width="120px">
+        <el-input v-model="fromFiltersEx.name" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item :label="'gRemarks' | translate" label-width="120px">
+        <el-input v-model="fromFiltersEx.remarks" autocomplete="off"></el-input>
+      </el-form-item>
+    </gv-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button class="gv-btn gv-btn-warning" @click="dialogFormVisible = false">{{ 'gBtnCancel' | translate }}
+      </el-button>
+      <el-button class="gv-btn gv-btn-submit" type="primary" @click="onSubmit">{{ 'gSubmit' | translate }}</el-button>
+    </div>
+  </el-dialog>
+  <el-dialog custom-class="gv-dialog" :title="'gBtnMaFi' | translate" :visible.sync="dialogTableVisible">
+    <div class="gv-query-table" style="margin-top:15px;">
+      <div class="query-content">
+        <el-table :data="optionsFieldsEx">
+          <el-table-column prop="label" :label="'gName' | translate" width="150"></el-table-column>
+          <el-table-column prop="remarks" :label="'gRemarks' | translate" width="200"></el-table-column>
+          <el-table-column prop="time" :label="'gData' | translate" show-overflow-tooltip>
+            <template #default="{row}">{{row.time | time('yyyy-MM-dd HH:mm:ss')}}</template>
+          </el-table-column>
+          <el-table-column :label="'gTitleOperation' | translate">
+            <template v-slot="scope">
+              <el-button @click="onHandleDel(scope.row)" class="gv-btn-warning gv-btn-xs" type="primary">
+                {{ 'gBtnDelete' | translate }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+  </el-dialog>
+</section>

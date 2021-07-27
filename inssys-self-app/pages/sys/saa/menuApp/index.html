@@ -1,0 +1,28 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'sysResourceManagement' | translate('All Resources')" name="1">
+            <div class="buttons">
+                <el-button size="mini" type="primary" @click="onHandleEditResource">{{'gBtnView' | translate}}</el-button>
+            </div>
+            <div style="width:600px;min-height:50px;border: 1px solid #d1dbe5;margin-top:5px;">
+                <el-tree ref="resource" :check-on-click-node='true' show-checkbox accordion check-strictly highlight-current :data="allMenus" node-key="id" :props="defaultProps"
+                    :expand-on-click-node="true">
+                </el-tree>
+            </div>
+        </el-collapse-item>
+        <el-collapse-item :title="'sysMenuManagement' | translate('Added Menus')" name="2">
+
+            <div class="buttons">
+                <el-button size="mini" type="primary" @click="onHandleEdit('add')">{{'gBtnCreate' | translate}}</el-button>
+                <el-button size="mini" type="primary" @click="onHandleEdit('edit')">{{'gBtnEdit' | translate}}</el-button>
+                <el-button size="mini" type="primary" @click="onHandleEdit('view')">{{'gBtnView' | translate}}</el-button>
+                <el-button size="mini" type="primary" @click="onHandleDel()">{{'gBtnDelete' | translate}}</el-button>
+            </div>
+            <div style="width:600px;min-height:300px;border: 1px solid #d1dbe5;margin-top:5px;">
+                <el-tree ref="tree" show-checkbox accordion :check-on-click-node='true' check-strictly highlight-current :data="menus" node-key="id" :props="defaultProps"
+                    :expand-on-click-node="true">
+                </el-tree>
+            </div>
+        </el-collapse-item>
+    </el-collapse>
+</section>

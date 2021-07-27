@@ -1,0 +1,255 @@
+<!-- 索赔查看处理页面 -->
+<section>
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="guScheme" :inline="true" @submit.prevent="onSubmit">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 出险通知信息 -->
+                <el-collapse-item
+                  id="lossAdviceInfo"
+                  name="lossAdviceInfo"
+                  :title="'claimNotificationInfo' | translate"
+                  v-if="whichCanChange != 'auditAdjusting'"
+                >
+                  <!-- 基本信息组件 -->
+                  <gv-panel :title="'commonInfo' | translate">
+                    <!-- <template v-slot:subBtn>
+                      <el-button
+                        type="primary"
+                        class="gv-btn-primary gv-btn-xs"
+                        style="margin-left: 20px"
+                        @click="showLossTrail"
+                        >{{'auditTrail' | translate}}</el-button
+                      >
+                    </template> -->
+                    <base-info
+                      ref="baseInfo"
+                      :vo="baseInfoForm"
+                      :showSubBtn="true"
+                      :isReadonly="true"
+                    ></base-info>
+                  </gv-panel>
+                  <!-- 保单信息组件 -->
+                  <gv-panel :title="'policyInformation' | translate">
+                    <policy-info
+                      ref="policyInfo"
+                      :vo="policyInfoData"
+                      :isReadonly="true"
+                    ></policy-info>
+                  </gv-panel>
+                  <!-- 文档资料列表组件 -->
+                  <gv-panel
+                    :title="'docList' | translate"
+                    style="padding-bottom: 15px"
+                  >
+                    <upload-file
+                      ref="uploadFile"
+                      type="07"
+                      :vo.sync="docData"
+                      :readonly="true"
+                    ></upload-file>
+                  </gv-panel>
+                </el-collapse-item>
+                <!-- 出险信息 -->
+                <el-collapse-item
+                  id="lossInfo"
+                  name="lossInfo"
+                  :title="'lossInfo' | translate"
+                  v-if="whichCanChange != 'auditAdjusting'"
+                >
+                  <loss-info
+                    :vo="lossInfoForm"
+                    :isReadonly="whichCanChange != 'lossInfo' || isReadonly"
+                    @saveConfirm="saveConfirm"
+                  ></loss-info>
+                </el-collapse-item>
+                <!-- 公估/理算信息 -->
+                <el-collapse-item
+                  id="lossAdjustingInfo"
+                  name="lossAdjustingInfo"
+                  :title="'lossAdjustingInfo' | translate"
+                >
+                  <loss-adjusting-info
+                    ref="lossAdjustingInfo"
+                    :vo="lossAdjustingData"
+                    :isReadonly="whichCanChange != 'lossAdjustingInfo' || isReadonly"
+                    :isAudit="whichCanChange"
+                    :showSubBtn="true"
+                    @saveConfirm="saveConfirm"
+                  ></loss-adjusting-info>
+                </el-collapse-item>
+                <!-- 赔付信息 -->
+                <el-collapse-item
+                  id="claimInfo"
+                  name="claimInfo"
+                  :title="'claimInfo' | translate"
+                  v-if="whichCanChange != 'auditAdjusting'"
+                >
+                  <claim-info
+                    :vo="claimData"
+                    :isReadonly="whichCanChange != 'claimInfo' || isReadonly"
+                    @saveConfirm="saveConfirm"
+                  ></claim-info>
+                </el-collapse-item>
+                <!-- 重开信息 -->
+                <el-collapse-item
+                  id="reopenInfo"
+                  name="reopenInfo"
+                  :title="'reopenInfo' | translate"
+                  v-if="whichCanChange != 'auditAdjusting'"
+                >
+                  <reopen-info
+                    :vo="reopenData"
+                    :showSubBtn="true"
+                    type="view"
+                    @showReopenTrail="showReopenTrail"
+                  ></reopen-info>
+                </el-collapse-item>
+                <!-- 注销/恢复信息 -->
+                <el-collapse-item
+                  id="CancelRecoveryInfo"
+                  name="CancelRecoveryInfo"
+                  :title="'cancelRecoveryInfo' | translate"
+                  v-if="whichCanChange != 'auditAdjusting'"
+                >
+                  <cancel-recovery
+                    :vo="CancelRecoveryData"
+                    :showSubBtn="true"
+                    title="cancelRecovery"
+                    @showCancelTrail="showCancelTrail"
+                  ></cancel-recovery>
+                </el-collapse-item>
+                <!-- 文档资料列表组件 -->
+                <el-collapse-item
+                  id="docInfo"
+                  name="docInfo"
+                  :title="'documentFile' | translate"
+                >
+                  <upload-file
+                    ref="uploadFile"
+                    type="07"
+                    :vo.sync="claimDocData"
+                    :readonly="isReadonly || whichCanChange == 'auditAdjusting'"
+                    @uploadFinish="uploadFinish"
+                  ></upload-file>
+                </el-collapse-item>
+                <!-- 审核信息 -->
+                <!-- <el-collapse-item
+                  id="otherReview"
+                  name="otherReview"
+                  :title="'auditInformation' | translate"
+                  v-if="whichCanChange == 'auditAdjusting'"
+                >
+                  <other-review
+                    ref="otherReview"
+                    :isReadonly="isReadonly"
+                  ></other-review>
+                </el-collapse-item> -->
+              </el-collapse>
+            </el-col>
+          </el-row>
+          <!-- <div :span="24" class="ia-im-bottomDiv1" v-if="!isDialog">
+            <el-button
+              class="gv-btn gv-btn-primary"
+              type="primary"
+              @click="showMpe"
+              v-if="whichCanChange != 'auditAdjusting'"
+              >{{'deductiblesDetail' | translate}}</el-button
+            >
+            <el-button
+              class="gv-btn gv-btn-primary"
+              type="primary"
+              v-if="whichCanChange == 'auditAdjusting'"
+              @click="showTrail"
+              >{{ 'auditTrail' | translate }}</el-button
+            >
+            <el-button
+              class="gv-btn gv-btn-primary"
+              type="primary"
+              @click="auditAdjusting('1')"
+              v-if="whichCanChange == 'auditAdjusting' && !isReadonly"
+              >{{ 'gBtnApprove' | translate}}</el-button
+            >
+            <el-button
+              class="gv-btn gv-btn-warning"
+              type="primary"
+              @click="auditAdjusting('0')"
+              v-if="whichCanChange == 'auditAdjusting' && !isReadonly"
+              >{{ 'gNotPass' | translate}}</el-button
+            >
+            <el-button class="gv-btn gv-btn-back" type="primary" @click="goBack"
+              >{{'gBtnReturn' | translate}}</el-button
+            >
+          </div> -->
+          <!-- <el-row type="flex" justify="center" style="margin-top: 15px" v-else>
+            <el-button
+              class="gv-btn gv-btn-primary"
+              type="primary"
+              @click="showMpe"
+              v-if="whichCanChange != 'auditAdjusting'"
+              >{{'deductiblesDetail' | translate}}</el-button
+            >
+            <el-button
+              class="gv-btn gv-btn-warning"
+              type="primary"
+              @click="$emit('close')"
+            >
+              {{'gBtnClose' | translate}}
+            </el-button>
+          </el-row> -->
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+  <el-dialog
+    :title="'gTitlePrompt' | translate"
+    :visible.sync="copyVisible"
+    width="30%"
+    :close-on-click-modal="false"
+    @close="closeCopyVisible"
+  >
+    <el-row>
+      <span>{{dialogMsg}}</span>
+    </el-row>
+    <template slot="footer">
+      <el-button
+        class="copyBtn gv-btn-primary"
+        type="primary"
+        size="medium"
+        @click="closeCopyVisible"
+        >{{'gBtnConfirm' | translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+  <el-dialog
+    :title="'policyDeductibles' | translate"
+    :visible.sync="mpeVisible"
+    width="50%"
+    append-to-body
+  >
+    <gv-form :model="mpe">
+      <div class="gv-row">
+        <el-row :gutter="20" class="cellfou ia_im_area">
+          <el-col :span="4" style="padding-right: 4.3%">
+            <div class="gvinput">
+              <span>{{'deductibles' | translate}}:</span>
+            </div>
+          </el-col>
+          <el-col :span="20" class="ia_im_describ">
+            <el-input
+              type="textarea"
+              :rows="2"
+              style="width: 100%"
+              disabled
+              v-model="mpe.detail"
+            >
+            </el-input>
+          </el-col>
+        </el-row>
+      </div>
+    </gv-form>
+  </el-dialog>
+</section>

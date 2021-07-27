@@ -1,0 +1,71 @@
+<section>
+    <gv-flow :node-data="nodeData"></gv-flow>
+    <!--列表-->
+    <template>
+        <el-table :data="workbenchVoList" highlight-current-row border stripe :row-class-name="tableRowClassName">
+            <el-table-column type="expand" width="30">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                        <!--外部参考号-->
+                        <el-form-item :label="'workbenchAppVoOuterRefNo' | translate('Outer Ref No.')">
+                            <span>{{ props.row.outerRefNo }}</span>
+                        </el-form-item>
+                        <!--参考金额-->
+                        <el-form-item :label="'workbenchAppVoRefAmount' | translate('Ref Amount')">
+                            <span>{{ props.row.refAmount }}</span>
+                        </el-form-item>
+                        <!--客户名称-->
+                        <el-form-item :label="'workbenchAppVoClientName' | translate('Client Name')">
+                            <span>{{ props.row.clientName }}</span>
+                        </el-form-item>
+                        <!--中介名称-->
+                        <el-form-item :label="'workbenchAppVoAgentName' | translate('Agent Name')">
+                            <span>{{ props.row.agentName }}</span>
+                        </el-form-item>
+                        <!--任务节点-->
+                        <el-form-item :label="'workbenchAppVoTaskCode' | translate('Task Code')">
+                            <span> {{props.row.taskCode}}</span>
+                        </el-form-item>
+                        <el-form-item :label="'workbenchAppVoDestinationRole' | translate('destination Role')" label-width="150px">
+                            <span>{{props.row.handlerRole}}</span>
+                        </el-form-item>
+                        <!--businessId-->
+                        <el-form-item :label="'workbenchAppVoBusinessId' | translate('businessId')" label-width="100px">
+                            <span>{{props.row.businessId}}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <el-table-column min-width="110" prop="clientName" :label="'workbenchAppVoClientName' | translate('Client Name')" sortable>
+            </el-table-column>
+            <el-table-column min-width="110" prop="agentName" :label="'workbenchAppVoAgentName' | translate('Agent Name')" sortable>
+            </el-table-column>
+            <el-table-column prop="taskId" :label="'workbenchAppVoTaskId' | translate('task Id')" width="80" sortable>
+                <template slot-scope="scope">
+                    <a href="javascript:;" @click="onHandleEdit(scope.row)" sortable> {{scope.row.taskId}} </a>
+                </template>
+            </el-table-column>
+            <el-table-column prop="handlerCode" :label="'workbenchAppVoDestinationUser' | translate('destination User')" min-width="160" sortable>
+            </el-table-column>
+            <el-table-column prop="status" :label="'workbenchAppVoStatus' | translate('Status')" width="100" sortable>
+            </el-table-column>
+            <el-table-column prop="processDesc" :label="'workbenchAppVoProcessDesc' | translate('Process Desc')" sortable width="140">
+            </el-table-column>
+            <el-table-column min-width="100" prop="taskName" :label="'workbenchAppVoTaskName' | translate('Task Name')" sortable>
+            </el-table-column>
+            <!--内部参考号-->
+            <el-table-column prop="innerRefNo" :label="'workbenchAppVoInnerRefNo' | translate('Inner Ref No.')"  width="165" sortable>
+            </el-table-column>
+            <el-table-column prop="priority" :formatter="formatPriority" :label="'workbenchAppVoPriority' | translate('priority')" width="80" sortable>
+            </el-table-column>
+            <el-table-column prop="inTime" :formatter="formatTime" :label="'workbenchAppVoInTime' | translate('In Time')" width="130" align="right" sortable></el-table-column>
+            <el-table-column prop="outTime" :formatter="formatTime" :label="'workbenchAppVoOutTime' | translate('Out Time')" width="130" align="right" sortable></el-table-column>
+        </el-table>
+        <!-- <el-row class="table-footer">
+            <el-col :span="16">
+                <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+                </el-pagination>
+            </el-col>
+        </el-row> -->
+    </template>
+</section>

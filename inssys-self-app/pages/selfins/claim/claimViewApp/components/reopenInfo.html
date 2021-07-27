@@ -1,0 +1,64 @@
+<!-- 重开信息组件 -->
+<div>
+  <template v-if="showSubBtn">
+    <!-- <el-button type="primary" class="gv-btn-primary gv-btn-xs" style="margin: 10px 20px;" @click="showTrail">{{'auditTrail' | translate}}</el-button> -->
+  </template>
+  <gv-form
+    :model="reopenInfo"
+    ref="reopenInfo"
+    v-if="type=='edit'"
+    :rules="rules"
+    class="mt20"
+  >
+    <div class="gv-row">
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span style="color: red">*</span
+            ><span>{{'reason' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-form-item prop="remark" class="qxw100">
+            <el-input
+              ref="remark"
+              type="textarea"
+              :rows="3"
+              style="width: 100%"
+              :placeholder="isReadonly? '' : '请输入重开理由'"
+              v-model="reopenInfo.remark"
+              :disabled="isReadonly"
+            >
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+  <el-table v-if="type=='view'" :data="reopenData">
+    <el-table-column :label="'index' | translate">
+      <template slot-scope="scope"> {{scope.$index + 1}} </template>
+    </el-table-column>
+    <!-- 提交人 -->
+    <el-table-column prop="submitName" :label="'submitter' | translate">
+    </el-table-column>
+    <!-- 提交时间 -->
+    <el-table-column prop="submitTime" :label="'submitTime' | translate">
+    </el-table-column>
+    <!-- 重开理由 -->
+    <el-table-column prop="submitReason" :label="'reason' | translate">
+    </el-table-column>
+    <!-- 审核人 -->
+    <el-table-column prop="approvedName" :label="'auditor' | translate">
+    </el-table-column>
+    <!-- 审核通过时间 -->
+    <el-table-column prop="approvedTime" :label="'auditPassTime' | translate">
+    </el-table-column>
+    <!-- 审核意见 -->
+    <el-table-column
+      prop="approvedOperation"
+      :label="'auditOpinion' | translate"
+    >
+    </el-table-column>
+  </el-table>
+</div>

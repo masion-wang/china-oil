@@ -1,0 +1,4 @@
+{
+    "payment_cannotBeEmpty": "Bill receiver entry / split premium / loss must not be blank",
+    "payment_cannotBeEmpty2":"Entry / split premium / loss must not be blank"
+}

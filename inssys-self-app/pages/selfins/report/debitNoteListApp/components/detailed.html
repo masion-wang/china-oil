@@ -1,0 +1,90 @@
+<div>
+
+    <el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" stripe>
+        <!--  Insurance Category-->
+        <el-table-column label="Insurance Category" prop="riskCode"> </el-table-column>
+        <!-- Policy No/Endorsement Ref -->
+        <el-table-column label="Policy No/Endorsement Ref" prop="endorsementRef" width='100px'
+            show-overflow-tooltip="true">
+        </el-table-column>
+        <!-- Payment Status -->
+        <el-table-column label="Payment Status" prop="paymentStatus"> </el-table-column>
+        <!-- Project -->
+        <el-table-column label="Project" prop="projectName" show-overflow-tooltip="true"> </el-table-column>
+        <!-- Cedant -->
+        <el-table-column label="Cedant" prop="ceDant"></el-table-column>
+        <!-- Effective -->
+        <el-table-column label="Effective" prop="effective"></el-table-column>
+        <!-- Expiry -->
+        <el-table-column label="Expiry" prop="expiry"></el-table-column>
+        <!-- Maint. To -->
+        <el-table-column label="Maint. To" prop="maintTo"></el-table-column>
+        <!--Our Share-->
+        <el-table-column label="Our Share" prop="ourShare">
+        </el-table-column>
+        <!-- Debit Note-->
+        <el-table-column label="Debit Note" prop="debitNoteNo" show-overflow-tooltip="true"> </el-table-column>
+        <!-- Issue Date -->
+        <el-table-column label="Issue Date" prop="issueDate"> </el-table-column>
+        <!--A／C Date -->
+        <el-table-column label="A／C Date" prop="acDate"> </el-table-column>
+        <!-- Ccy -->
+        <el-table-column label="Ccy" prop="currency"> </el-table-column>
+        <!-- Insured Value(100%) -->
+        <el-table-column label="Insured Value(100%)" prop="insuredValueI" show-overflow-tooltip="true">
+        </el-table-column>
+        <!-- Insured Value of CIL -->
+        <el-table-column label="Insured Value of CIL" prop="insuredValueCIL"></el-table-column>
+        <!--Gross Premium (100%) -->
+        <el-table-column label="Gross Premium (100%)" prop="annualPrmI"></el-table-column>
+        <!-- Gross Premium-->
+        <el-table-column label="Gross Premium" prop="grossPremiumI"></el-table-column>
+        <!--  Commission-->
+        <el-table-column label="Commission" prop="commissionI"> </el-table-column>
+        <!-- Net Premium -->
+        <el-table-column label="Net Premium" prop="netPremiumI"> </el-table-column>
+        <!--Net Premium(USD) -->
+        <el-table-column label="Net Premium(USD)" prop="netPremiumIByUSD"> </el-table-column>
+        <!-- Net Premium(HKD) -->
+        <el-table-column label="Net Premium(HKD)" prop="netPremiumIByHKD"> </el-table-column>
+        <!-- Brokerage -->
+        <el-table-column label="Brokerage" prop="brokerageI"></el-table-column>
+        <!-- PC -->
+        <el-table-column label="PC" prop="pcI"></el-table-column>
+        <!--MWS Pool-->
+        <el-table-column label="MWS Pool" prop="mwsPoolI"></el-table-column>
+        <!-- others fee-->
+        <el-table-column label="others fee" prop="others1I"></el-table-column>
+        <!-- R/I Payee -->
+        <el-table-column label="R/I Payee" prop="riPayee" show-overflow-tooltip="true"> </el-table-column>
+        <!--R/I % -->
+        <el-table-column label="R/I %" prop="riShare" show-overflow-tooltip="true"> </el-table-column>
+        <!-- Credit Note -->
+        <el-table-column label="Credit Note" prop="creditNoteNo" show-overflow-tooltip="true"> </el-table-column>
+        <!--Gross Premium (100%)  -->
+        <el-table-column label="Gross Premium (100%)" prop="grossPremiumO100P"></el-table-column>
+        <!-- Gross Premium -->
+        <el-table-column label="Gross Premium" prop="grossPremiumO"></el-table-column>
+        <!-- Commission -->
+        <el-table-column label="Commission" prop="commissionO"></el-table-column>
+        <!-- Net Premium -->
+        <el-table-column label="Net Premium" prop="netPremiumO"></el-table-column>
+        <!-- Net Premium(USD)-->
+        <el-table-column label="Net Premium(USD)" prop="netPremiumOByUSD"></el-table-column>
+        <!--  Net Premium(HKD)-->
+        <el-table-column label="Net Premium(HKD)" prop="netPremiumOByHKD"> </el-table-column>
+        <!-- Brokerage -->
+        <el-table-column label="Brokerage" prop="brokerageO"></el-table-column>
+        <!-- PC -->
+        <el-table-column label="PC" prop="pcO"></el-table-column>
+        <!--MWS Pool-->
+        <el-table-column label="MWS Pool" prop="mwsPoolO"></el-table-column>
+        <!-- others fee-->
+        <el-table-column label="others fee" prop="others1O"></el-table-column>
+    </el-table>
+    <el-pagination style="float: right" @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+        :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length" :current-page.sync="currentPage">
+    </el-pagination>
+
+</div>

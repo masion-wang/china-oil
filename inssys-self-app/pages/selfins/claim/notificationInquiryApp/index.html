@@ -1,0 +1,244 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 自保赔案号 -->
+        <gv-form-item key-name="ClaimNo." isThree="true" prop="claimNo">
+          <el-input maxlength="20" v-model="scope.search.claimNo"></el-input>
+        </gv-form-item>
+        <!-- 原单赔案号 -->
+        <gv-form-item key-name="OriginalClaimNo" isThree="true" prop="sourceClaimNo">
+          <el-input maxlength="21" v-model="scope.search.sourceClaimNo"></el-input>
+        </gv-form-item>
+        <!-- 原险种 -->
+        <gv-form-item key-name="originalInsurance" isThree="true" prop="policyRiskCode">
+          <gv-select size="mini" po-name="ggRisk" code-name="riskCode" label-name="riskCname"
+            v-model="scope.search.policyRiskCode" :placeholder="'gSelect' | translate('Please Select')"></gv-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 自保险种  -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCode">
+          <gv-select size="mini" code-type="RiskType" v-model="scope.search.riskCode" filterable
+            label-name-ex="codeCode" code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 出险日期 -->
+        <gv-form-item key-name="zbLossDateTime" class="forInput" isThree="true">
+          <div style="display: flex">
+            <el-form-item prop="lossDateTimeStart" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.lossDateTimeStart" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="lossDateTimeEnd" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+                v-model="scope.search.lossDateTimeEnd" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!-- 出险原因 -->
+        <gv-form-item key-name="lossReason" isThree="true" prop="circumstances">
+          <gv-select v-model="scope.search.circumstances" size="mini" filterable code-type="ClaimReason"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 自保赔案状态  -->
+        <gv-form-item key-name="ClaimStatuszb" isThree="true" prop="claimStatus">
+          <gv-select options-set="1" size="mini" code-type="ClaimStatus" v-model="scope.search.claimStatus" filterable
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 自保保单号 -->
+        <gv-form-item key-name="selfinsurancepolicyno" isThree="true" prop="policyNo">
+          <el-input v-model="scope.search.policyNo" maxlength="21"> </el-input>
+        </gv-form-item>
+        <!-- 投保单位   -->
+        <gv-form-item key-name="insuredCompany" isThree="true" prop="insureCompany">
+          <gv-select2 size="mini" filterable clearable po-name="ggSupplierMsg" code-name="supplierChineseName"
+            label-name="supplierChineseName" v-model="scope.search.insureCompany"></gv-select2>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 赔案暂存号  -->
+        <gv-form-item key-name="zbTmeporaClaim" isThree="true" prop="claimTempNo">
+          <el-input v-model="scope.search.claimTempNo" maxlength="30">
+          </el-input>
+        </gv-form-item>
+        <!-- 审核人  -->
+        <gv-form-item key-name="reviewer" isThree="true" prop="approvedBy">
+          <el-input v-model="scope.search.approvedBy" maxlength="30">
+          </el-input>
+        </gv-form-item>
+        <!-- 审核日期 -->
+        <gv-form-item key-name="auditDate" class="forInput" isThree="true">
+          <div style="display: flex">
+            <el-form-item prop="approvedDateStart" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.approvedDateStart" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="approvedDateEnd" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+                v-model="scope.search.approvedDateEnd" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 创建人 -->
+        <gv-form-item key-name="founder" isThree="true" prop="createdBy">
+          <el-input v-model="scope.search.createdBy" maxlength="30"> </el-input>
+        </gv-form-item>
+        <!-- 创建日期  -->
+        <gv-form-item key-name="createDate" class="forInput" isThree="true">
+          <div style="display: flex">
+            <el-form-item prop="createdDateStart" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.createdDateStart" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="createdDateEnd" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+                v-model="scope.search.createdDateEnd" type="datetime" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <!-- 结案 -->
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="cancelOrRecovery('00')">
+        {{'zbend'|translate}}</el-button>
+      <!-- 注销/恢复 -->
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="cancelOrRecovery('01')">
+        {{'cancelRecovery' | translate}}</el-button>
+      <!-- 重开 -->
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="reopenCancelResume()">{{'reopen' |
+        translate}}</el-button>
+      <!-- 修改 -->
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="chengeModeify()">{{'btnModeify' |
+        translate}}</el-button>
+      <!-- 测试 -->
+      <!-- <el-input
+        v-model="input"
+        placeholder="请输入内容"
+        style="width: '100px'"
+      ></el-input>
+      <el-button
+        class="gv-btn gv-btn-primary gv-btn-xs"
+        type="primary"
+        @click="inputButton()"
+        >测试</el-button
+      > -->
+    </template>
+  </gv-filter-table>
+  <!--自保保单号详情 -->
+  <el-dialog append-to-body :title="'policyDetails'| translate" :visible.sync="settlingNew" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px">
+    <settling-new ref="settlingNew" @close="settlingNew = false"></settling-new>
+    <template slot="footer">
+      <!-- 关闭 -->
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="settlingNew = false">{{'gBtnClose' | translate}}
+        </el-button>
+        <!-- 补录文档资料 -->
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click="UPfile()">{{'zbaddDocumentsClaim'|translate}}
+        </el-button>
+        <!-- 打印 -->
+        <el-button v-if="printClaimNoButton" class="gv-btn gv-btn-primary" type="primary" @click="getPrint()">
+          {{'gBtnPrint' | translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!-- 原单赔案号 -->
+  <el-dialog append-to-body :title="'policyDetails'| translate" :visible.sync="settlingCeding" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px">
+    <settling-ceding ref="settlingCeding" @close="settlingCeding = false"></settling-ceding>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="settlingCeding = false">{{'gBtnClose' | translate}}
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!-- 审核意见 -->
+  <el-dialog :visible.sync="Auditopinion" width="90%" margin-top="90vh" :close-on-click-modal="false"
+    :before-close="handleClose" class="dialogPadding10px">
+    <gv-form :model="auditInfo" ref="auditInfo" :rules="rules">
+      <div class="gv-row" style="padding-top: 20px">
+        <el-row :gutter="20" class="cellfou ia_im_area">
+          <el-col :span="4" style="padding-right: 4.3%">
+            <div class="gvinput">
+              <span style="color: red">*</span><span>{{auditOpinion}}:</span>
+            </div>
+          </el-col>
+          <el-col :span="20" class="ia_im_describ">
+            <el-form-item prop="approvedRemark" class="qxw100">
+              <el-input ref="approvedRemark" type="textarea" :rows="3" style="width: 100%"
+                :placeholder="'Pleaseenterthecontent' | translate" v-model="auditInfo.approvedRemark">
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </div>
+    </gv-form>
+
+    <span slot="footer" class="dialog-footer">
+      <div v-if="retruenbutton == false">
+        <!-- 注销 -->
+        <el-button type="primary" @click="retruen('00')">{{'cancel'| translate}}</el-button>
+        <!-- 恢 复 -->
+        <el-button type="primary" @click="retruen('01')">{{'recovery'| translate}}</el-button>
+        <!-- 取消 -->
+        <el-button @click="handleClose">{{'gBtnCancel'| translate}}</el-button>
+      </div>
+      <div v-if="retruenbutton != false">
+        <!-- 提交 -->
+        <el-button type="primary" @click="Auditsumbit()">{{'gSubmit'| translate}}</el-button>
+        <!-- 取消 -->
+        <el-button @click="handleClose">{{'gBtnCancel'| translate}}</el-button>
+      </div>
+    </span>
+  </el-dialog>
+
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important"
+    :title="'zbnextperson'| translate" @close="close" width="60%" :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,index) in gwNextNodeExecutorsList">
+        <!-- <el-row :span="24" gutter="10" class="taskNode"> -->
+        <el-checkbox-group v-model="checkboxGroup">
+          <el-checkbox style="background-color: #ecf5ff" :label="item.userCode" border>
+            <div class="userinfo-pop">
+              <div class="avatar-box" style="float: left; margin-top: -5px">
+                <img src="../../../../../dist/img/userpic.png" />
+              </div>
+            </div>
+            <div style="margin-left: 28px">{{item.userName}}</div>
+          </el-checkbox>
+        </el-checkbox-group>
+        <!-- </el-row> -->
+      </el-row>
+      <!-- <work—flow ref="workflow"></work—flow> -->
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

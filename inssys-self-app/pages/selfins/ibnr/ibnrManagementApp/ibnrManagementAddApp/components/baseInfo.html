@@ -1,0 +1,149 @@
+<!-- 保单基本信息组件 -->
+<div>
+  <gv-form :model="baseInfo" ref="baseInfos">
+    <!-- 表单 -->
+    <div class="gv-row" style="padding-top: 20px">
+      <!--批量任务号-->
+      <gv-form-item key-name="zbBatchNo" prop="batchNo" isThree="true">
+        <el-input
+          :disabled="true"
+          class="centerInput"
+          :placeholder="'systemAutoGenerate' | translate"
+          v-model="baseInfo.batchNo"
+        >
+        </el-input>
+      </gv-form-item>
+      <!-- 状态-->
+      <gv-form-item key-name="state" isThree="true" prop="status">
+        <gv-select
+          size="mini"
+          :placeholder="'systemAutoGenerate' | translate"
+          code-type="IbnrStatus"
+          v-model="baseInfo.status"
+          :disabled="true"
+        ></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--冲销挂账日期-->
+      <gv-form-item
+        key-name="zbReserveA/CDate"
+        prop="reverseDate"
+        isThree="true"
+        :rules="baseInforules.reverseDate"
+        requires
+      >
+        <el-date-picker
+          :disabled="pass"
+          v-model="baseInfo.reverseDate"
+          type="date"
+          format="dd-MM-yyyy"
+          value-format="dd-MM-yyyy"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--挂账日期范围-->
+      <gv-form-item key-name="zbA/CDateRange" isThree="true">
+        <div style="display: flex">
+          <el-form-item
+            prop="lossDateTimeStart"
+            style="flex: 1; margin: 0; text-align: center; line-height: 32px"
+          >
+            <el-input :disabled="true" class="centerInput" v-model="onacDate">
+            </el-input>
+            <!-- <span style="font-size: 14px">01-01-2000</span> -->
+          </el-form-item>
+          <div style="width: 10px; text-align: center; line-height: 32px">
+            -
+          </div>
+          <el-form-item
+            prop="acDate"
+            style="flex: 1; margin: 0; text-align: center; line-height: 32px"
+          >
+            <el-date-picker
+              :disabled="true"
+              :placeholder="'systemAutoGenerate' | translate"
+              v-model="baseInfo.acDate"
+              type="date"
+              format="dd-MM-yyyy"
+              value-format="dd-MM-yyyy"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建人-->
+      <gv-form-item key-name="founder" prop="createdBy" isThree="true">
+        <el-input
+          :disabled="true"
+          :placeholder="'systemAutoGenerate' | translate"
+          class="centerInput"
+          v-model="baseInfo.createdBy"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--修改人-->
+      <gv-form-item key-name="modifiedBy" prop="amendedBy" isThree="true">
+        <el-input
+          :disabled="true"
+          :placeholder="'systemAutoGenerate' | translate"
+          class="centerInput"
+          v-model="baseInfo.amendedBy"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--审核人-->
+      <gv-form-item key-name="reviewer" prop="approvedBy" isThree="true">
+        <el-input
+          :disabled="true"
+          class="centerInput"
+          :placeholder="'systemAutoGenerate' | translate"
+          v-model="baseInfo.approvedBy"
+        >
+        </el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建时间-->
+      <gv-form-item key-name="creationTime" prop="createdDate" isThree="true">
+        <el-input
+          :disabled="true"
+          class="centerInput"
+          :placeholder="'systemAutoGenerate' | translate"
+          v-model="baseInfo.createdDate"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--修改时间-->
+      <gv-form-item
+        key-name="modificationTime"
+        prop="amendedDate"
+        isThree="true"
+      >
+        <el-input
+          :disabled="true"
+          :placeholder="'systemAutoGenerate' | translate"
+          class="centerInput"
+          v-model="baseInfo.amendedDate"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--审核通过日期-->
+      <gv-form-item
+        key-name="dateOfApproval"
+        prop="approvedDate"
+        isThree="true"
+      >
+        <el-input
+          :placeholder="'systemAutoGenerate' | translate"
+          :disabled="true"
+          class="centerInput"
+          v-model="baseInfo.approvedDate"
+        >
+        </el-input>
+      </gv-form-item>
+    </div>
+  </gv-form>
+</div>

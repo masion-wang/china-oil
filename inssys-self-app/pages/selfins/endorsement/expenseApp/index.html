@@ -1,0 +1,116 @@
+<!-- 保单录入页面 -->
+<section>
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="policyForm" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 基础信息 -->
+                <base-info @cedingCompany="cedingCompany" ref="baseInfo" :vo="baseInfo" :pageId="pageId"
+                  :isExpense="isExpense" :Premium="Premium" :NonPremium="NonPremium" :Cancellation="Cancellation"
+                  :Write="Write"></base-info>
+                <!-- 费用信息 -->
+                <el-collapse-item id="paymentPlanInfo" name="paymentPlanInfo" :title="'zbfeeinformationL'| translate"
+                  style=" margin-top: 5px">
+                  <payment-plan ref="paymentPlanInfo" :vo="paymentPlanInfo" :isReadonly="isReadonly"
+                    :isJointStock="isJointStock" :policyFa="policyFa" :pageId="pageId"></payment-plan>
+                </el-collapse-item>
+                <!-- 文档资料 -->
+                <el-collapse-item id="docListInfo" name="docListInfo"
+                  :title="'filedata' | translate('List of documents')" style="margin-bottom: 80px" v-if="Approve">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="docList" :readonly="isReadonly"></upload-file>
+                </el-collapse-item>
+                <el-collapse-item id="docListInfo" name="docListInfo"
+                  :title="'filedata' | translate('List of documents')" v-if="!Approve">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="docList" :readonly="isReadonly"></upload-file>
+                </el-collapse-item>
+                <!-- 审核信息 -->
+                <el-collapse-item style="margin-bottom: 80px" id="auditInfo" name="auditInfo"
+                  :title="'auditInformation'| translate" v-if="$route.query.pageType == 'task'">
+                  <audit ref="auditInfo"></audit>
+                </el-collapse-item>
+              </el-collapse>
+            </el-col>
+          </el-row>
+          <div :span="24" class="ia-im-bottomDiv1" v-if="seachView">
+            <!-- 保存 -->
+            <el-button class="gv-btn-xs gv-btn-save" type="primary" @click="saveSubmit('1')"
+              v-if="$route.query.flag =='expense'|| $route.query.pageType == 'amend'">
+              {{'gBtnSave' | translate}}
+            </el-button>
+            <!-- 提交 -->
+            <el-button class="gv-btn-xs gv-btn-submit" type="primary" @click="saveSubmit('2')"
+              v-if="$route.query.flag =='expense'||$route.query.pageType == 'amend'">
+              {{'gSubmit' | translate}}</el-button>
+            <!-- 审核通过 -->
+            <el-button v-if="$route.query.pageType == 'task'" class="gv-btn-xs gv-btn-submit" type="primary"
+              @click="goAudit('01')">
+              {{'gPass' | translate}}
+            </el-button>
+            <!-- 审核不通过 -->
+            <el-button v-if="$route.query.pageType == 'task'" class="gv-btn-xs gv-btn-warning" type="primary"
+              @click="goAudit('06')">
+              {{'gNotPass' | translate}}</el-button>
+            <!-- 审核轨迹 -->
+            <el-button type="primary" class="gv-btn-primary gv-btn-xs" v-if="$route.query.pageType == 'task'"
+              @click="auditTrail()">{{'auditTrail' | translate}}</el-button>
+            <!-- 返回 -->
+            <el-button v-if="$route.query.pageType == 'task'" class="gv-btn-xs" type="primary" @click="returnPage()">
+              {{'gBtnReturn' | translate}}</el-button>
+            <!-- 关闭 -->
+            <el-button v-if="$route.query.pageType == 'back'" class="gv-btn-xs" type="primary" @click="returnPage()">{{
+              'gBtnClose' | translate('Close') }}</el-button>
+            <!-- 补录文档资料 -->
+            <el-button v-if="$route.query.pageType == 'back'" class="gv-btn gv-btn-primary" type="primary"
+              @click="UPfile()">{{'zbaddDocumentsClaim'|translate}}</el-button>
+          </div>
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+  <!-- 提交成功 -->
+  <!-- 提示 -->
+  <el-dialog :title="'gTitlePrompt'| translate" :visible.sync="copyVisible" width="30%" :close-on-click-modal="false">
+    <el-row>
+      <span>{{dialogText}}</span>
+    </el-row>
+    <template slot="footer">
+      <el-button class="copyBtn" type="primary" size="medium" @click="copyVisibledialog(dialogText)">{{'gBtnConfirm' |
+        translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important"
+    :title="'zbnextperson'| translate" @close="close" width="60%" :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,indexa) in gwNextNodeExecutorsList">
+        <div class="choseNodeTitle" style="height: 32px; font-size: 14px">
+          <!-- 下级节点 -->
+          <span>{{item.feetypeName}} {{'zbSubordinatenodeL' | translate}}</span>
+        </div>
+        <el-row v-for="(itemself,index) in item.mapList">
+          <el-checkbox-group v-model="checkboxGroup">
+            <el-checkbox style="background-color: #ecf5ff" :label="itemself.userCode+'-'+item.feetypeCode" border>
+              <div class="userinfo-pop">
+                <div class="avatar-box" style="float: left; margin-top: -5px">
+                  <img src="../../../../../dist/img/userpic.png" />
+                </div>
+              </div>
+              <div style="margin-left: 28px">{{itemself.userName}}</div>
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-row>
+      </el-row>
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

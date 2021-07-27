@@ -1,0 +1,51 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" @onExportAllExcel="onExportAllExcel"
+    :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 统计日期 -->
+        <gv-form-item key-name="zbStatisticsdate" isThree="true" prop="positionDate" requires>
+          <div style="display: flex;width: 320px;">
+            <el-form-item prop="startReportDate" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="endReportDate" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date"
+                v-model="scope.search.endReportDate" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!-- 自保险种  -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCodeList" requires>
+          <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+            @change="changeriskcode(scope.search.riskCodeList,'riskCodeList')" v-model="scope.search.riskCodeList"
+            multiple>
+            <el-option value="All" label="All"></el-option>
+            <el-option v-for="item in riskCodeLiOption" :key="item.codeCode" :label="item.codeCode"
+              :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- 是否计提准备金 -->
+        <gv-form-item key-name="zbIsprovisionmade" isThree="true" prop="isEsBill">
+          <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+            v-model="scope.search.isEsBill">
+            <el-option v-for="item in zbIsprovisiOption" :key="item.codeCode" :label="item.codeName"
+              :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500">{{'Queryresults'|translate('Query results')}}</span>
+    </template>
+  </gv-filter-table>
+</section>

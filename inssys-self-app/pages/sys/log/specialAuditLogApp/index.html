@@ -1,0 +1,41 @@
+<section>
+	<el-collapse v-model="mixinObject.activeNames">
+		<el-collapse-item :title="'gTitleSearchData' | translate('Search data')" name="1">
+			<el-form class="table-line" :inline="true" ref="specialAuditLog" :model="specialAuditLog" class="table-line">
+				<table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+						<gv-form-label keyName="specialAuditLogBusinessNo" defaultName="Business No" :width="3"></gv-form-label>
+						<gv-form-input prop="businessNo" :width="5">
+							<el-input size="mini" v-model="specialAuditLog.businessNo"></el-input>
+						</gv-form-input>
+                        <gv-form-label :width="16"></gv-form-label>
+					</tr>
+					<tr>
+                        <td align="center" colspan="3">
+                            <el-form-item>
+	                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+	                            <el-button size="mini" @click="onResetForm('specialAuditLog')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                            </el-form-item>
+                        </td>
+                    </tr>
+				</table>
+			</el-form>
+		</el-collapse-item>
+	</el-collapse>
+	<template>
+		<el-table :data="specialAuditLogList" highlight-current-row border strip >
+			<el-table-column prop="content.businessNo" :label="'specialAuditLogBusinessNo' | translate('Business No')" width="300"></el-table-column>
+			<el-table-column :formatter="formatDate" sortable prop="content.createTime" align="right" :label="'logAuditRequestVoStartTime' | translate('Operating Time')" width="300"></el-table-column>
+			<el-table-column :label="'gTitleOperation' | translate('Operation')" min-width="80">
+				<template slot-scope="scope">
+					<el-button size="mini" type="primary" @click="onHandleEdit(scope.row)">{{ 'gBtnView' | translate('View') }}</el-button>
+				</template>
+			</el-table-column>
+						
+		</el-table>
+	</template>
+	<el-col :span="24" class="toolbar-btn toobar-pagination" style="padding-bottom: 10px;">
+		<el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" page-size="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+		</el-pagination>
+	</el-col>
+</section>

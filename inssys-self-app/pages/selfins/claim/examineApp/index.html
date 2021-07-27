@@ -1,0 +1,1336 @@
+<!-- 赔案估损审核 -->
+<section>
+  <el-row :gutter="20">
+    <el-col :span="24" class="projectecol">
+      <el-row>
+        <el-col :span="24">
+          <el-collapse v-model="activeNames">
+            <!--  标的详情  -->
+            <el-collapse-item id="baseInfo" name="baseInfo" :title="'gTitleBasics' | translate('Basic Data')">
+              <gv-form :model="baseInfo" ref="baseInfos" :rules="baseInforules">
+                <!-- 表单 -->
+                <div>
+                  <!-- 自保保单号 -->
+                  <div class="gv-row" style="padding-top: 20px">
+                    <!--自保保单号  self新增理赔-->
+                    <gv-form-item v-if="self" key-name="selfinsurancepolicyno" isThree="true" requires>
+                      <el-row>
+                        <el-col :span="10">
+                          <el-form-item prop="policyNo" style="margin-bottom: 0">
+                            <el-input v-model="baseInfo.policyNo" maxlength="21" :disabled="true"
+                              :placeholder="'systemAutoGenerate' | translate"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" :offset="1">
+                          <el-form-item prop="version" style="margin-bottom: 0">
+                            <el-input maxlength="3" :disabled="true" v-model="baseInfo.version"
+                              :placeholder="'systemAutoGenerate' | translate"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="1" :offset="1">
+                          <el-button class="gv-btn gv-btn-primary" type="primary" @click="addunderlying('inquiryD')"
+                            :disabled="Submit">
+                            {{ 'gBtnSearch' | translate('Search') }}
+                          </el-button>
+                        </el-col>
+                      </el-row>
+                    </gv-form-item>
+                    <!-- 前端系统带出理赔  自保保单号-->
+                    <gv-form-item v-if="!self" key-name="selfinsurancepolicyno" prop="policyNo" isThree="true" requires>
+                      <el-row>
+                        <el-col :span="17">
+                          <div v-if="!self" class="disabledLink">
+                            <span
+                              @click="viewpolicyNo(baseInfo.policyNo,baseInfo.version,baseInfo,baseInfo.policyNo,baseInfo.policyMainId)">{{baseInfo.policyNo}}</span>
+                          </div>
+                        </el-col>
+                        <el-col :span="6" :offset="1">
+                          <div v-if="!self" class="disabledLink">
+                            <span
+                              @click="viewpolicyNo(baseInfo.claimNo,baseInfo.version,baseInfo,baseInfo.policyNo,baseInfo.policyMainId)">{{baseInfo.version}}</span>
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </gv-form-item>
+                  </div>
+                  <!-- 原单赔案号 -->
+                  <div class="gv-row">
+                    <gv-form-item key-name="OriginalClaimNo" prop="sourceClaimNo" isThree="true">
+                      <!--原单赔案号   self新增理赔-->
+                      <el-row v-if="self">
+                        <el-col :span="17">
+                          <el-form-item prop="sourceClaimNo" style="margin-bottom: 0">
+                            <el-input v-model="baseInfo.sourceClaimNo" maxlength="21"
+                              :disabled="isReadonly ||viewonly || amend"
+                              :placeholder="'systemAutoGenerate' | translate"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="1" :offset="1">
+                          <el-button class="gv-btn gv-btn-primary" type="primary" :disabled="Submit"
+                            @click="addunderlying('originalclaim')">
+                            {{ 'gBtnSearch' | translate('Search') }}
+                          </el-button>
+                        </el-col>
+                      </el-row>
+                      <!--  原单赔案号 前端系统带出理赔 -->
+                      <div v-if="!self" class="disabledLink">
+                        <span @click="viewSourceClaimNo(baseInfo.sourceClaimNo)">{{baseInfo.sourceClaimNo}}</span>
+                      </div>
+                    </gv-form-item>
+                    <!-- 原保险人立案号 -->
+                    <gv-form-item key-name="ReinsuredClaimNo" prop="registerNo" isThree="true">
+                      <el-input :disabled="isReadonly || Notthecase" maxlength="30" v-model="baseInfo.registerNo">
+                      </el-input>
+                    </gv-form-item>
+                    <!-- 是否计提准备金 -->
+                    <gv-form-item key-name="zbIsprovisionmade" prop="isEsBill" isThree="true" requires>
+                      <el-select v-model="baseInfo.isEsBill"
+                        :disabled="isReadonly || amend || Notthecase || gssheReadOnly">
+                        <el-option v-for="item in isEsBilloptions" :key="item.value" :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!--自保赔案号-->
+                    <gv-form-item key-name="ClaimNo." prop="claimNo" isThree="true">
+                      <el-input :disabled="isReadonly || viewonly || amend " maxlength="100"
+                        :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.claimNo"></el-input>
+                    </gv-form-item>
+                    <!-- 立案日期-->
+                    <gv-form-item key-name="ClaimDatezb" isThree="true" prop="claimDate">
+                      <el-date-picker v-model="baseInfo.claimDate" :placeholder="'systemAutoGenerate' | translate"
+                        type="datetime" :disabled="isReadonly ||viewonly || amend" format="dd-MM-yyyy HH:mm:ss"
+                        value-format="dd-MM-yyyy HH:mm:ss">
+                      </el-date-picker>
+                    </gv-form-item>
+                    <!-- 自保赔案状态-->
+                    <gv-form-item key-name="ClaimStatuszb" isThree="true" prop="claimStatus">
+                      <gv-select :disabled="isReadonly ||viewonly || amend" v-model="baseInfo.claimStatus"
+                        code-type="ClaimStatus" :placeholder="'systemAutoGenerate' | translate" code-name="codeCode"
+                        label-name="codeName"></gv-select>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!--自保险种-->
+                    <gv-form-item key-name="selfInsurance" prop="riskCode" isThree="true" requires>
+                      <gv-select :disabled="isReadonly || viewonly || amend" size="mini" code-type="RiskType"
+                        :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.riskCode" code-name="codeCode"
+                        label-name="codeName"></gv-select>
+                    </gv-form-item>
+                    <!--出险区域-->
+                    <gv-form-item key-name="zbLocationofAccident" prop="locationAccident" isThree="true" requires>
+                      <gv-select v-model="baseInfo.locationAccident" :disabled="isReadonly || amend || Notthecase"
+                        size="mini" code-type="AccidentArea" code-name="codeCode" label-name="codeName"></gv-select>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!--出险国家-->
+                    <gv-form-item key-name="zbLossCountry" requires prop="lossCountry" isThree="true">
+                      <el-select clearable filterable v-model="baseInfo.lossCountry" :placeholder="'gSelect'| translate"
+                        :disabled="isReadonly || amend || Notthecase">
+                        <el-option v-for="(item,index) in CountryList" :key="index" :value="item.countryCode"
+                          :label="item.countryCname">
+                        </el-option>
+                      </el-select>
+                    </gv-form-item>
+                    <!--出险日期-->
+                    <gv-form-item key-name="zbLossDateTime" requires prop="lossDateTime" isThree="true">
+                      <el-date-picker @change="changelossDateTime(baseInfo.lossDateTime)"
+                        v-model="baseInfo.lossDateTime" type="datetime" :disabled="isReadonly || amend || Notthecase"
+                        format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss">
+                      </el-date-picker>
+                    </gv-form-item>
+                    <!--出险原因-->
+                    <gv-form-item key-name="lossReason" requires prop="circumstances" isThree="true">
+                      <gv-select v-model="baseInfo.circumstances" :disabled="isReadonly || amend || Notthecase"
+                        size="mini" code-type="ClaimReason" code-name="codeCode" label-name="codeName"></gv-select>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!--出险描述-->
+                    <el-row :gutter="20" class="cellfou ia_im_area">
+                      <el-col :span="4" style="padding-right: 4.3%">
+                        <div class="gvinput">
+                          <span>{{'lossDescription' | translate}}:</span>
+                        </div>
+                      </el-col>
+                      <el-col :span="20" class="ia_im_describ">
+                        <el-input type="textarea" :rows="2" style="width: 100%" v-model="baseInfo.accidentDescription"
+                          :disabled="isReadonly || amend || Notthecase" maxlength="4000">
+                        </el-input>
+                      </el-col>
+                    </el-row>
+                  </div>
+                  <div class="gv-row">
+                    <!--备注-->
+                    <el-row :gutter="20" class="cellfou ia_im_area">
+                      <el-col :span="4" style="padding-right: 4.3%">
+                        <div class="gvinput">
+                          <span>{{'remark'| translate}}:</span>
+                        </div>
+                      </el-col>
+                      <el-col :span="20" class="ia_im_describ">
+                        <el-input type="textarea" :rows="2" style="width: 100%" v-model="baseInfo.remark"
+                          :disabled="isReadonly || amend || Notthecase" maxlength="4000">
+                        </el-input>
+                      </el-col>
+                    </el-row>
+                  </div>
+                  <div class="gv-row">
+                    <!--创建人-->
+                    <gv-form-item key-name="founder" prop="createdBy" isThree="true">
+                      <el-input :disabled="isReadonly || viewonly || amend" v-model="baseInfo.createdBy"
+                        :placeholder="'systemAutoGenerate' | translate"></el-input>
+                    </gv-form-item>
+                    <!--修改人-->
+                    <gv-form-item key-name="modifiedBy" prop="amendedBy" isThree="true">
+                      <el-input :disabled="isReadonly || viewonly || amend" v-model="baseInfo.amendedBy"
+                        :placeholder="'systemAutoGenerate' | translate"></el-input>
+                    </gv-form-item>
+                    <!--审核人-->
+                    <gv-form-item key-name="reviewer" prop="approvedBy" isThree="true">
+                      <el-input :disabled="isReadonly || viewonly || amend" v-model="baseInfo.approvedBy"
+                        :placeholder="'systemAutoGenerate' | translate"></el-input>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!--创建日期-->
+                    <gv-form-item key-name="createDate" prop="createdDate" isThree="true">
+                      <el-date-picker v-model="baseInfo.createdDate" type="datetime"
+                        :disabled="isReadonly || viewonly || amend" format="dd-MM-yyyy HH:mm:ss"
+                        :placeholder="'systemAutoGenerate' | translate" value-format="dd-MM-yyyy HH:mm:ss">
+                      </el-date-picker>
+                    </gv-form-item>
+                    <!--修改日期-->
+                    <gv-form-item key-name="datechanged" prop="amendedDate" isThree="true">
+                      <el-date-picker v-model="baseInfo.amendedDate" type="datetime"
+                        :disabled="isReadonly || viewonly || amend" format="dd-MM-yyyy HH:mm:ss"
+                        value-format="dd-MM-yyyy HH:mm:ss" :placeholder="'systemAutoGenerate' | translate">
+                      </el-date-picker>
+                    </gv-form-item>
+                    <!--审核通过日期-->
+                    <gv-form-item key-name="checkTime" prop="approvedDate" isThree="true">
+                      <el-date-picker v-model="baseInfo.approvedDate" type="datetime"
+                        :disabled="isReadonly || viewonly || amend" format="dd-MM-yyyy HH:mm:ss"
+                        :placeholder="'systemAutoGenerate' | translate" value-format="dd-MM-yyyy HH:mm:ss">
+                      </el-date-picker>
+                    </gv-form-item>
+                  </div>
+                  <div class="gv-row">
+                    <!-- 总分入金额-->
+                    <gv-form-item key-name="zbtotalcreditamount" prop="paymentAmountCnAll" isThree="true">
+                      <gv-input :disabled="isReadonly || viewonly || amend" size="mini" :thou="true" num-len="2"
+                        v-model="baseInfo.paymentAmountCnAll">
+                      </gv-input>
+                    </gv-form-item>
+                    <!-- 总分出金额 -->
+                    <gv-form-item key-name="zbtotalpoinsoutam" prop="riPidCnAll" isThree="true">
+                      <gv-input :disabled="isReadonly || viewonly || amend" size="mini" :thou="true" num-len="2"
+                        v-model="baseInfo.riPidCnAll">
+                      </gv-input>
+                    </gv-form-item>
+                    <!-- 总自留金额 -->
+                    <gv-form-item key-name="zbzzljamount" prop="retainedAmountAll" isThree="true">
+                      <gv-input :disabled="isReadonly || viewonly || amend" size="mini" :thou="true" num-len="2"
+                        v-model="baseInfo.retainedAmountAll">
+                      </gv-input>
+                    </gv-form-item>
+                  </div>
+                </div>
+                <!--  标的详情  -->
+                <div style="margin-top: 20px">
+                  <div style="
+                      background-color: #f4f5f9;
+                      height: 45px;
+                      line-height: 45px;
+                    ">
+                    <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left: 40px" />
+                    <span style="font-size: 14px; font-weight: 500">{{'detailsMatter' | translate}}</span>
+                  </div>
+                  <!-- 新增标的按钮-->
+                  <!-- <div style="margin: 20px 20px 0" v-if="addbutton">
+                    <el-button
+                      class="gv-btn gv-btn-primary"
+                      type="primary"
+                      @click="addunderlying('underlying')"
+                    >
+                      {{'ItemNo.Select'| translate}}</el-button
+                    >
+                    <el-button
+                      type="text"
+                      class="settNewBYLDL"
+                      style="float: right; padding-right: 20px"
+                      @click="gsClick"
+                      >估损审核</el-button
+                    >
+                  </div> -->
+                  <el-form :model="expandForm" :rules="expandrules" ref="expandForm">
+                    <el-table :data="expandForm.underlying" default-expand-all row-class-name="policyAssetRow">
+                      <el-table-column type="expand" width="100%">
+                        <template slot-scope="expand">
+                          <!-- //估损信息 -->
+                          <span style="font-size: 14px; font-weight: 500"></span>
+                          {{'zbLossestimationinfor'|translate}}</span>
+                          <!-- 审核状态为status "01"表示审核通过，不可修改 -->
+                          <el-table style="width: 100%" class="tabletitle formTable" :header-cell-class-name="must3"
+                            :data="expand.row.gcEstimateLossVoList">
+                            <!-- 估损币别 -->
+                            <el-table-column :label="'zbReserveCurrency'| translate" prop="reserveCurrency">
+                              <template slot-scope="scope">
+                                <el-form-item v-if='scope.row.status !="01"'
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.reserveCurrency'"
+                                  :rules="expandrules.reserveCurrency">
+                                  <gv-select size="mini" code-type="Currency" v-model="scope.row.reserveCurrency"
+                                    code-name="codeCode" label-name="codeName"
+                                    :disabled="isReadonly || amend || Notthecase"></gv-select>
+                                </el-form-item>
+                                <el-form-item v-else>
+                                  <gv-select size="mini" code-type="Currency" v-model="scope.row.reserveCurrency"
+                                    code-name="codeCode" label-name="codeName" disabled="true"></gv-select>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <!-- 整案估损 -->
+                            <el-table-column :label="'zbO/S'| translate" prop="allGrossLossAmount">
+                              <template slot-scope="scope">
+                                <el-form-item v-if='scope.row.status !="01"'
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.allGrossLossAmount'"
+                                  :rules="expandrules.allGrossLossAmount">
+                                  <gv-input v-model="scope.row.allGrossLossAmount" num-len="2" maxlength="16"
+                                    :disabled="isReadonly || amend || Notthecase" :thou="true"></gv-input>
+                                </el-form-item>
+                                <el-form-item v-else>
+                                  <gv-input v-model="scope.row.allGrossLossAmount" num-len="2" maxlength="16"
+                                    disabled="true" :thou="true"></gv-input>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <!-- 费用类型 -->
+                            <el-table-column :label="'feeType'| translate" prop="feeTypeCode">
+                              <template slot-scope="scope">
+                                <el-form-item v-if='scope.row.status !="01"'
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.feeTypeCode'"
+                                  :rules="expandrules.feeTypeCode">
+                                  <gv-select code-type="ClaimFeeType" code-name="codeCode" label-name="codeName"
+                                    v-model="scope.row.feeTypeCode" :disabled="isReadonly || amend ||Notthecase">
+                                  </gv-select>
+                                </el-form-item>
+                                <el-form-item v-else
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.feeTypeCode'"
+                                  :rules="expandrules.feeTypeCode">
+                                  <gv-select code-type="ClaimFeeType" code-name="codeCode" label-name="codeName"
+                                    v-model="scope.row.feeTypeCode" disabled="true"></gv-select>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <!-- 自留金额估损 -->
+                            <el-table-column :label="'zbestimatedLossAmount'| translate" prop="grossLossAmount"
+                              width="100px">
+                              <template slot-scope="scope">
+                                <el-form-item v-if='scope.row.status !="01"'
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.grossLossAmount'"
+                                  :rules="expandrules.grossLossAmount">
+                                  <gv-input v-model="scope.row.grossLossAmount" num-len="2" maxlength="16"
+                                    :disabled="isReadonly || amend || Notthecase" :thou="true"></gv-input>
+                                </el-form-item>
+
+                                <el-form-item
+                                  :prop="'underlying.'+expand.$index +'.gcEstimateLossVoList.' + scope.$index + '.grossLossAmount'"
+                                  :rules="expandrules.grossLossAmount" v-else>
+                                  <gv-input v-model="scope.row.grossLossAmount" num-len="2" maxlength="16"
+                                    disabled="true" :thou="true"></gv-input>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <!-- 已决金额 -->
+                            <el-table-column :label="'zbPaidLoss'| translate" prop="paidLossAmount" width="100px">
+                              <template slot-scope="scope">
+                                <gv-input v-model="scope.row.paidLossAmount" num-len="2" maxlength="16"
+                                  :disabled="isReadonly || viewonly || amend" :thou="true"></gv-input>
+                              </template>
+                            </el-table-column>
+                            <!-- 未决金额 -->
+                            <el-table-column :label="'zbO/SLoss'| translate" prop="outLossAmount" width="100px">
+                              <template slot-scope="scope">
+                                <gv-input v-model="scope.row.outLossAmount" num-len="2" maxlength="16"
+                                  :disabled="isReadonly || addbutton" :thou="true"></gv-input>
+                              </template>
+                            </el-table-column>
+                            <!-- 备注 -->
+                            <el-table-column :label="'remark'| translate" prop="remark">
+                              <template slot-scope="scope">
+                                <el-input v-if='scope.row.status !="01"' :disabled="isReadonly || amend || Notthecase"
+                                  v-model="scope.row.remark" type="textarea" maxlength="2000"></el-input>
+                                <el-input v-else disabled="true" v-model="scope.row.remark" type="textarea"
+                                  maxlength="2000"></el-input>
+                              </template>
+                            </el-table-column>
+                            <!-- 审核状态 -->
+                            <el-table-column :label="'checkInd'| translate" prop="status">
+                              <template slot-scope="scope">
+                                {{
+                                Vue.gvUtil.translationData('EstimateLossStatus',
+                                scope.row.status) }}
+                              </template>
+                            </el-table-column>
+                            <!-- 创建人 -->
+                            <el-table-column :label="'founder' | translate" prop="createdBy" />
+                            <!-- 创建日期 -->
+                            <el-table-column :label="'createDate' | translate" prop="createdDate" />
+                            <!-- 修改人 -->
+                            <el-table-column :label="'modifiedBy' | translate" prop="amendedBy" />
+                            <!--修改日期  -->
+                            <el-table-column :label="'datechanged' | translate" prop="amendedDate" />
+                            <!-- 审核人 -->
+                            <el-table-column :label="'reviewer' | translate" prop="approvedBy" />
+                            <!-- 审核通过日期 -->
+                            <el-table-column :label="'auditDate'| translate" prop="approvedDate" />
+                            <!-- 是否计提准备金 -->
+                            <el-table-column :label="'zbIsprovisionmade'| translate" prop="isEsBill" width="100px">
+                              <template slot-scope="scope">
+                                <span v-if='scope.row.isEsBill=="00"'>
+                                  否
+                                </span>
+                                <span v-if='scope.row.isEsBill=="01"'>
+                                  是
+                                </span>
+                              </template>
+                            </el-table-column>
+                            <el-table-column :label="'operation'| translate" width="200px">
+                              <template slot-scope="scope">
+                                <span v-if='scope.row.status !="01"'>
+                                  <!-- 历次估损 -->
+                                  <el-button class="gv-btn gv-btn-primary" type="primary"
+                                    @click="Previouslossassessment(scope.row)">{{'ReserveAdjustment'|
+                                    translate}}</el-button>
+                                  <!--删除-->
+                                  <el-button v-if="addbutton" size="mini" type="primary" icon="el-icon-minus"
+                                    class="gv-btn-warning"
+                                    @click='remove(scope.$index,"gcEstimateLossVo",expand.row.gcEstimateLossVoList,expand.$index)'>
+                                  </el-button>
+                                </span>
+                                <span v-if='scope.row.status =="01"'>
+                                  <!-- 历次估损 -->
+                                  <el-button class="gv-btn gv-btn-primary" type="primary"
+                                    @click="Previouslossassessment(scope.row)">{{'ReserveAdjustment'|translate}}
+                                  </el-button>
+                                </span>
+                              </template>
+                            </el-table-column>
+                          </el-table>
+
+                          <!-- 新增 -->
+                          <el-button v-if="addbutton" type="primary" icon="el-icon-plus" class="gv-btn-primary"
+                            size="mini" style="margin: 5px"
+                            @click='addData("gcEstimateLossVo",expand.row.gcEstimateLossVoList,expand.row)'></el-button>
+                        </template>
+                      </el-table-column>
+
+                      <!-- 标的序号 -->
+                      <el-table-column :label="'serialNumber'| translate" prop="itemNo">
+                        <template slot-scope="scope">
+                          <span :class=" isRed ? 'setRowStyleBYLDL' : ''">{{scope.row.itemNo}}</span>
+                        </template>
+                      </el-table-column>
+                      <!-- 操作 -->
+                      <el-table-column :label="'operation'| translate">
+                        <template slot-scope="scope">
+                          <!-- 查看 -->
+                          <el-button class="gv-btn gv-btn-primary" type="primary" @click="checkbd(scope.row)">
+                            {{'gBtnView' | translate}}</el-button>
+                          <el-button v-if="addbutton" class="gv-btn gv-btn-primary gv-btn-warning" type="primary"
+                            icon="el-icon-minus" @click='remove(scope.$index,"underlying",scope.row)'></el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-form>
+                </div>
+              </gv-form>
+            </el-collapse-item>
+            <!-- 审核信息 -->
+            <el-collapse-item id="auditInfo" name="auditInfo" :title="'auditInformation'| translate"
+              style="margin-bottom: 80px" v-if="backisTrue">
+              <audit ref="auditInfo"></audit>
+            </el-collapse-item>
+          </el-collapse>
+        </el-col>
+      </el-row>
+      <div :span="24" class="ia-im-bottomDiv1" v-if="view">
+        <template v-if='$route.query.pageType !="back"'>
+          <!-- 保存 -->
+          <!-- <el-button
+            v-if="!pass"
+            class="gv-btn-xs gv-btn-save"
+            type="primary"
+            @click="saveSubmit('1')"
+          >
+            {{'gBtnSave' | translate}} -->
+          <!-- </el-button> -->
+          <!-- 提交 -->
+          <!-- <el-button
+            v-if="!pass"
+            class="gv-btn-xs gv-btn-submit"
+            type="primary"
+            @click="saveSubmit('2')"
+          >
+            {{'gSubmit' | translate}}</el-button
+          > -->
+
+          <!-- 审核通过 passs审核页面显示-->
+          <el-button v-if="pass" class="gv-btn-xs gv-btn-submit" type="primary" @click="WorkingNext()">{{'gPass' |
+            translate}}</el-button>
+          <!-- 审核不通过 -->
+          <el-button v-if="pass" class="gv-btn-xs gv-btn-warning" type="primary" @click="goNOAudit('06')">
+            {{'gNotPass' | translate}}</el-button>
+          <!-- 审核轨迹 passs审核页面显示-->
+          <el-button v-if="pass" type="primary" class="gv-btn-primary gv-btn-xs" @click="auditTrail()">{{'auditTrail' |
+            translate}}</el-button>
+          <!-- 返回 -->
+          <el-button v-if="pass" class="gv-btn-xs" type="primary" @click="returnPage()">
+            {{'gBtnReturn' | translate}}</el-button>
+        </template>
+        <template v-if="$route.query.pageType =='back'">
+          <!-- 取消 -->
+          <el-button class="gv-btn-xs" type="primary" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}
+          </el-button>
+
+        </template>
+      </div>
+    </el-col>
+  </el-row>
+  <!-- 赔付标的 -->
+  <el-dialog :visible.sync="showPaymentPlanDialog" width="80%" append-to-body>
+    <div class="subCollapse" :title="'zbCompensationtarget' | translate('Compensation target')">
+      <el-form disabled="true" :model="underlying" ref="underfrom" :rules="underlying.underlyingRules">
+        <el-table :data="underlying.guPolicyItemMainVoList" class="centerTable insureAppTable2ByWS"
+          style="padding-left: 10px" default-expand-all>
+          <!--第二行分出-->
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-table :data="scope.row.guPolicyItemReinsVoList" style="width: 100%">
+                <!-- 再保人1-->
+                <el-table-column prop="reinsurer">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'reinsurer' | translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.reinsurer'">
+                      <el-input v-model="scope2.row.reinsurer" :disabled="Submit" maxlength="200"></el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <!-- 分出比例2-->
+                <el-table-column prop="selfInsuranceRate">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'distributionRatio' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.selfInsuranceRate'"
+                      :rules="underlying.underlyingRules.selfInsuranceRate">
+                      <gv-input v-model="scope2.row.selfInsuranceRate" :disabled="Submit" num-len="6" maxlength="9">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 分出保额3 ？？？-->
+                <el-table-column width="210px">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'cededAmount' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-row>
+                      <el-col :span="9">
+                        <el-form-item
+                          :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope.$index + '.currency'"
+                          :rules="underlying.underlyingRules.currency">
+                          <gv-select size="mini" code-type="Currency" v-model="scope2.row.currency" code-name="codeCode"
+                            :disabled="Submit"></gv-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="14" style="margin-left: 5px">
+                        <el-form-item
+                          :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.riShareValue'"
+                          :rules="underlying.underlyingRules.riShareValue">
+                          <gv-input class="gv-input" :thou="true" v-model.number="scope2.row.riShareValue" num-len="2"
+                            :disabled="Submit" num-len="2" maxlength="16"></gv-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </template>
+                </el-table-column>
+
+                <!-- 原分出毛保费4-->
+                <el-table-column prop="riOriGrossPremium">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'originalGrossPremium' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.riOriGrossPremium'"
+                      :rules="underlying.underlyingRules.riOriGrossPremium">
+                      <gv-input v-model="scope2.row.riOriGrossPremium" :disabled="Submit" num-len="2" maxlength="16">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 分出净保费 5-->
+                <el-table-column prop="totalDue">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'netPremiumPaidOut' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.totalDue'"
+                      :rules="underlying.underlyingRules.totalDue">
+                      <gv-input v-model="scope2.row.totalDue" :disabled="Submit" num-len="2" maxlength="16"></gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 分出费率 6-->
+                <el-table-column prop="riRate">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'cededRate' | translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.riRate'"
+                      :rules="underlying.underlyingRules.riRate">
+                      <gv-input v-model="scope2.row.riRate" :disabled="Submit" num-len="4" maxlength="16">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 年保费 7-->
+                <el-table-column prop="annualPremium">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'annualPremium' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.annualPremium'"
+                      :rules="underlying.underlyingRules.annualPremium">
+                      <gv-input v-model="scope2.row.annualPremium" :disabled="Submit" num-len="2" maxlength="16">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 检验费 8-->
+                <el-table-column prop="mws" :label="'inspectionFee' | translate">
+                  <template slot-scope="scope">
+                    <gv-input v-model="scope.row.mws" :disabled="Submit" num-len="2" maxlength="16">
+                    </gv-input>
+                  </template>
+                </el-table-column>
+
+                <!-- 分出佣金 9-->
+                <el-table-column prop="commission">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'commissionOut' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.commission'"
+                      :rules="underlying.underlyingRules.commission">
+                      <gv-input v-model="scope2.row.commission" :disabled="Submit" num-len="2" maxlength="16">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 分出总保费 10-->
+                <el-table-column prop="totalPremium">
+                  <template slot="header">
+                    <span style="color: red">*</span>{{'totalPremiumPaidOut' |
+                    translate}}
+                  </template>
+                  <template slot-scope="scope2">
+                    <el-form-item
+                      :prop="'guPolicyItemMainVoList.'+scope.$index +'.guPolicyItemReinsVoList.' + scope2.$index + '.totalPremium'"
+                      :rules="underlying.underlyingRules.totalPremium">
+                      <gv-input v-model="scope2.row.totalPremium" :disabled="Submit" num-len="2" maxlength="16">
+                      </gv-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+
+                <!-- 备注1 11-->
+                <el-table-column prop="remark1" :label="'note1' | translate">
+                  <template slot-scope="scope">
+                    <el-input type="textarea" maxlength="2000" :rows="1" v-model="scope.row.remark1" :disabled="Submit">
+                    </el-input>
+                  </template>
+                </el-table-column>
+
+                <!-- 备注2 12-->
+                <el-table-column prop="remark2" :label="'note2' | translate">
+                  <template slot-scope="scope">
+                    <el-input type="textarea" maxlength="2000" :rows="1" v-model="scope.row.remark2" :disabled="Submit">
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+          </el-table-column>
+
+          <!-- 标的序号-->
+          <el-table-column prop="guPolicyItemCedingVo.itemNo" type="index" width="90"
+            :label="'serialNumber' | translate">
+            <template slot-scope="scope">
+              <el-form-item>
+                <div>{{scope.$index+1}}</div>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 被保人1-->
+          <el-table-column prop="guPolicyItemCedingVo.insured" :label="'insured' | translate"
+            v-if="baseInfo.riskCode=='CARD' || baseInfo.riskCode=='EAS' || baseInfo.riskCode=='OOPD'" width="150">
+            <template slot-scope="scope">
+              <el-form-item>
+                <el-input v-model="scope.row.insured" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 工程名称 || 项目名称 ？？？-->
+          <el-table-column prop="guPolicyItemCedingVo.project" :label="'projectName' | translate"
+            v-if="baseInfo.riskCode=='CARD'" width="150">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.project'">
+                <el-input v-model="scope.row.project" :disabled="Submit" maxlength="200"></el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 工程地址 3-->
+          <el-table-column prop="guPolicyItemCedingVo.location" :label="'projectAddress' | translate"
+            v-if="baseInfo.riskCode=='CARD'" width="150">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.location'">
+                <el-input v-model="scope.row.location" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 原险种代码 4-->
+          <el-table-column prop="guPolicyItemCedingVo.cedingRiskCode" width="150"
+            :label="'originalInsuranceCode' | translate"
+            v-if="baseInfo.riskCode=='CARD' || baseInfo.riskCode=='EAS' || baseInfo.riskCode=='OOPD'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.cedingRiskCode'">
+                <el-input v-model="scope.row.guPolicyItemCedingVo.cedingRiskCode" :disabled="Submit" maxlength="10">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 原险种名称 5-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.cedingRiskName" :label="'nameInsurance' | translate"
+            v-if="baseInfo.riskCode=='CARD' || baseInfo.riskCode=='EAS' || baseInfo.riskCode=='OOPD'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.cedingRiskName'">
+                <el-input v-model="scope.row.guPolicyItemCedingVo.cedingRiskName" :disabled="Submit" maxlength="100">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 原保单号 6-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.cedingPolicyNo"
+            :label="'originalWarrantyNumber' | translate" v-if="baseInfo.riskCode=='CARD' || baseInfo.riskCode=='OOPD'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.cedingPolicyNo'">
+                <el-input v-model="scope.row.cedingPolicyNo" :disabled="Submit" maxlength="21">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 项目名称 7-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.projectName" :label="'entryName' | translate"
+            v-if="baseInfo.riskCode=='CARU'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.projectName'">
+                <el-input v-model="scope.row.projectName" :disabled="Submit">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 船舶名称 8-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.vesselName" :label="'nameVessel' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.vesselName'">
+                <el-input v-model="scope.row.vesselName" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 船舶类型 9-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.usage" :label="'shipType' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.usage'">
+                <el-input v-model="scope.row.usage" :disabled="Submit" maxlength="100">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 船籍 10-->
+          <el-table-column width="150" prop="guPolicyItemCedingVo.registered" :label="'shipNationality' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.registered'">
+                <el-input v-model="scope.row.registered" :disabled="Submit" maxlength="100">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 载重吨位／重量 11-->
+          <el-table-column prop="guPolicyItemCedingVo.tonnage" :label="'dwtWeight' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.tonnage'">
+                <gv-input maxlength="9" num-len="2" v-model="scope.row.tonnage" :disabled="Submit" num-len="2"
+                  maxlength="9">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 建造年份 12-->
+          <el-table-column prop="guPolicyItemCedingVo.builtYear" :label="'yearConstruction' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.builtYear'">
+                <el-input v-model="scope.row.builtYear" :disabled="Submit" maxlength="4"></el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 航行区域 13-->
+          <el-table-column prop="guPolicyItemCedingVo.workingArea" :label="'navigationArea' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.workingArea'">
+                <el-input v-model="scope.row.workingArea" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 层 14-->
+          <el-table-column prop="guPolicyItemCedingVo.layer" :label="'layer' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.layer'">
+                <el-input v-model="scope.row.layer" :disabled="Submit" maxlength="1">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 属性 15-->
+          <el-table-column prop="guPolicyItemCedingVo.nature" :label="'attribute' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.nature'">
+                <el-input v-model="scope.row.nature" :disabled="Submit" maxlength="100">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 免赔 16-->
+          <el-table-column prop="guPolicyItemCedingVo.excess" :label="'deductible' | translate"
+            v-if="baseInfo.riskCode=='MAR'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.excess'">
+                <el-input v-model="scope.row.excess" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 油田代码 17 -->
+          <el-table-column prop="guPolicyItemCedingVo.oilFieldCode" :label="'oilField' | translate"
+            v-if="baseInfo.riskCode=='ODE' || baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.oilFieldCode'">
+                <el-input v-model="scope.row.oilFieldCode" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 井名 18-->
+          <el-table-column prop="guPolicyItemCedingVo.wellName" :label="'wellName' | translate"
+            v-if="baseInfo.riskCode=='ODE' || baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.wellName'">
+                <el-input v-model="scope.row.wellName" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 井号 19-->
+          <el-table-column prop="guPolicyItemCedingVo.wellNo" :label="'wellNo' | translate"
+            v-if="baseInfo.riskCode=='ODE' || baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.wellNo'">
+                <el-input v-model="scope.row.wellNo" :disabled="Submit" maxlength="50">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 井型 20-->
+          <el-table-column prop="guPolicyItemCedingVo.wellType" :label="'wellType' | translate"
+            v-if="baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.wellType'">
+                <el-input v-model="scope.row.wellType" :disabled="Submit" maxlength="50">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 井深（米） 21-->
+          <el-table-column prop="guPolicyItemCedingVo.depthm" :label="'wellDepth(m)' | translate"
+            v-if="baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.depthm'">
+                <gv-input maxlength="16" num-len="6" v-model="scope.row.depthm" :disabled="Submit" num-len="6"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 井深（英尺） 22-->
+          <el-table-column prop="guPolicyItemCedingVo.depthft" :label="'wellDepth(ft)' | translate"
+            v-if="baseInfo.riskCode=='OEE'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.depthft'">
+                <gv-input maxlength="16" num-len="6" v-model="scope.row.depthft" :disabled="Submit" num-len="6"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 作业区 23-->
+          <el-table-column prop="guPolicyItemCedingVo.area" :label="'operationArea' | translate"
+            v-if="baseInfo.riskCode=='OOPU'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.area'">
+                <el-input v-model="scope.row.area" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 油田名称 24-->
+          <el-table-column prop="guPolicyItemCedingVo.oilField" :label="'oilField' | translate"
+            v-if="baseInfo.riskCode=='OOPU'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.oilField'">
+                <el-input v-model="scope.row.oilField" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 财产名称 25-->
+          <el-table-column prop="guPolicyItemCedingVo.propertyDetails" :label="'nameProperty' | translate"
+            v-if="baseInfo.riskCode=='OOPU'">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.propertyDetails'">
+                <el-input v-model="scope.row.propertyDetails" :disabled="Submit" maxlength="200">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 财产类型 26-->
+          <el-table-column prop="guPolicyItemCedingVo.propertyType" :label="'typeProperty' | translate"
+            v-if="baseInfo.riskCode=='OOPU'">
+          </el-table-column>
+
+          <!-- 项 27 -->
+          <el-table-column prop="guPolicyItemCedingVo.section" :label="'term' | translate">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.section'">
+                <el-input v-model="scope.row.section" :disabled="Submit" maxlength="100">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 保险起期 28   :rules="underlying.underlyingRules.periodStart"
+               :rules="[{required: true, message: '不能为空', trigger: 'blur'}]"-->
+          <el-table-column prop="guPolicyItemCedingVo.periodStart" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'startingDateInsurance' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.periodStart'"
+                :rules="underlying.underlyingRules.periodStart">
+                <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="scope.row.periodStart"
+                  type="date" :disabled="Submit">
+                </el-date-picker>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 保险止期 29-->
+          <el-table-column prop="guPolicyItemCedingVo.periodEnd" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'expiryDateInsurance' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.periodEnd'"
+                :rules="underlying.underlyingRules.periodEnd">
+                <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="scope.row.periodEnd" type="date"
+                  default-time="23:59:59" :disabled="Submit">
+                </el-date-picker>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 保额／限额 30 -->
+          <el-table-column prop="guPolicyItemCedingVo.insuredValue" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'coverageLimit' | translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.insuredValue'"
+                :rules="underlying.underlyingRules.insuredValue">
+                <gv-input v-model="scope.row.insuredValue" :disabled="Submit" num-len="2" maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 海油权益% 31-->
+          <el-table-column prop="guPolicyItemCedingVo.interestcnooc" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'rightsCnooc' | translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.interestcnooc'"
+                :rules="underlying.underlyingRules.interestcnooc">
+                <gv-input v-model="scope.row.interestcnooc" :disabled="Submit" num-len="6" maxlength="9">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!--  自保比例 分入 32-->
+          <el-table-column prop="guPolicyItemCedingVo.cilShare" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'selfInsuranceRatio' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.cilShare'"
+                :rules="underlying.underlyingRules.cilShare">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.cilShare" :disabled="Submit" num-len="6"
+                  maxlength="9">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保保额 33 -->
+          <el-table-column prop="guPolicyItemCedingVo.cilShareValue" width="150">
+            <template slot="header">
+              <span style="color: red">*</span>{{'selfInsuranceAmount' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.cilShareValue'"
+                :rules="underlying.underlyingRules.cilShareValue">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.cilShareValue" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保分入原毛保费-->
+          <el-table-column prop="guPolicyItemCedingVo.cilOriGrossPremium" :label="'originalGrossInsurance' | translate">
+            <template slot-scope="scope">
+              <el-form-item
+                :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.cilOriGrossPremium'">
+                <gv-input num-len="2" maxlength="16" v-model="scope.row.guPolicyItemCedingVo.cilOriGrossPremium"
+                  :disabled="Submit">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保分入净保费 35-->
+          <el-table-column prop="guPolicyItemCedingVo.totalDue">
+            <template slot="header">
+              <span style="color: red">*</span>{{'selfInsuranceNetPremium' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.totalDue'"
+                :rules="underlying.underlyingRules.totalDue">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.totalDue" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保费率 36-->
+          <el-table-column prop="guPolicyItemCedingVo.cilRate">
+            <template slot="header">
+              <span style="color: red">*</span>{{'selfInsuranceRate' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.cilRate'"
+                :rules="underlying.underlyingRules.cilRate">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.cilRate" :disabled="Submit" num-len="4"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保佣金 37-->
+          <el-table-column prop="guPolicyItemCedingVo.commission">
+            <template slot="header">
+              <span style="color: red">*</span>{{'selfInsuranceCommission' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.commission'"
+                :rules="underlying.underlyingRules.commission">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.commission" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 自保毛保费 38-->
+          <el-table-column prop="guPolicyItemCedingVo.cilGrossPremium">
+            <template slot="header">
+              <span style="color: red">*</span>{{'grossSelfInsurancePremium' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item
+                :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.cilGrossPremium'"
+                :rules="underlying.underlyingRules.cilGrossPremium">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.cilGrossPremium" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 承保天数 39 -->
+          <el-table-column prop="guPolicyItemCedingVo.insuredDay">
+            <template slot="header">
+              <span style="color: red">*</span>{{'daysCovered' | translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.insuredDay'"
+                :rules="underlying.underlyingRules.insuredDay">
+                <el-input v-model="scope.row.guPolicyItemCedingVo.insuredDay" :disabled="Submit" type="number"
+                  maxlength="6">
+                </el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 承保月数 40-->
+          <el-table-column prop="guPolicyItemCedingVo.oriMonths">
+            <template slot="header">
+              <span style="color: red">*</span>{{'monthsUnderwriting' |
+              translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.oriMonths'"
+                :rules="underlying.underlyingRules.oriMonths">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.oriMonths" :disabled="Submit" num-len="2"
+                  maxlength="8">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 月保费 41-->
+          <el-table-column prop="guPolicyItemCedingVo.oriPerMonth">
+            <template slot="header">
+              <span style="color: red">*</span>{{'monthlyPremium' | translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.oriPerMonth'"
+                :rules="underlying.underlyingRules.oriPerMonth">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.oriPerMonth" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 年保费 42-->
+          <el-table-column prop="guPolicyItemCedingVo.oriAnnualPremium">
+            <template slot="header">
+              <span style="color: red">*</span>{{'annualPremium' | translate}}
+            </template>
+            <template slot-scope="scope">
+              <el-form-item
+                :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.oriAnnualPremium'"
+                :rules="underlying.underlyingRules.oriAnnualPremium">
+                <gv-input v-model="scope.row.guPolicyItemCedingVo.oriAnnualPremium" :disabled="Submit" num-len="2"
+                  maxlength="16">
+                </gv-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 备注1 43-->
+          <el-table-column prop="guPolicyItemCedingVo.remark1" :label="'note1' | translate">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.remark1'">
+                <el-input v-model="scope.row.guPolicyItemCedingVo.remark1" type="textarea" maxlength="200" :rows="1"
+                  :disabled="Submit"></el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+
+          <!-- 备注2 44-->
+          <el-table-column prop="guPolicyItemCedingVo.remark2" :label="'note2' | translate">
+            <template slot-scope="scope">
+              <el-form-item :prop="'guPolicyItemMainVoList.' + scope.$index + '.guPolicyItemCedingVo'+'.remark2'">
+                <el-input v-model="scope.row.guPolicyItemCedingVo.remark2" type="textarea" maxlength="200" :rows="1"
+                  :disabled="Submit"></el-input>
+              </el-form-item>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+    </div>
+    <template slot="footer">
+      <div style="text-align: center">
+        <!-- 关闭 -->
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="showPaymentPlanDialog = false">{{'cxlClose'|
+          translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 原单赔案号详情弹框 -->
+  <el-dialog append-to-body :title="'policyDetails'| translate" :visible.sync="settlingCeding" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px">
+    <settling-ceding ref="settlingCeding" @close="settlingCeding = false"></settling-ceding>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="settlingCeding = false">{{'gBtnClose' | translate}}
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 自保保单号详情弹框 -->
+  <el-dialog append-to-body :title="'policyDetails'| translate" :visible.sync="selfInsurancePolicyCeding" width="90%"
+    top="7vh" :close-on-click-modal="false" class="dialogPadding10px">
+    <self-insurance-policy-ceding ref="policyceding" @close="selfInsurancePolicyCeding = false">
+    </self-insurance-policy-ceding>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="selfInsurancePolicyCeding = false">{{'gBtnClose' |
+          translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 历次估损 -->
+  <el-dialog :visible.sync="PreviouslossassessmentDialog" append-to-body>
+    <el-table :data="lossassessmentData">
+      <el-table-column :label="'zbAdjustmentDateTime'|translate" prop="adjustmentDateTime">
+        <template slot-scope="scope">
+          <el-date-picker v-model="scope.row.adjustmentDateTime" type="datetime"
+            :disabled="isReadonly || viewonly || amend" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss">
+          </el-date-picker>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'zbAdjustmentAmount'|translate" prop="changeAmount">
+        <template slot-scope="scope">
+          <gv-input v-model="scope.row.changeAmount" num-len="2" maxlength="16"
+            :disabled="isReadonly || viewonly || amend" :thou="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'zbAdjustmentUser'|translate" prop="adjustmentUser">
+        <template slot-scope="scope">
+          <el-input :disabled="isReadonly || viewonly || amend" v-model="scope.row.adjustmentUser"></el-input>
+        </template>
+      </el-table-column>
+    </el-table>
+    <template slot="footer">
+      <el-button class="copyBtn" type="primary" size="medium" @click="PreviouslossassessmentDialog=false">
+        {{'gBtnClose' | translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important"
+    :title="'zbnextperson'| translate" @close="close" width="60%" append-to-body :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,index) in gwNextNodeExecutorsList">
+        <!-- <el-row :span="24" gutter="10" class="taskNode"> -->
+        <el-checkbox-group v-model="checkboxGroup">
+          <el-checkbox style="background-color: #ecf5ff" :label="item.userCode" border>
+            <div class="userinfo-pop">
+              <div class="avatar-box" style="float: left; margin-top: -5px">
+                <img src="../../../../../dist/img/userpic.png" />
+              </div>
+            </div>
+            <div style="margin-left: 28px">{{item.userName}}</div>
+          </el-checkbox>
+        </el-checkbox-group>
+        <!-- </el-row> -->
+      </el-row>
+      <!-- <work—flow ref="workflow"></work—flow> -->
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

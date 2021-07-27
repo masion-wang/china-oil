@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="sys_title">Home</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./dist/css/app.css" />
+    <link rel="stylesheet" href="./dist/css/custom.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./dist/js/difflib/diffview.css"
+    />
+    <link rel="stylesheet" href="./dist/css/scheme.css" />
+    <link rel="stylesheet" href="./dist/css/selfins.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- <meta http-equiv="Cache-Control" content="only-if-cached"/> -->
+    <link
+      type="image/x-icon"
+      href="./dist/img/favicon.ico"
+      rel="shortcut icon"
+    />
+  </head>
+
+  <body>
+    <div id="app">
+      <router-view></router-view>
+      <transition name="fade">
+        <gv-loading
+          :title="'gTitleDataLoading' | translate('Loading the data...')"
+          v-show="loading.showLoading"
+        ></gv-loading>
+      </transition>
+    </div>
+  </body>
+  <script type="text/javascript" src="./dist/js/polyfill.min.js"></script>
+  <script type="text/javascript" src="./dist/js/vendor.js"></script>
+  <script type="text/javascript" src="./dist/js/vendor_e.js"></script>
+  <script type="text/javascript" src="./dist/js/vendor_ex.js?t=v1.0.0"></script>
+  <script type="text/javascript" src="./dist/js/quill.min.js"></script>
+  <script type="text/javascript" src="./dist/js/difflib/diffview.js"></script>
+  <script type="text/javascript" src="./dist/js/difflib/difflib.js"></script>
+  <script src="./dist/js/fileSaver.js"></script>
+  <script src="./dist/js/jQueryWordExport.js"></script>
+  <!-- <script src="http://oss.sheetjs.com/js-xlsx/xlsx.full.min.js"></script> -->
+  <!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script> -->
+  <script type="text/javascript">
+    var _gc = localStorage.getItem("_i18") || "zh";
+    //每次常规的前端静态代码更新部署时，需要更新版本号
+    var _version = "V1.0.0";
+    seajs.config({
+      base: "./",
+      preload: ["plugin-text"],
+      charset: "utf-8",
+      alias: {
+        exportJsonExcel: "dist/js/JsonExportExcel.min.js",
+      },
+      vars: {
+        locale: _gc, //zh
+      },
+      map: [
+        //可配置版本号
+        [".css", ".css?v=" + _version],
+        [".js", ".js?v=" + _version],
+        // ['.html', '.html?v=' + _version]
+      ],
+    });
+    // 加载入口模块
+    seajs.use("./app");
+  </script>
+</html>

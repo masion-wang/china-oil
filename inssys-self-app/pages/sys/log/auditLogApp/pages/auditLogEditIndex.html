@@ -1,0 +1,54 @@
+<section>
+    <el-form class="table-line" ref="form.content" :model="form.content" :inline="true" label-width="149px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate" name="1" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="logAuditRequestVoApiName" defaultName="Api Name" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                            <el-input size="mini" readonly v-model="form.apiName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="logAuditRequestVoUserCode" defaultName="User Code" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                            <el-input size="mini" readonly v-model="form.userCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="logAuditRequestVoOperateTime" defaultName="Operate Time" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                                <el-date-picker size="mini" :disabled="true" :editable="false" v-model="form.operateTime" format="dd-MM-yyyy HH:mm:ss"
+                                ></el-date-picker>
+                            <!-- <el-input size="mini" readonly v-model="form.operateTime"></el-input> -->
+                        </gv-form-input>
+
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="logAuditRequestVoRequestUrl" defaultName="Request Url" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                            <el-input size="mini" readonly v-model="form.url"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="logAuditRequestVoException" defaultName="Exception Info" :width="3"></gv-form-label>
+                        <gv-form-input colspan="3">
+                            <!-- <el-input size="mini" readonly v-model="form.exception"></el-input> -->
+                            <el-input size="mini" type="textarea" rows="6" :autosize='{ minRows: 2, maxRows: 23 }' readonly v-model="form.exception"></el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="logAuditRequestVoClientIp" defaultName="Client Ip" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                            <el-input size="mini" readonly v-model="form.clientIp"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="logAuditRequestVoRequestParam" defaultName="Request Parameters" :width="3"></gv-form-label>
+                        <gv-form-input colspan="5">
+                            <el-input size="mini" type="textarea" rows="6" :autosize='{ minRows: 2, maxRows: 23 }' readonly v-model="form.request"></el-input>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar txt-center">
+            <el-form-item>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}
+                </el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

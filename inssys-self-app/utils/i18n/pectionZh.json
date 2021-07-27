@@ -1,0 +1,22 @@
+{
+   "inspectionInfo": "检验详情",
+   "inspectionNo": "检验编号",
+   "inspectionName": "检验名称",
+   "inspectionType": "检验类型",
+   "institute": "机构",
+   "inspectionContent": "检验内容",
+   "responsibleParty": "负责方",
+   "inspectionInd": "检验标识",
+   "inspectionResult": "检验结果",
+   "auditRemark": "审核备注",
+   "pectionServiceType": "服务类型",
+   "inspectionCode": "检验代码",
+   "department": "部门",
+   "uploadReport": "上载报告",
+   "rectificationContent": "整改内容",
+   "rectificationDetail": "整改详情",
+   "rectificationInd": "整改标识",
+   "rectificationResult": "整改结果",
+   "abort": "放弃任务",
+   "inspectionPleaseChoose": "请双击进行选择！"
+}

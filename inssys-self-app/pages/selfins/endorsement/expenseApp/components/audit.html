@@ -1,0 +1,28 @@
+<!-- 审核意见 2-->
+<div>
+  <gv-form :model="auditInfo" ref="auditInfo" :rules="rules">
+    <div class="gv-row" style="padding-top: 20px">
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span style="color: red">*</span
+            ><span>{{'auditOpinion' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-form-item prop="approvedRemark" class="qxw100">
+            <el-input
+              ref="approvedRemark"
+              type="textarea"
+              :rows="3"
+              style="width: 100%"
+              :placeholder="'pleaseInputauditOpinion' | translate"
+              v-model="auditInfo.approvedRemark"
+            >
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+</div>

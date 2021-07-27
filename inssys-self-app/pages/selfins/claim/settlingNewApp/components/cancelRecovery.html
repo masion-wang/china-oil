@@ -1,0 +1,45 @@
+<!-- 注销/恢复信息组件 -->
+<!-- <gv-panel :title="panelTitle+'信息'"> -->
+<div>
+  <!-- <template v-if="showSubBtn">
+    <el-button type="primary" class="gv-btn-primary gv-btn-xs" style="margin: 10px 20px;" @click="showTrail">{{'auditTrail' | translate}}</el-button>
+  </template>
+  <gv-form :model="cancelRecovery" ref="cancelRecovery" class="mt20" v-if="title!='cancelRecovery'">
+    <div class="gv-row">
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%;">
+          <div class="gvinput"><span style="color: red;">*</span><span>{{panelTitle}}{{'opinion1' | translate}}:</span></div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-form-item prop="remark" class="qxw100">
+            <el-input ref="remark" type="textarea" :rows="3" style="width:100%;" :placeholder="'pleaseInputRemark' | translate" v-model="cancelRecovery.remark" :disabled="isReadonly">
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form> -->
+  <el-table :data="cancelRecoveryData">
+    <el-table-column :label="'gNumber' | translate">
+      <template slot-scope="scope"> {{scope.$index + 1}} </template>
+    </el-table-column>
+    <el-table-column :label="'cancelRecovery' | translate">
+      <template slot-scope="scope">
+        {{translateFlag(scope.row.flag)}}
+      </template>
+    </el-table-column>
+    <el-table-column prop="creatBy" :label="'submitname' | translate">
+    </el-table-column>
+    <el-table-column prop="creatTime" :label="'submitTime' | translate">
+    </el-table-column>
+    <el-table-column prop="opinion" :label="'cancelRecoveryReason' | translate">
+    </el-table-column>
+    <el-table-column prop="approvedBy" :label="'auditor' | translate">
+    </el-table-column>
+    <el-table-column prop="approvedOn" :label="'auditPassTime' | translate">
+    </el-table-column>
+    <el-table-column prop="opinions" :label="'auditOpinion' | translate">
+    </el-table-column>
+  </el-table>
+</div>
+<!-- </gv-panel> -->

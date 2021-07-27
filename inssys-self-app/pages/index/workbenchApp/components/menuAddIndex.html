@@ -1,0 +1,92 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" @submit.prevent="onSubmit">
+    	 <el-collapse v-model="mixinObject.activeNames">
+             <el-collapse-item v-if="isChoosedDisplay" :title="'selfDefineMenusOfUser' | translate('Entry Menus')" name="2">
+                 <el-table :data="choosedMenus" border >
+                     <el-table-column type="index" :label="'SequenceNo'| translate('Sequence No')" width="70"></el-table-column>
+                     <el-table-column :label="'sysFieldCode'| translate('Field Code')" width="300">
+                         <template scope="scope">
+                             <gv-form-input :prop="'choosedMenus.' + scope.$index + '.menuCname'">
+                                 <el-input size="mini" maxlength="60" disabled v-model="scope.row.menuCname"></el-input>
+                             </gv-form-input>
+                         </template>
+                     </el-table-column>
+                     <el-table-column :label="'sysEntityCode'| translate('Entity Code')" width="300">
+                         <template scope="scope">
+                             <gv-form-input :prop="'choosedMenus.' + scope.$index + '.menuEname'">
+                                 <el-input size="mini" maxlength="60" disabled v-model="scope.row.menuEname"></el-input>
+                             </gv-form-input>
+                         </template>
+                     </el-table-column>
+                     <el-table-column :label="'gTitleOperation' | translate('Operation')">
+                         <template scope="scope">
+                             <el-button size="mini" class="gv-btn-warning" icon="el-icon-minus" @click="onDeletes(scope.row.menuId, scope.$index)" class="marf5"></el-button>
+                         </template>
+                     </el-table-column>
+                 </el-table>
+             </el-collapse-item>
+        	<el-collapse-item v-if="isChooseItemDisplay" :title="'selfDefineChoose' | translate('Self Define Choose')" name="1">
+                <!-- <el-row class="mydefine-menu-list" v-for="(item, index) in availableImgs">
+                    <img v-for="(colItem, colIndex) in item.row" :src="colItem.src" alt="" @click="chooseImg(index, colIndex)">
+                </el-row> -->
+                <!-- <el-tree ref="tree" @check-change="onMenuChange" highlight-current :data="menus" default-expand-all show-checkbox node-key="ids" :props="defaultProps">
+                </el-tree> -->
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+						<!-- <gv-form-label keyName="Choose Image" defaultName="Choose Image" :width="3"></gv-form-label>
+						<gv-form-input prop="chooseImgSrc" :width="5">
+                            <img :src="form.chooseImgSrc" alt="Choosed Image">
+						</gv-form-input>
+                        <gv-form-label keyName="Page Name" defaultName="Page name" :width="3"></gv-form-label>
+                        <gv-form-input prop="pageName" :width="5">
+                            <el-input size="mini" v-model="form.pageName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="Path Name" defaultName="Path Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="pathName" :width="5">
+                            <el-input size="mini" v-model="form.pathName"></el-input>
+                        </gv-form-input> -->
+                        <gv-form-label requires keyName="gCname" defaultName="Chinese Name" :width="3"></gv-form-label>
+						<gv-form-input prop="menuCname" :width="5">
+                            <el-input readonly size="mini" v-model="form.menuCname"></el-input>
+						</gv-form-input>
+                        <gv-form-label requires keyName="gZname" defaultName="English Name" :width="3"></gv-form-label>
+						<gv-form-input prop="menuEname" :width="5">
+                            <el-input readonly size="mini" v-model="form.menuEname"></el-input>
+						</gv-form-input>
+					</tr>
+                </table>
+                <template>
+                    <el-table :data="taskMenus" highlight-current-row border stripe>
+                        <!-- <el-table-column prop="taskMenuName" label="Task Menu Name">
+                        </el-table-column>
+                        <el-table-column prop="pathName" label="Path Name">
+                        </el-table-column>
+                        <el-table-column prop="pageName" label="Page Name">
+                        </el-table-column>
+                        <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="primary" @click="choose(scope.row)">{{ 'gBtnSelect' | translate('Select') }}</el-button>
+                            </template>
+                        </el-table-column> -->
+                        <el-table-column prop="menuCname" :label="'gCname' | translate('Chinese Name')">
+                        </el-table-column>
+                        <el-table-column prop="menuEname" :label="'gZname' | translate('English Name')">
+                        </el-table-column>
+                        <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="gv-btn-primary" type="primary" @click="choose(scope.row)">{{ 'gBtnSelect' | translate('Select') }}</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button class="gv-btn gv-save" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button class="gv-btn gv-warning" @click="onResetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button class="gv-btn gv-warning" @click="onCloseDialog()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            <el-form-item>
+        </div>
+    </el-form>
+</section>

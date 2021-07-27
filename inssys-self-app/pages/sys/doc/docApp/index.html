@@ -1,0 +1,19 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleDocScan' | translate('Document Scan')" name="1">
+		   <el-form :inline="true" class="table-line">
+		      <table class="tp-table" cellpadding="0" cellspacing="0" style="text-align: center">
+		         <tr>
+	               <gv-form-label keyName="sysDocScanPath" defaultName="Path of Sacn" :width="4"></gv-form-label>
+	               <gv-form-input :width="16">
+                      <el-input type="text" id="path"></el-input>
+                   </gv-form-input>
+		            <gv-form-input :width="4"> 
+                        <el-button size="mini" type="primary" @click="onHandleScan()" class="marf5">{{'gBtnFilesScan' | translate}}</el-button> 
+		            </gv-form-input> 
+		         </tr>
+		      </table>
+		   </el-form>
+        </el-collapse-item>
+    </el-collapse>
+</section>

@@ -1,0 +1,246 @@
+<section>
+  <gv-data-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <!--查询条件-->
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 账单接收人 -->
+        <gv-form-item key-name="Billreceiver" isThree="true" prop="correspCode">
+
+          <gv-select2 size="mini" filterable valid='1' clearable po-name="ggSupplierMsg" code-name="supplierCode"
+            label-name="supplierChineseName" label-name-ex="supplierCode" v-model="scope.search.correspCode">
+          </gv-select2>
+        </gv-form-item>
+        <!-- 单据类型 -->
+        <gv-form-item key-name="zbTypeDocument" isThree="true" prop="billType">
+          <gv-select v-model="scope.search.billType" size="mini" code-type="documentType" code-name="codeCode"
+            label-name="codeName"></gv-select>
+          <!-- <el-select v-model="scope.search.billType" filterable clearable @change="BillTypelistchange">
+            <el-option v-for="item in BillTypelist" :key="item.feetypeCode"
+              :label="item.financeCode+'-'+item.inwardInd+'-'+item.feetypeName"
+              :value="item.financeCode+'-'+item.inwardInd+'-'+item.feetypeName">
+            </el-option>
+          </el-select> -->
+        </gv-form-item>
+        <!-- 缴费截止日期 -->
+        <gv-form-item key-name="paymentDeadline" isThree="true" prop="dueDates">
+          <div style="display: flex">
+            <el-date-picker :disabled="isC" size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.dueDatesStart" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker :disabled="isC" size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.dueDatesEnd" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 业务号  -->
+        <gv-form-item key-name="workbenchAppVoBusinessId" isThree="true" prop="businessNo">
+          <el-select v-model="scope.search.businessNo" @change="BillTypelistchange" filterable clearable>
+            <el-option v-for="item in businessNolist" :key="item.businessNo" :label="item.businessNo"
+              :value="item.businessNo">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- 账单类型 -->
+
+        <gv-form-item key-name="zbBillType" isThree="true" prop="documentType">
+          <gv-select size="mini" code-type="BillingType" v-model="scope.search.documentType"
+            @row-select="changeschemeName2" code-name="codeCode"></gv-select>
+        </gv-form-item>
+
+        <!-- <gv-form-item key-name="zbBillType" isThree="true" prop="cedingPolicyNo">
+          <span @click="showDialog">弹窗</span>
+        </gv-form-item> -->
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500">{{ 'queryResult' | translate}}</span>
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="copy()">复制</el-button>
+    </template>
+  </gv-data-table>
+  <!--根据单号显示弹窗数据-->
+  <el-dialog :visible.sync="isShow" width="80%" class="DialogByWS" append-to-body>
+    <gv-form ref="scoreObj">
+      <gv-panel title="基础信息" style="margin: 0px 0px">
+        <gv-form :model="baseInfo">
+          <div class="gv-row" style="padding-top: 20px">
+            <!--机构-->
+            <gv-form-item key-name="company" prop="branch" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.branch}}</div>
+            </gv-form-item>
+            <!--登记号码-->
+            <gv-form-item key-name="登记号码" prop="registerNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.registerNo}}</div>
+            </gv-form-item>
+            <!--单据号-->
+            <gv-form-item key-name="documentNo" prop="billNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.billNo}}</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--期次-->
+            <gv-form-item key-name="period" prop="instalmentNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.instalmentNo}}</div>
+            </gv-form-item>
+            <!-- 期数 -->
+            <gv-form-item key-name="qs" prop="instalment" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.instalment}}</div>
+            </gv-form-item>
+            <!-- 账单类型 -->
+            <gv-form-item key-name="zbBillType" prop="documentType" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.documentTypeName}}</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--单据类型-->
+            <gv-form-item key-name="zbTypeDocument" prop="billType">
+              <div style="position:relative;top:3px;">{{baseInfo.billTypeName}}</div>
+            </gv-form-item>
+            <!--凭证号-->
+            <gv-form-item key-name="zbCertificatenumber" prop="voucherNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.voucherNo}}</div>
+            </gv-form-item>
+            <!--账单接收人-->
+            <gv-form-item key-name="Billreceiver" prop="correspondence" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.correspondence}}</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--业务号-->
+            <gv-form-item key-name="workbenchAppVoBusinessId" prop="businessNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.businessNo}}</div>
+            </gv-form-item>
+            <!--保单号-->
+            <gv-form-item key-name="policyNo" isThree="true" prop="policyNo">
+              <div style="position:relative;top:3px;">{{baseInfo.policyNo}}</div>
+            </gv-form-item>
+            <!--赔案号-->
+            <gv-form-item key-name="claimNo" prop="claimNo" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.claimNo}}</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--兑换率-->
+            <gv-form-item key-name="rateOfExchange" isThree="true" prop="rate">
+              <div style="position:relative;top:3px;">{{baseInfo.rate}}</div>
+            </gv-form-item>
+            <!--账单金额-->
+            <gv-form-item key-name="zbTbillamount" prop="amount" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.amount}}</div>
+            </gv-form-item>
+            <!--账单金额（HKD)-->
+            <gv-form-item key-name="Billamount(HKD)" prop="selfAmount" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.selfAmount}}</div>
+            </gv-form-item>
+          </div>
+          <!--???-->
+          <div class="gv-row">
+            <!--缴费截止日期-->
+            <gv-form-item key-name="推送日期" prop="dueDate" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.dueDate}}</div>
+            </gv-form-item>
+            <!--结算号-->
+            <gv-form-item key-name="结算号" prop="maintenancePeriodEnd" isThree="true">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+            <!--结算日期-->
+            <gv-form-item key-name="结算日期" prop="testingPeriodStart" isThree="true">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+          </div>
+          <!--???-->
+          <div class="gv-row">
+            <!--结算兑换率-->
+            <gv-form-item key-name="结算兑换率" isThree="true" prop="maintenancePeriodEnd">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+            <!--结算金额-->
+            <gv-form-item key-name="结算金额" prop="maintenancePeriodEnd" isThree="true">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+            <!--结算金额(HKD)-->
+            <gv-form-item key-name="Settlementamount(HKD)" prop="maintenancePeriodEnd" isThree="true">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--推送日期-->
+            <gv-form-item key-name="推送日期" prop="postedDate" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.postedDate}}</div>
+            </gv-form-item>
+            <!--推送财务状态-->
+            <gv-form-item key-name="Pushfinancialstatus" prop="postedStatus" isThree="true">
+              <div style="position:relative;top:3px;">{{baseInfo.postedStatus}}</div>
+            </gv-form-item>
+            <!--创建人-->
+            <gv-form-item key-name="founder" isThree="true" prop="createBy">
+              <div style="position:relative;top:3px;">{{baseInfo.createBy}}</div>
+            </gv-form-item>
+          </div>
+          <div class="gv-row">
+            <!--创建日期-->
+            <gv-form-item key-name="ggCodeEntryDate" prop="maintenancePeriodEnd" isThree="true">
+              <div style="position:relative;top:3px;">???</div>
+            </gv-form-item>
+          </div>
+        </gv-form>
+      </gv-panel>
+      <gv-panel title="实收实付明细" style="margin: 0px 0px">
+        <el-table :data="DueAndPay" style="width: 100%">
+          <!-- 费用类型 -->
+          <el-table-column prop="feeType" :label="'feeType' | translate('Fee type')">
+          </el-table-column>
+          <!-- 险种 -->
+          <el-table-column prop="riskCode" :label="'riskType' | translate">
+          </el-table-column>
+          <!-- 期次 period -->
+          <el-table-column prop="installmentNo" :label="'period' | translate"> </el-table-column>
+          <!-- 金额 payment-->
+          <el-table-column prop="premium" label="金额"> </el-table-column>
+          <!-- 收付款人代码 -->
+          <el-table-column prop="payeeCode" label="收付款人代码"> </el-table-column>
+          <!-- 收付款人名称 -->
+          <el-table-column prop="payee" label="收付款人名称">
+          </el-table-column>
+        </el-table>
+      </gv-panel>
+
+    </gv-form>
+
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--根据单据号显示弹窗保单数据-->
+  <el-dialog :visible.sync="isShow2" width="80%" class="DialogByWS" append-to-body>
+    <insure-app ref='insureapp' :policyMainId="policyMainId"></insure-app>
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow2=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--根据单据号显示弹窗赔案数据-->
+  <el-dialog :visible.sync="isShow3" width="80%" class="DialogByWS" append-to-body>
+    <settling-new-app ref='settlingnewapp' :policyMainId="policyMainId"></settling-new-app>
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow3=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</section>

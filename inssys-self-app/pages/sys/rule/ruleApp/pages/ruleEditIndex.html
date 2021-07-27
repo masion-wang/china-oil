@@ -1,0 +1,138 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" label-width="109px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'ruleEditData' | translate('Rule Edit Data')" name="1" class="table-line">
+                <table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="ruleCode" defaultName="Rule Code" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="code" :width="5">
+                           <el-input size="mini" :readonly="isReadonly" v-model="form.code"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ruleCodeDesc" defaultName="Rule Code Desc" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="codeDesc" :width="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.codeDesc"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ruleStatus" defaultName="Status" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" :disabled="isReadonly" optionsSet="0" codeType="Validind" v-model="form.validInd"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="validDateFactor" defaultName="Valid Date" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="validDateColumn">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.validDateColumn"></el-input>
+                        </gv-form-input>
+
+                        <td></td>
+                        <gv-form-input :width="5">
+                            <template>
+                              <el-checkbox v-model="formEngine">结果集维护在表单引擎中</el-checkbox>
+                            </template>
+                        </gv-form-input>
+
+                        <gv-form-label keyName="formEngineCode" defaultName="Form Engine Code" requires :width="3" v-show="formEngine"></gv-form-label>
+                        <gv-form-input prop="formEngineFactorCode" :width="5" v-show="formEngine">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.formEngineFactorCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label v-show="!formEngine"></gv-form-label>
+                        <gv-form-input v-show="!formEngine"></gv-form-input>
+                    </tr>
+                    <tr v-show="formEngine">
+                        <gv-form-label keyName="formEngineCode" defaultName="Form Engine Code" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="formEngineResultCode" :width="5" >
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.formEngineResultCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label colspan="4"></gv-form-label>
+                    </tr>
+                </table>
+            </el-collapse-item>
+            <!-- 规则因子列表 -->
+            <el-collapse-item :title="'ruleFactorData' | translate('Rule Factor List')" name="2">
+                <el-table :data="form.ggRuleFactorVos" border>
+                    <el-table-column :label="'factorCode'| translate('Factor Code')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleFactorVos.' + scope.$index + '.baseFactorId'">
+                                <el-select :disabled="isReadonly" v-model="scope.row.baseFactorId" @change="factorCodeChange(scope.$index)">
+                                    <el-option v-for="item in ruleBaseFactorList" :key="item.id" :label="item.factorCode" :value="item.id" ></el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="'factorDesc'| translate('Factor Desc')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleFactorVos.' + scope.$index + '.factorDesc'">
+                                <el-input size="mini" :readonly="true" v-model="scope.row.factorDesc"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="'ruleSort'| translate('Sort')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleFactorVos.' + scope.$index + '.factorOrder'">
+                                <el-input size="mini" :readonly="isReadonly" v-model="scope.row.factorOrder"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column :label="'gTitleOperation' | translate('Operation')" min-width="120">
+                        <template scope="scope">
+                            <el-button v-if="!isReadonly" size="mini" type="primary" icon="el-icon-minus" @click="onDeletes(scope.$index, form.ggRuleFactorVos)" class="marf5"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <div :span="20" class="toolbar-btn toolbar-pagination" v-if="!isReadonly">
+                    <el-button size="mini" type="primary" icon="el-icon-plus" @click="onAddRangeList()"></el-button>
+                </div>
+            </el-collapse-item>
+            <!--规则装配列表-->
+            <el-collapse-item :title="'ruleAssembleData' | translate('Rule Assemble List')" name="3">
+                <el-table :data="form.ggRuleAssembleVos" border>
+                    <!--枚举值-->
+                    <el-table-column :label="'ruleCode'| translate('Rule Code')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleAssembleVos.' + scope.$index + '.ruleAssembleId'">
+                               <el-select :disabled="isReadonly" v-model="scope.row.ruleAssembleId" @change="codeChange(scope.$index)">
+                                    <el-option v-for="item in ruleList" :key="item.id" :label="item.code" :value="item.id" ></el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="'ruleCodeDesc'| translate('Rule Code Desc')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleAssembleVos.' + scope.$index + '.codeDesc'">
+                                <el-input size="mini" :readonly="true" v-model="scope.row.codeDesc"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="'ruleSort'| translate('Sort')" width="250">
+                        <template scope="scope">
+                            <gv-form-input :prop="'ggRuleAssembleVos.' + scope.$index + '.ruleOrder'">
+                                <el-input size="mini" :readonly="isReadonly" v-model="scope.row.ruleOrder"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 删除按钮 -->
+                    <el-table-column :label="'gTitleOperation' | translate('Operation')" min-width="120">
+                        <template scope="scope">
+                            <el-button v-if="!isReadonly" size="mini" type="primary" icon="el-icon-minus" @click="onDeletes(scope.$index, form.ggRuleAssembleVos)" class="marf5"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <div :span="20" class="toolbar-btn toolbar-pagination" v-if="!isReadonly">
+                    <el-button size="mini" type="primary"  icon="el-icon-plus" @click="onAddEnumList"></el-button>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn">
+            <el-form-item>
+                <!--保存-->
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <!--清除-->
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <!--返回-->
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

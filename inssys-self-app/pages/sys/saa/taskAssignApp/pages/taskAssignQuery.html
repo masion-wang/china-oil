@@ -1,0 +1,30 @@
+<section>
+    <el-button style="display: none;" size="mini" type="primary" @click="onGetList()">{{ 'gBtnInquiry' | translate('Inquiry') }}</el-button>
+    <!--列表-->
+    <template>
+        <el-table :data="userList" highlight-current-row border stripe>
+            <el-table-column :label="'sysUserVoUserCode' | translate('userCode')" width="200" sortable prop="userCode">
+                <template slot-scope="scope">
+                    <span> {{scope.row.userCode}} </span>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'sysUserVoUserName' | translate('userName')" sortable prop="userName" width="200">
+                <template slot-scope="scope">
+                    <span> {{scope.row.userName}} </span>
+                </template>
+            </el-table-column>
+            <el-table-column :context="_self" :label="'gTitleOperation' | translate('Operation')" min-width="60">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary" @click="onSelect(scope.row)">{{ '' | translate('Select') }}
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

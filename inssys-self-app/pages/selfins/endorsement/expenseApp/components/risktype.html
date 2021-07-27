@@ -1,0 +1,1122 @@
+<div style="margin-left: 66%">
+  <el-button class="gv-btn gv-btn-primary" type="primary" @click="checkpolicy"
+    >重新生成标的</el-button
+  >
+  <el-button class="gv-btn gv-btn-primary" type="primary" @click="removeMulti"
+    >导出清单</el-button
+  >
+  <el-button class="gv-btn gv-btn-primary" type="primary" @click="checkpolicy"
+    >导入清单</el-button
+  >
+  <el-button class="gv-btn gv-btn-primary" type="primary" @click="removeMulti"
+    >历次批单</el-button
+  >
+</div>
+<div class="subCollapse">
+  <!-- 自保险种：CARD2 -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <el-table-column prop="policyNo" label="保单号"> </el-table-column>
+          <el-table-column prop="riskName" width="150" label="险种">
+          </el-table-column>
+          <el-table-column label="初步估损金额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column prop="time" label="初步估损金额备注">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="claimNo" label="赔案号" width="250">
+          </el-table-column>
+          <el-table-column prop="claimStatus" width="100" label="赔案状态">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 被保人 -->
+    <el-table-column label="被保人"> </el-table-column>
+    <!-- 工程名称 -->
+    <el-table-column label="工程名称"> </el-table-column>
+    <!-- 工程地址 -->
+    <el-table-column label="工程名称"> </el-table-column>
+    <!-- 原险种代码 -->
+    <el-table-column label="原险种代码"> </el-table-column>
+    <!-- 原险种名称 -->
+    <el-table-column label="原险种名称"> </el-table-column>
+    <!-- 原保单号 -->
+    <el-table-column label="原保单号"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：CARU -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 项目名称 -->
+    <el-table-column label="项目名称"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：EAS -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 被保人 -->
+    <el-table-column label="被保人"> </el-table-column>
+    <!-- 原险种代码 -->
+    <el-table-column label="原险种代码"> </el-table-column>
+    <!-- 原险种名称 -->
+    <el-table-column label="原险种名称"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：MAR -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 船舶名称 -->
+    <el-table-column label="船舶名称"> </el-table-column>
+    <!-- 船舶类型 -->
+    <el-table-column label="船舶类型"> </el-table-column>
+    <!-- 船籍 -->
+    <el-table-column label="船籍"> </el-table-column>
+    <!-- 载重吨位／重量 -->
+    <el-table-column label="载重吨位／重量"> </el-table-column>
+    <!-- 建造年份 -->
+    <el-table-column label="建造年份"> </el-table-column>
+    <!-- 航行区域 -->
+    <el-table-column label="航行区域"> </el-table-column>
+    <!-- 层 -->
+    <el-table-column label="层"> </el-table-column>
+    <!-- 属性 -->
+    <el-table-column label="属性"> </el-table-column>
+    <!-- 免赔 -->
+    <el-table-column label="免赔"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：ODE -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 油田 -->
+    <el-table-column label="油田"> </el-table-column>
+    <!-- 井名 -->
+    <el-table-column label="井名"> </el-table-column>
+    <!-- 井号 -->
+    <el-table-column label="井号"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：OEE -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 油田 -->
+    <el-table-column label="油田"> </el-table-column>
+    <!-- 井名 -->
+    <el-table-column label="井名"> </el-table-column>
+    <!-- 井号 -->
+    <el-table-column label="井号"> </el-table-column>
+    <!-- 井型 -->
+    <el-table-column label="井型"> </el-table-column>
+    <!-- 井深（米） -->
+    <el-table-column label="井深（米）"> </el-table-column>
+    <!-- 井深（英尺） -->
+    <el-table-column label="井深（英尺）"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：OOPU -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+    v-if="text"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 作业区 -->
+    <el-table-column label="作业区"> </el-table-column>
+    <!-- 油田 -->
+    <el-table-column label="油田"> </el-table-column>
+    <!-- 财产名称 -->
+    <el-table-column label="财产名称"> </el-table-column>
+    <!-- 财产类型 -->
+    <el-table-column label="财产类型"> </el-table-column>
+  </el-table>
+  <!-- 自保险种：OOPD -->
+  <el-table
+    class="centerTable"
+    style="padding-left: 10px"
+    :data="Subjectmatter"
+  >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table :data="props.row.gcClaimPolicyList" style="width: 100%">
+          <!-- 再保人 -->
+          <el-table-column prop="policyNo" label="再保人"> </el-table-column>
+          <!-- 分出比例 -->
+          <el-table-column prop="riskName" label="分出比例"> </el-table-column>
+          <!-- 分出保额 -->
+          <el-table-column label="分出保额">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini"
+                    code-type="Currency"
+                    v-model="scope.row.preliminaryLossCurrency"
+                    :disabled="isReadonly"
+                  ></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    :thou="true"
+                    v-model="scope.row.preliminaryLossAmount"
+                    num-len="2"
+                    :readonly="isReadonly"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出费率 -->
+          <el-table-column prop="claimNo" label="分出费率"> </el-table-column>
+          <!-- 年保费 -->
+          <el-table-column prop="claimStatus" label="年保费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 检验费 -->
+          <el-table-column prop="claimStatus" label="检验费">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus',
+              scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <!-- 分出净保费 -->
+          <el-table-column prop="time" label="分出净保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出佣金 -->
+          <el-table-column prop="time" label="分出佣金">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 分出总保费 -->
+          <el-table-column prop="time" label="分出总保费">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注1 -->
+          <el-table-column prop="time" label="备注1">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 备注2 -->
+          <el-table-column prop="time" label="备注2">
+            <template slot-scope="scope">
+              <el-input
+                type="textarea"
+                maxlength="2000"
+                :rows="1"
+                placeholder="备注"
+                v-model="scope.row.preliminaryLossRemark"
+                :disabled="isReadonly"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 标的序号 -->
+    <el-table-column type="index" width="90" label="标的序号">
+    </el-table-column>
+    <!-- 被保人 -->
+    <el-table-column label="被保人"> </el-table-column>
+    <!-- 原险种代码 -->
+    <el-table-column label="原险种代码"> </el-table-column>
+    <!-- 原险种名称 -->
+    <el-table-column label="原险种名称"> </el-table-column>
+    <!-- 原保单号 -->
+    <el-table-column label="原保单号"> </el-table-column>
+  </el-table>
+</div>

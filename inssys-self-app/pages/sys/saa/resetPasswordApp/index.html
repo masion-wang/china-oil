@@ -1,0 +1,34 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="sysUserVoFilters" :rules="rules" :model="sysUserVoFilters" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysUserVoOriginalPassword" defaultName="Original Password" :width="3" requires>
+                        </gv-form-label>
+                        <gv-form-input prop="originalPassword" :width="5">
+                            <el-input type="password" size="mini" v-model="sysUserVoFilters.originalPassword"></el-input>
+                        </gv-form-input>
+                         <gv-form-label keyName="sysUserVoNewPassword" defaultName="New Password" :width="3" requires></gv-form-label>
+                        <gv-form-input prop="newPassword" :width="5">
+                            <el-input type="password" size="mini" v-model="sysUserVoFilters.newPassword"></el-input>
+                        </gv-form-input>
+                         <gv-form-label keyName="sysUserVoConfirmNewPassword" defaultName="Confirm New Password" :width="3" requires>
+                         </gv-form-label>
+                        <gv-form-input prop="confirmNewPassword" :width="5">
+                            <el-input type="password" size="mini" v-model="sysUserVoFilters.confirmNewPassword">
+                            </el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onUpdate()">{{ 'gBtnUpdate' | translate('Update') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('sysUserVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+
+</section>

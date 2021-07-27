@@ -1,0 +1,59 @@
+.disbaseinfo {
+  margin-left: 0;
+  float: right;
+  width: 84%;
+}
+.baseinfoinfo {
+  margin-bottom: 5px;
+  width: 100% !important;
+}
+.baseinfoinfo .el-form-item__content {
+  margin-left: 0 !important;
+  width: 84%;
+}
+.insureAppTableByWS .cell {
+  height: 50px;
+}
+.centerTableByWS .cell {
+  margin-top: 10px;
+  line-height: 55px;
+  height: 55px;
+}
+.el-table .hidden-rowBYLDL {
+  display: none;
+}
+.setRowStyleBYLDL {
+  color: red;
+}
+.premiumInputByWS > input {
+  background-color: lightgreen !important;
+}
+.selecttagstexBYLDL .el-select__tags .el-tag .el-select__tags-text {
+  display: inline-block;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eltagBYLDL .el-select__tags .el-tag .el-tag__close {
+  top: -9px !important;
+}
+.zbpaginationBYLDL {
+  height: 20px;
+  background-color: #fff;
+}
+/* 表单验证错误提示 */
+/* .el-form-item__content {
+  position: relative;
+}
+.el-form-item__error {
+  position: absolute !important;
+  /* top: 80.5%; */
+/* } */
+/* .formTable .cell {
+  padding: 15px 5px;
+} */
+.settNewBYLDL > span {
+  font-size: 16px;
+}

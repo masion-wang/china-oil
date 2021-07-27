@@ -1,0 +1,101 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <!--工具条-->
+            <el-form class="table-line" :inline="true" ref="ruleVoFilters" :model="ruleVoFilters" :rules="rules" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr v-if="query.type != 'subValue'">
+                        <gv-form-label keyName="Business No" requires defaultName="Business No" :width="3"></gv-form-label>
+                        <gv-form-input prop="businessNo" :width="5">
+                            <el-input size="mini" v-model="ruleVoFilters.businessNo"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="Result" defaultName="Business No" :width="3"></gv-form-label>
+                        <gv-form-input prop="Result" :width="5">
+                            <el-input size="mini" v-model="ruleVoFilters.result"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="uwDate" defaultName="Uw Date" :width="3"></gv-form-label>
+                        <gv-form-input prop="uwDate" :width="5">
+                            <el-date-picker size="mini" style="width:47%" v-model="ruleVoFilters.greaterThanDate"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" type="date">
+                            </el-date-picker> -
+                            <el-date-picker size="mini" style="width:47%" v-model="ruleVoFilters.lowerThanDate"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd 23:59:59" type="date">
+                            </el-date-picker>
+                        </gv-form-input>
+                    </tr>
+
+                    <tr v-if="query.type != 'subValue'">
+                        <gv-form-label keyName="Quotation Status" requires defaultName="Quotation Status" :width="3"></gv-form-label>
+                        <gv-form-input prop="uwStatus" :width="5">
+                            <!-- <el-input size="mini" v-model="ruleVoFilters.uwStatus"></el-input> -->
+                            <gv-select size="mini" optionsSet="2" codeType="RuleLogStatus" v-model="ruleVoFilters.uwStatus"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr v-else>
+                        <gv-form-label keyName="Result" defaultName="Business No" :width="3"></gv-form-label>
+                        <gv-form-input prop="result" :width="5">
+                            <el-input size="mini" v-model="ruleVoFilters.result"></el-input>
+                        </gv-form-input>
+                        
+                        <gv-form-label keyName="uwDate" defaultName="Uw Date" :width="3"></gv-form-label>
+                        <gv-form-input prop="uwDate" :width="5">
+                            <el-date-picker size="mini" style="width:47%" v-model="ruleVoFilters.greaterThanDate"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" type="date">
+                            </el-date-picker> -
+                            <el-date-picker size="mini" style="width:47%" v-model="ruleVoFilters.lowerThanDate"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd 23:59:59" type="date">
+                            </el-date-picker>
+                        </gv-form-input>
+                        <gv-form-label :width="8"></gv-form-label>
+                    </tr>
+                    
+                    
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">
+                                {{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('ruleVoFilters')">
+                                {{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--列表-->
+    <template>
+
+        <el-table :data="tableData" :span-method="objectSpanMethod" border style="width: 100%; margin-top: 20px">
+            <el-table-column prop="content.businessNo" label="businessNo" width="180">
+            </el-table-column>
+            <el-table-column prop="content.result.ruleCode" label="ruleCode">
+            </el-table-column>
+            <el-table-column prop="content.result.factorName" label="factorName">
+            </el-table-column>
+            <el-table-column prop="content.result.factorValue" label="factorValue">
+            </el-table-column>
+            <el-table-column prop="content.result.resultName" label="resultName">
+            </el-table-column>
+            <el-table-column prop="content.result.resultValue" label="resultValue">
+            </el-table-column>
+            <el-table-column prop="content.uwDate" :formatter="formatDate" label="uwDate" width="150">
+            </el-table-column>
+            <el-table-column prop="content.result.hasSubValue" :formatter="formatStatus" label="hasSubValue" width="150">
+            </el-table-column>
+            <el-table-column v-if="query.type != 'subValue'" :label="'gTitleOperation' | translate('Operation')" width="150">
+                <template slot-scope="scope">
+                    <el-button v-if="scope.row.content.result.hasSubValue" size="mini" type="primary"
+                        @click="onHandleEdit(scope.row, 'subValue')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+            :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total"
+            :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

@@ -1,0 +1,72 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="formViewDetailVoFilters" :model="formViewDetailVoFilters" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="pubViewObjectVoViewObjectForm" defaultName="View Object Form" :width="3"></gv-form-label>
+                        <gv-form-input prop="form" :width="5">
+                            <el-input size="mini" v-model.trim="formViewDetailVoFilters.form"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectEleVoElementCode" defaultName="Element Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="elementCode" :width="5">
+                            <el-input size="mini" v-model.trim="formViewDetailVoFilters.elementCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectEleVoValidInd" defaultName="Valid Ind" :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="formViewDetailVoFilters.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('formViewDetailVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <!--列表-->
+    <template>
+        <el-table :data="formViewDetailList" highlight-current-row border stripe>
+            <el-table-column prop="form" sortable :label="'pubViewObjectVoViewObjectForm' | translate('View Object Form')">
+            </el-table-column>
+            <el-table-column prop="elementCode" sortable :label="'pubViewObjectEleVoElementCode' | translate('Element Code')">
+            </el-table-column>
+            <el-table-column prop="dataType" sortable :label="'pubViewObjectEleVoDataType' | translate('Data Type')">
+            </el-table-column>
+            <el-table-column prop="dataLength" sortable :label="'pubViewObjectEleVoDataLength' | translate('Data Length')">
+            </el-table-column>
+            <el-table-column prop="textType" sortable :label="'pubViewObjectEleVoTextType' | translate('Text Type')">
+            </el-table-column>
+            <el-table-column prop="validInd" :formatter="formatStatus" :label="'pubViewObjectEleVoValidInd' | translate('Valid Ind')"
+                width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd=='1'?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+
+                <template slot-scope="scope">
+
+                    <el-button v-if="scope.row.validInd == '1'" size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">
+                        {{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button v-else size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')" style="visibility:hidden">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!-- 分页 -->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

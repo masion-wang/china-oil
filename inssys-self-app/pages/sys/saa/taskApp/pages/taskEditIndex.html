@@ -1,0 +1,42 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1">
+            <gv-form :model="form" ref="form" :rules="rules">
+                <div class="gv-row">
+                    <gv-form-item key-name="sysMenuTaskCode" prop="taskCode" requires>
+                        <el-input maxlength="60" :readonly="query.type != 'add'" v-model="form.taskCode"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="gCname" prop="taskCName" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.taskCName"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="gTname" prop="taskTName" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.taskTName"></el-input>
+                    </gv-form-item>
+                </div>
+                <div class="gv-row">
+                    <gv-form-item key-name="gZname" prop="taskEName" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.taskEName"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="saaTaskVoTaskGroupName" prop="groupName" requires>
+                        <el-input maxlength="120" :readonly="isReadonly" v-model="form.groupName"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="saaTaskVoTaskUrl" prop="url" requires>
+                        <el-input maxlength="200" :readonly="isReadonly" v-model="form.url"></el-input>
+                    </gv-form-item>
+                </div>
+                <div class="gv-row">
+                    <gv-form-item key-name="gValidStatus" prop="validInd" requires>
+                        <gv-select optionsSet="2" codeType="Validind" :disabled="isReadonly" v-model="form.validInd"></gv-select>
+                    </gv-form-item>
+                    <gv-form-item :colspan="3">
+                    </gv-form-item>
+                </div>
+                <el-row class="toolbar-btn txt-center">
+                    <el-button type="primary" v-if="query.type!='view'" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                    <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                    <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+                </el-row>
+            </gv-form>
+        </el-collapse-item>
+    </el-collapse>
+</section>

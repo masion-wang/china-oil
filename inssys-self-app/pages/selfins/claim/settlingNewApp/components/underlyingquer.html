@@ -1,0 +1,151 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <template v-slot:search="scope">
+      <!-- CARD -->
+      <div class="gv-row" v-if='riskCode=="CARD"'>
+        <!-- 原保单号 -->
+        <gv-form-item
+          key-name="originalWarrantyNumber"
+          isThree="true"
+          prop="cedingPolicyNo"
+        >
+          <el-input v-model="scope.search.cedingPolicyNo" maxlength="21">
+          </el-input>
+        </gv-form-item>
+        <!-- 原险种 -->
+        <gv-form-item
+          key-name="originalInsurance"
+          isThree="true"
+          prop="periodRiskCode"
+        >
+          <gv-select
+            size="mini"
+            clearable
+            filterable
+            po-name="ggRisk"
+            code-name="riskCode"
+            label-name="riskCname"
+            v-model="scope.search.periodRiskCode"
+            :placeholder="'gSelect' | translate('Please Select')"
+          ></gv-select>
+        </gv-form-item>
+        <!-- 工程名称 -->
+        <gv-form-item key-name="engineeringName" isThree="true" prop="project">
+          <el-input v-model="scope.search.project" maxlength="200"> </el-input>
+        </gv-form-item>
+      </div>
+      <!-- CARU -->
+      <div class="gv-row" v-if='riskCode=="CARU"'>
+        <!-- 项目名称 -->
+        <gv-form-item key-name="entryName" isThree="true" prop="project">
+          <el-input v-model="scope.search.project" maxlength="200"> </el-input>
+        </gv-form-item>
+      </div>
+      <!-- EAS -->
+      <div class="gv-row" v-if='riskCode=="EAS"'>
+        <!-- 原单险种 -->
+        <gv-form-item
+          key-name="originalInsurance"
+          isThree="true"
+          prop="periodRiskCode"
+        >
+          <gv-select
+            size="mini"
+            po-name="ggRisk"
+            code-name="riskCode"
+            filterable
+            clearable
+            label-name="riskCname"
+            v-model="scope.search.periodRiskCode"
+            :placeholder="'gSelect' | translate('Please Select')"
+          ></gv-select>
+        </gv-form-item>
+        <!-- 被保人 -->
+        <gv-form-item key-name="insured" isThree="true" prop="insured">
+          <el-input v-model="scope.search.insured" maxlength="200"> </el-input>
+        </gv-form-item>
+      </div>
+      <!-- MAR -->
+      <div class="gv-row" v-if='riskCode=="MAR"'>
+        <!-- 船名 -->
+        <gv-form-item key-name="nameVessel" isThree="true" prop="vesselName">
+          <el-input v-model="scope.search.vesselName"> </el-input>
+        </gv-form-item>
+      </div>
+      <!-- ODE/OEE -->
+      <div class="gv-row" v-if='riskCode=="ODE"||riskCode=="OEE"'>
+        <!-- 油田 -->
+        <gv-form-item key-name="oilField" isThree="true" prop="oilField">
+          <el-input v-model="scope.search.oilField" maxlength="200"> </el-input>
+          <!-- 井名 -->
+        </gv-form-item>
+        <gv-form-item key-name="wellName" isThree="true" prop="wellName">
+          <el-input v-model="scope.search.wellName" maxlength="200"> </el-input>
+        </gv-form-item>
+        <!-- 井号 -->
+        <gv-form-item key-name="wellNo" isThree="true" prop="wellNo">
+          <el-input v-model="scope.search.wellNo" maxlength="50"> </el-input>
+        </gv-form-item>
+      </div>
+      <!-- OOPU -->
+      <div class="gv-row" v-if='riskCode=="OOPU"'>
+        <!-- 作业区 -->
+        <gv-form-item key-name="operationArea" isThree="true" prop="area">
+          <el-input v-model="scope.search.area" maxlength="200"> </el-input>
+        </gv-form-item>
+        <!-- 油田 -->
+        <gv-form-item key-name="oilField" isThree="true" prop="oilField">
+          <el-input v-model="scope.search.oilField" maxlength="200"> </el-input>
+        </gv-form-item>
+        <!-- 财产名称 -->
+        <gv-form-item
+          key-name="nameProperty"
+          isThree="true"
+          prop="propertyDetails"
+        >
+          <el-input v-model="scope.search.propertyDetails" maxlength="200">
+          </el-input>
+        </gv-form-item>
+      </div>
+      <!-- OOPD -->
+      <div class="gv-row" v-if='riskCode=="OOPD"'>
+        <!-- 原保单号 -->
+        <gv-form-item
+          key-name="originalWarrantyNumber"
+          isThree="true"
+          prop="cedingPolicyNo"
+        >
+          <el-input v-model="scope.search.cedingPolicyNo" maxlength="21">
+          </el-input>
+        </gv-form-item>
+        <!-- 原单险种 -->
+        <gv-form-item
+          key-name="originalInsurance"
+          isThree="true"
+          prop="periodRiskCode"
+        >
+          <gv-select
+            size="mini"
+            po-name="ggRisk"
+            clearable
+            filterable
+            code-name="riskCode"
+            label-name="riskCname"
+            v-model="scope.search.periodRiskCode"
+            :placeholder="'gSelect' | translate('Please Select')"
+          ></gv-select>
+        </gv-form-item>
+        <!-- 被保人 -->
+        <gv-form-item key-name="insured" isThree="true" prop="insured">
+          <el-input v-model="scope.search.insured" maxlength="200"> </el-input>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--工具条-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500"
+        >{{'Queryresults'|translate('Query results')}}</span
+      >
+    </template>
+  </gv-filter-table>
+</section>

@@ -1,0 +1,42 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+	    <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+		    <el-form :inline="true" ref="saaRoleVoFilters" :model="saaRoleVoFilters" class="table-line">
+		        <table class="tp-table" cellpadding="0" cellspacing="0">
+		        	<gv-form-label keyName="saaRoleVoRoleCode" defaultName="Role Code" requires :width="3"></gv-form-label>
+                    <gv-form-input prop="roleCode" :width="5">
+                        <el-input size="mini" :readonly="query.type != 'add'" v-model="saaRoleVoFilters.roleCode"></el-input>
+                    </gv-form-input>
+
+                    <gv-form-label :width="3"></gv-form-label>
+                    <gv-form-input :width="5"></gv-form-input>
+					<gv-form-label :width="3"></gv-form-label>
+                    <gv-form-input :width="5"></gv-form-input>
+		        </table>
+		    </el-form>
+	    </el-collapse-item>
+    </el-collapse>
+
+    <!--列表-->
+    <template>
+	    <el-table ref="multipleTable" @selection-change="handleSelectionChange" :data="saaRoleVoList" highlight-current-row border stripe>
+	    	<el-table-column type="selection" width="55">
+		    </el-table-column>
+			<el-table-column prop="userCode" :label="'sysUserVoUserCode' | translate('User Code')">
+            </el-table-column>
+            <el-table-column prop="userName" :label="'sysUserVoUserName' | translate('User Name')">
+            </el-table-column>
+    	</el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange()" @current-change="onHandleCurrentChange()" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnConfirm' | translate('Confirm') }}</el-button>
+        <el-button size="mini" @click="returnPage()">{{ 'gBtnReturn' | translate('Return') }}
+        </el-button>
+    </div>
+</section>

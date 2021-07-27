@@ -1,0 +1,1277 @@
+<!-- 保单基本信息组件 -->
+<div>
+  <gv-form :model="baseInfo" ref="baseInfo" :rules="rules">
+    <!-- 按钮 -->
+    <div style="margin-left: 30px; margin-top: 9px">
+      <!-- 打印 -->
+      <el-button class="gv-btn gv-btn-primary" type="primary" @click="Print"
+        >{{'gBtnPrint' | translate('Print')}}
+      </el-button>
+      <!-- 条款 -->
+      <el-button
+        class="gv-btn gv-btn-primary"
+        type="primary"
+        @click="clickClauses"
+        >{{'clause' | translate('clause')}}
+      </el-button>
+    </div>
+    <div class="gv-row" style="padding-top: 20px">
+      <!--自保投保单号-->
+      <gv-form-item
+        key-name="selfinsurancenumber"
+        prop="proposalNo"
+        isThree="true"
+      >
+        <el-input
+          v-model="baseInfo.proposalNo"
+          :readonly="isReadonly"
+          maxlength="21"
+        ></el-input>
+      </gv-form-item>
+      <!--自保保单号-->
+      <gv-form-item
+        key-name="selfinsurancepolicyno"
+        prop="policyNo"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          maxlength="21"
+          v-model="baseInfo.policyNo"
+        ></el-input>
+      </gv-form-item>
+      <!--新保/续保-->
+      <gv-form-item
+        key-name="newRenewedInsurance"
+        prop="renewalSign"
+        isThree="true"
+      >
+        <gv-select
+          :disabled="Submit || isExpense"
+          @change="changeContinueSign(baseInfo.continueSign)"
+          size="mini"
+          code-type="ResumeRemark"
+          v-model="baseInfo.renewalSign"
+          code-name="codeCode"
+          label-name="codeName"
+        >
+        </gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--上年保单号-->
+      <gv-form-item
+        key-name="policyLastYear"
+        prop="previousPolicyNo"
+        isThree="true"
+      >
+        <el-select
+          v-model="baseInfo.previousPolicyNo"
+          placeholder="请选择"
+          :disabled="Renewal||isExpense"
+        >
+          <el-option>22</el-option>
+        </el-select>
+      </gv-form-item>
+      <!-- 续保保单号 -->
+      <gv-form-item
+        key-name="renewalPolicyNo"
+        prop="renewalPolicyNo"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          maxlength="21"
+          v-model="baseInfo.renewalPolicyNo"
+        ></el-input>
+      </gv-form-item>
+      <!--批改生效日期-->
+      <gv-form-item
+        key-name="effectiveDateOfCorrection"
+        prop="endorsementEffectiveDate"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.endorsementEffectiveDate"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <!-- 如果是费用录入页面则不显示该行 -->
+    <div class="gv-row" v-if='$route.query.flag != "expense"'>
+      <!--批改类型-->
+      <gv-form-item
+        key-name="correctionType"
+        prop="endorsementType"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          maxlength="100"
+          v-model="baseInfo.endorsementType"
+        ></el-input>
+      </gv-form-item>
+      <!-- 冲销批单号 ???-->
+      <gv-form-item key-name="reverseLotNumber" isThree="true">
+        <el-input :readonly="isReadonly" maxlength="21"></el-input>
+      </gv-form-item>
+      <!-- 被冲销批单号 ???-->
+      <gv-form-item key-name="cancelledLotNumber" isThree="true">
+        <el-input :readonly="isReadonly" maxlength="21"></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--自保险种-->
+      <gv-form-item
+        key-name="selfInsurance"
+        prop="riskCode"
+        isThree="true"
+        requires
+      >
+      <gv-select :disabled="Submit || isExpense" @row-select="changeschemeName" size="mini" code-type="RiskType"
+      v-model="baseInfo.riskCode"  filterable label-name-ex="codeCode" code-name="codeCode"
+      label-name="codeName"></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--上游/下游-->
+      <gv-form-item
+        key-name="upstreamDownstream"
+        prop="upstreamSign"
+        isThree="true"
+        requires
+      >
+      <gv-select
+      :disabled="isReadonly"
+      size="mini"
+      code-type="StreamType"
+      maxlength="20"
+          v-model="baseInfo.upstreamSign"
+      code-name="codeCode"
+      label-name="codeName"
+    >
+      </gv-form-item>
+      <!--临分标志-->
+      <gv-form-item
+        key-name="temporaryMark"
+        prop="riInward"
+        isThree="true"
+        requires
+      >
+      <gv-select v-model="baseInfo.riInward" :disabled="isReadonly" size="mini" code-type="TemporaryMark"
+      code-name="codeCode" label-name="codeName"></gv-select>
+       </gv-form-item>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--保险起期-->
+      <gv-form-item
+        key-name="startingDateInsurance"
+        prop="effectiveDate"
+        isThree="true"
+        requires
+      >
+        <el-date-picker
+          v-model="baseInfo.effectiveDate"
+          type="date"
+          format="dd-MM-yyyy HH:mm:ss"
+          value-format="dd-MM-yyyy HH:mm:ss"
+          :placeholder="'nyr' | translate"
+          :readonly="Premium && Write"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--保险止期-->
+      <gv-form-item
+        key-name="expiryDateInsurance"
+        prop="expiryDate"
+        isThree="true"
+        format="dd-MM-yyyy HH:mm:ss"
+        value-format="dd-MM-yyyy HH:mm:ss"
+        requires
+      >
+        <el-date-picker
+          v-model="baseInfo.expiryDate"
+          type="date"
+          format="dd-MM-yyyy HH:mm:ss"
+          value-format="dd-MM-yyyy HH:mm:ss"
+          :placeholder="'nyr' | translate"
+          default-time="23:59:59"
+          :readonly="Premium && Write"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--承保年度-->
+      <gv-form-item
+        key-name="underwritingYear"
+        prop="underWritingYear"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          maxlength="4"
+          v-model="baseInfo.underWritingYear"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--维护期-->
+      <gv-form-item
+        key-name="maintenancePeriod"
+        prop="maintenancePeriodStart"
+        isThree="true"
+      >
+        <el-date-picker
+          v-model="baseInfo.maintenancePeriodStart"
+          style="width: auto"
+          type="datetimerange"
+          range-separator="-"
+          :start-placeholder="'startDate' | translate"
+          :end-placeholder="'endDate' | translate"
+          :disabled="Premium && Write"
+          format="dd-MM-yyyy HH:mm:ss"
+          value-format="dd-MM-yyyy HH:mm:ss"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--发现期-->
+      <gv-form-item
+        key-name="discoveryPeriod"
+        prop="maintenancePeriodEnd"
+        isThree="true"
+      >
+        <el-date-picker
+          v-model="baseInfo.maintenancePeriodEnd"
+          style="width: auto"
+          type="datetimerange"
+          range-separator="-"
+          :start-placeholder="'startDate' | translate"
+          :end-placeholder="'endDate' | translate"
+          :disabled="Premium && Write"
+          format="dd-MM-yyyy HH:mm:ss"
+          value-format="dd-MM-yyyy HH:mm:ss"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--测试期-->
+      <gv-form-item
+        key-name="testingPeriod"
+        prop="testingPeriodStart"
+        isThree="true"
+      >
+        <el-date-picker
+          v-model="baseInfo.testingPeriodStart"
+          style="width: auto"
+          type="datetimerange"
+          range-separator="-"
+          :start-placeholder="'startDate' | translate"
+          :end-placeholder="'endDate' | translate"
+          :disabled="Premium && Write"
+          format="dd-MM-yyyy HH:mm:ss"
+          value-format="dd-MM-yyyy HH:mm:ss"
+        >
+        </el-date-picker>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--保险期间描述-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span>{{'descriptionInsurancePeriod' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input
+            type="textarea"
+            :rows="2"
+            style="width: 100%"
+            v-model="baseInfo.insuranceDescription"
+            :disabled="isReadonly"
+            :placeholder="isReadonly? '' : 'pleaseInputInsurancePeriod' | translate"
+            maxlength="4000"
+          >
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="gv-row">
+      <!--经办人-->
+      <gv-form-item key-name="agent" isThree="true" requires prop='handle'>
+        <el-input :readonly="NonPremium && Write"  v-model="baseInfo.handle"></el-input>
+      </gv-form-item>
+      <!--承包人-->
+      <gv-form-item key-name="contractor" isThree="true" requires prop="underWriter">
+        <el-input :readonly="NonPremium && Write" v-model="baseInfo.underWriter"></el-input>
+      </gv-form-item>
+      <!--项目打印名称-->
+      <gv-form-item key-name="projectPrintName" isThree="true" requires prop="projectName">
+        <el-input :readonly="NonPremium && Write" maxlength="200" v-model="baseInfo.projectName"></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--被保人-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span style="color: red">* </span
+            ><span>{{'insured' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input
+            type="textarea"
+            :rows="2"
+            style="width: 100%"
+            v-model="baseInfo.insured"
+            :disabled="NonPremium && Write"
+            :placeholder="isReadonly? '' : 'pleaseInputRemark' | translate"
+            maxlength="2000"
+          >
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="gv-row">
+      <!--对方账单号-->
+      <gv-form-item key-name="oppositeAccountNo" prop="creditNo" isThree="true">
+        <el-input
+          :readonly="NonPremium && Write"
+          maxlength="200"
+          v-model="baseInfo.creditNo"
+        ></el-input>
+      </gv-form-item>
+      <!--原保险人-->
+      <gv-form-item
+        key-name="originalInsurer"
+        isThree="true"
+        prop="cedingCompany"
+      >
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.cedingCompany"
+        ></el-input>
+      </gv-form-item>
+      <!--原项目名称-->
+      <gv-form-item
+        key-name="originalProjectName"
+        isThree="true"
+        prop="cedingProjectName"
+      >
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.cedingProjectName"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--保单状态-->
+      <gv-form-item key-name="policyStatus" prop="policyStatus" isThree="true">
+        <gv-select
+          size="mini"
+          code-type="PolicyStatus"
+          v-model="baseInfo.policyStatus"
+          code-name="codeCode"
+          :disabled="true"
+        ></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建人-->
+      <gv-form-item key-name="founder" prop="createdBy" isThree="true">
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.createdBy"
+        ></el-input>
+      </gv-form-item>
+      <!--修改人-->
+      <gv-form-item key-name="modifiedBy" prop="amendedBy" isThree="true">
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.amendedBy"
+        ></el-input>
+      </gv-form-item>
+      <!--审核人-->
+      <gv-form-item key-name="reviewer" prop="approvedBy" isThree="true">
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.approvedBy"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建时间-->
+      <gv-form-item key-name="creationTime" prop="createdDate" isThree="true">
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.createdDate"
+        ></el-input>
+      </gv-form-item>
+      <!--修改时间-->
+      <gv-form-item
+        key-name="modificationTime"
+        prop="amendedDate"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.amendedDate"
+        ></el-input>
+      </gv-form-item>
+      <!--审核通过日期-->
+      <gv-form-item
+        key-name="dateOfApproval"
+        prop="approvedDate"
+        isThree="true"
+      >
+        <el-input
+          :readonly="isReadonly"
+          v-model="baseInfo.approvedDate"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--原单币别-->
+      <gv-form-item
+        key-name="originalCurrency"
+        isThree="true"
+        prop="cedingCurrency"
+      >
+        <gv-select
+          size="mini"
+          code-type="Currency"
+          v-model="baseInfo.cedingCurrency"
+          code-name="codeCode"
+          :disabled="true"
+        ></gv-select>
+      </gv-form-item>
+      <!--本单币别-->
+      <gv-form-item key-name="listCurrency" prop="currency" isThree="true">
+        <gv-select
+          size="mini"
+          code-type="Currency"
+          v-model="baseInfo.currency"
+          code-name="codeCode"
+          :disabled="Premium && Write || isReadonly"
+        ></gv-select>
+      </gv-form-item>
+      <!--兑换率-->
+      <gv-form-item
+        key-name="rateOfExchange"
+        prop="exchangeRate"
+        isThree="true"
+      >
+        <el-input
+          :readonly="Premium && Write"
+          v-model="baseInfo.exchangeRate"
+        ></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--增值税税率-->
+      <gv-form-item key-name="vatRate" prop="vatRate" isThree="true">
+        <el-col :span="22">
+          <el-input
+            v-model="baseInfo.vatRate"
+            :readonly="Premium && Write"
+          ></el-input>
+        </el-col>
+        <el-col :span="1" :offset="1" style="line-height: 32px"> % </el-col>
+      </gv-form-item>
+      <!--增值税附加税率-->
+      <gv-form-item
+        key-name="additionalVatRate"
+        prop="vatSurchargeRate"
+        isThree="true"
+      >
+        <el-col :span="22">
+          <el-input
+            v-model="baseInfo.vatSurchargeRate"
+            :readonly="Premium && Write"
+          ></el-input>
+        </el-col>
+        <el-col
+          :span="1"
+          :offset="1"
+          style="line-height: 32px"
+          style="line-height: 32px"
+        >
+          %
+        </el-col>
+      </gv-form-item>
+      <!--佣金率-->
+      <gv-form-item
+        key-name="commissionRate"
+        prop="commissionRate"
+        isThree="true"
+      >
+        <el-col :span="22">
+          <el-input
+            v-model="baseInfo.commissionRate"
+            @blur="blur"
+            :readonly="Premium && Write"
+          ></el-input>
+        </el-col>
+        <el-col :span="1" :offset="1"> % </el-col>
+      </gv-form-item>
+    </div>
+    <!--再保人信息-->
+    <gv-panel>
+      <el-row type="flex" justify="center">
+        <el-col>
+          <el-form>
+            <el-collapse v-model="activeNames">
+              <!-- 再保人信息 -->
+              <el-collapse-item
+                :title="'reinsurerInformation' | translate"
+                name="1"
+                style="margin-left: 10px"
+                class="subCollapse"
+              >
+                <div class="subCollapse">
+                  <el-table
+                    class="centerTable"
+                    style="padding-left: 10px"
+                    :data="tableData"
+                    :header-cell-class-name="must"
+                  >
+                    <!-- 再保人 -->
+                    <el-table-column
+                      :label="'reinsurer' | translate"
+                      prop="reinsurer"
+                      width="200px"
+                    >
+                      <template slot-scope="scope">
+                        <el-input
+                          v-model="scope.row.reinsurer"
+                          :readonly="isReadonly"
+                        >
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <!-- 转分出比例 -->
+                    <el-table-column
+                      :label="'transferOutRatio' | translate"
+                      prop="riShare"
+                      width="140px"
+                    >
+                      <template slot-scope="scope">
+                        <el-col :span="23">
+                          <el-input
+                            v-model="scope.row.riShare"
+                            type="number"
+                            :readonly="isReadonly"
+                            num-len="6"
+                            maxlength="9"
+                          >
+                          </el-input>
+                        </el-col>
+                        <el-col :span="1" style="line-height: 32px"> % </el-col>
+                      </template>
+                    </el-table-column>
+                    <!-- 转分出手续费比例 -->
+                    <el-table-column
+                      :label="'proportionOTransferOutServiceCharge' | translate"
+                      prop="overrideRate"
+                      width="140px"
+                    >
+                      <template slot-scope="scope">
+                        <el-col :span="23">
+                          <el-input
+                            v-model="scope.row.overrideRate"
+                            :readonly="Premium && Write"
+                            @blur="blur"
+                            num-len="6"
+                            maxlength="9"
+                          >
+                          </el-input>
+                        </el-col>
+                        <el-col :span="1" style="line-height: 32px"> % </el-col>
+                      </template>
+                    </el-table-column>
+                    <!-- 再保方保单号 -->
+                    <el-table-column
+                      :label="'ReinsurancePolicyNumber' | translate"
+                      prop="reinsurancePolicyNo"
+                      width="250px"
+                    >
+                      <template slot-scope="scope">
+                        <el-input
+                          v-model="scope.row.reinsurancePolicyNo"
+                          :readonly="Premium && Write"
+                          maxlength="200"
+                        >
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <!-- 再保方账单号 -->
+                    <el-table-column
+                      :label="'Reguaranteethebill' | translate"
+                      prop="reinsuranceDebitCreditNo"
+                      width="250px"
+                    >
+                      <template slot-scope="scope">
+                        <el-input
+                          v-model="scope.row.reinsuranceDebitCreditNo"
+                          :readonly="Premium && Write"
+                          maxlength="200"
+                        >
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <!-- 操作 -->
+                    <el-table-column
+                      :label="'gTitleOperation' | translate"
+                      width="200px"
+                    >
+                      <template slot-scope="scope">
+                        <div>
+                          <!-- 条款 -->
+                          <el-button
+                            @click="selectCo(scope.row, scope.row.key)"
+                            class="gv-btn-primary"
+                            type="primary"
+                            size="mini"
+                            @click="clickClauses(scope.row)"
+                          >
+                            {{'clause' | translate}}</el-button
+                          >
+                          <!--删除-->
+                          <!-- <el-button size="mini" style="margin-left:5px;" class="gv-btn-xs"
+                            @click="remove(scope.$index,'tableData')">-</el-button> -->
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <!-- <el-button size="mini" style="margin-left:10px;" type="primary"
+                    class="gv-btn gv-btn-primary gv-btn-xs" @click="addtabledata()" type="primary">+</el-button> -->
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </el-form>
+        </el-col>
+      </el-row>
+    </gv-panel>
+    <!-- 已选原保单  已绑字段-->
+    <div style="margin-top: 20px">
+      <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+        <img
+          class="ia-im-collapseTitle"
+          src="../../../dist/img/zongbaofei.png"
+          style="margin-left: 40px"
+        />
+        <span style="font-size: 14px; font-weight: 500">
+          {{'originalPolicySelected' | translate}}</span
+        >
+        <i style="float: right; margin-right: 45px">
+          <!-- 新增 -->
+          <el-button
+            class="gv-btn gv-btn-primary"
+            type="primary"
+            @click="checkpolicy"
+            v-if="!Premium"
+            :readonly="Submit"
+            >{{'gBtnCreate' | translate}}</el-button
+          >
+          <!-- 删除 -->
+          <el-button
+            class="gv-btn gv-btn-primary"
+            type="primary"
+            @click="removeMulti"
+            v-if="isAdd"
+            :readonly="Submit"
+          >
+            {{'gBtnDelete' | translate}}</el-button
+          >
+        </i>
+      </div>
+      <div class="subCollapse">
+        <el-table
+          :data="choscedta"
+          @selection-change="handleSelectionChange"
+          class="centerTable"
+        >
+        <!-- 多选框，如果是费用录入页面多选框不显示 -->
+          <el-table-column type="selection" width="55" v-if='$route.query.flag != "expense"'> </el-table-column>
+          <!-- 原保单号 -->
+          <el-table-column
+            :label="'originalWarrantyNumber' | translate"
+            prop="cedingPolicyNo"
+          />
+          <!-- 原险种 -->
+          <el-table-column
+            :label="'originalInsurance' | translate"
+            prop="cedingRiskName"
+          />
+          <!-- 币别 -->
+          <el-table-column :label="'currency' | translate" prop="currency">
+            <!-- <template slot-scope="scope"
+              >{{Vue.gvUtil.translationData('Currency', scope.row.currency)}}
+            </template> -->
+          </el-table-column>
+          <!-- 共保比例 -->
+          <el-table-column
+            :label="'coInsuranceRatio' | translate"
+            prop="coinsuranceRate"
+          />
+          <!-- 自保比例 -->
+          <el-table-column
+            :label="'selfInsuranceRatio' | translate"
+            prop="selfInsuranceRate"
+          />
+          <!-- 主共/从共 -->
+          <el-table-column
+            :label="'principalSubordinate' | translate"
+            prop="coinsuranceType"
+          />
+          <!-- 自保是否同共保方分摊 -->
+          <el-table-column
+            :label="'whetherSelfInsurance' | translate"
+            prop="isShare"
+          />
+          <!-- 批改类型  ???-->
+          <el-table-column
+            :label="'correctionType' | translate"
+            v-if="!Premium || !NonPremium"
+          >
+            <el-input :readonly="Premium && Write"></el-input>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+    <!--  标的详情  -->
+    <div style="margin-top: 20px">
+      <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+        <img
+          class="ia-im-collapseTitle"
+          src="../../../dist/img/zongbaofei.png"
+          style="margin-left: 40px"
+        />
+        <span style="font-size: 14px; font-weight: 500"
+          >{{'detailsMatter' | translate}}</span
+        >
+        <div
+          style="position: absolute; left: 7%; top: 0; z-index: 9"
+          v-if="!isExpense"
+        >
+          <!-- 根据不同的自保险种显示不同的按钮 -->
+          <!-- 重新生成标的 -->
+          <el-button
+            class="gv-btn gv-btn-primary"
+            type="primary"
+            v-if="NonPremium && riskCode!='EAS' && riskCode!='MAR' && riskCode!='OOPU'"
+          >
+            {{'regenerateTarget' | translate}}</el-button
+          >
+          <!-- 导出清单 -->
+          <el-button
+            class="gv-btn gv-btn-primary"
+            type="primary"
+            v-if="NonPremium && riskCode!='EAS' && riskCode!='MAR' && riskCode!='OOPU'"
+            >{{'exportManifest' | translate}}
+          </el-button>
+          <!-- 导入清单 -->
+          <el-button
+            class="gv-btn gv-btn-primary"
+            type="primary"
+            v-if="NonPremium && riskCode!='EAS' && riskCode!='MAR' && riskCode!='OOPU'"
+            >{{'importManifest' | translate}}
+          </el-button>
+          <!-- 历次批单 -->
+          <el-button class="gv-btn gv-btn-primary" type="primary"
+            >{{'previousEndorsements' | translate}}</el-button
+          >
+        </div>
+      </div>
+      <div class="subCollapse">
+        <el-form :model="matterTableForm" ref="matterTableForm">
+          <el-table
+            class="centerTable"
+            style="padding-left: 10px"
+            :data="matterTableForm.recognizeeTableList"
+          >
+            <!-- 扩展表格 -->
+            <el-table-column type="expand">
+              <template slot-scope="expand">
+                <!-- 再保人 -->
+                <el-table
+                  :data="matterTableForm.reinsurerTableList"
+                  style="width: 100%"
+                  @cell-click="handle"
+                >
+                  <el-table-column
+                    v-for="(item,index) in matterTableForm.reinsurerTableLabel"
+                    :prop="item.prop"
+                    :label="item.label"
+                    :key="item.index"
+                  >
+                    <template slot-scope="scope">
+                      <!-- :prop="'reinsurerTableLabel.' + index + '.prop'" -->
+                      <el-form-item
+                      :prop="'reinsurerTableLabel.' + index + '.prop'"
+                        :rules="item.rule"
+                      >
+                        <gv-input
+                          v-model="scope.row[item.prop]"
+                          :type="item.type"
+                          :readonly="Premium"
+                          :maxlength="item.maxlength"
+                          :num-len="item.numLen"
+                        >
+                        </gv-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+            <!-- 标的序号 -->
+            <el-table-column
+              type="index"
+              width="90"
+              :label="'serialNumber' | translate"
+              prop="itemNo"
+            >
+            </el-table-column>
+            <el-table-column
+              v-for="(item,index) in matterTableForm.recognizeeTableLabel"
+              :prop="item.prop"
+              :label="item.label"
+              :key="item.index"
+              v-if="item.code.indexOf(baseInfo.riskCode)!=-1 ||item.code=='common'"
+            >
+              <template slot-scope="scope">
+                <!--  :prop="'recognizeeTableList.'+ scope.$index + '.' + item.prop" -->
+                <el-form-item
+                :prop="'recognizeeTableLabel.' + index + '.prop'"
+                  :rules="item.rule"
+                >
+                  <gv-input
+                    v-model="scope.row[item.prop]"
+                    :type="item.type"
+                    :readonly="Premium"
+                    :maxlength="item.maxlength"
+                    :num-len="item.numLen"
+                  >
+                  </gv-input>
+                </el-form-item>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form>
+      </div>
+    </div>
+    <!-- 分期信息 -->
+    <div style="margin-top: 20px">
+      <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+        <img
+          class="ia-im-collapseTitle"
+          src="../../../dist/img/zongbaofei.png"
+          style="margin-left: 40px"
+        />
+        <span style="font-size: 14px; font-weight: 500"
+          >{{'stagingInformation' | translate}}</span
+        >
+      </div>
+      <div class="subCollapse">
+        <!-- 费用总计 -->
+        <el-form model="guInstallmentRiVo" style="margin-top: 20px">
+          <div class="gv-row">
+            <!--自保总保额-->
+            <gv-form-item key-name="totalAmountInsurance" isThree="true">
+              <el-input v-model="guInstallmentRiVo.totalAmount" disabled></el-input>
+            </gv-form-item>
+            <!--自保总保费-->
+            <gv-form-item key-name="totalSelfInsurancePremium" isThree="true">
+              <el-input v-model="guInstallmentRiVo.totalPremium" disabled></el-input>
+            </gv-form-item>
+            <!--保费变化量-->
+            <gv-form-item key-name="changePremium" isThree="true">
+              <el-input v-model="guInstallmentRiVo.totalDue" disabled></el-input>
+            </gv-form-item>
+          </div>
+        </el-form>
+      </div>
+      <!-- 分期信息 -->
+      <el-form :model="stagesTableForm" ref="stagesTableForm">
+        <el-table
+          class="centerTable"
+          style="padding-left: 10px"
+          :data="stagesTableForm.stagesTableList"
+          stripe
+        >
+          <el-table-column
+            v-for="(item,index) in stagesTableForm.stagesTableLabel"
+            :prop="item.prop"
+            :label="item.label"
+            :key="item.index"
+          >
+            <template slot-scope="scope">
+              <!-- 不带百分比单位的 -->
+              <el-form-item
+                v-if="!item.percentage"
+                :prop="'stagesTableList.'+ scope.$index + '.' + item.prop"
+                :rules="item.rule"
+              >
+                <!-- 非日期输入框 -->
+                <gv-input
+                  v-if="item.type!='date'"
+                  v-model="scope.row[item.prop]"
+                  :type="item.type"
+                  :readonly="!item.readonly ||isExpense"
+                  :maxlength="item.maxlength"
+                  :num-len="item.numLen"
+                >
+                </gv-input>
+                <!-- 日期输入框 -->
+                <el-date-picker
+                  v-if="item.type=='date'"
+                  v-model="scope.row[item.prop]"
+                  type="date"
+                  :readonly="!item.readonly ||isExpense"
+                  :placeholder="'selectDate' | translate"
+                  format="dd-MM-yyyy "
+                  value-format="dd-MM-yyyy"
+                ></el-date-picker>
+              </el-form-item>
+              <!-- 带百分比单位的 -->
+              <el-form-item v-if="item.percentage">
+                <el-col :span="23">
+                  <gv-input
+                    v-model="scope.row[item.prop]"
+                    :type="item.type"
+                    :readonly="!item.readonly ||isExpense"
+                    :maxlength="item.maxlength"
+                    :num-len="item.numLen"
+                  >
+                  </gv-input>
+                </el-col>
+                <el-col :span="1" style="line-height: 32px"> % </el-col>
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <!-- 操作 -->
+          <el-table-column
+            :label="'gTitleOperation' | translate"
+            width="200px"
+            v-if="!isExpense"
+          >
+            <template slot-scope="scope">
+              <!--删除-->
+              <el-button
+                type="primary"
+                icon="el-icon-minus"
+                class="gv-btn-warning"
+                :readonly="Submit"
+                @click="remove(scope.$index,'stagesTable')"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+    
+      <div class="toolbar-btn" v-if="!isExpense">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          class="gv-btn-primary"
+          :readonly="Submit"
+          @click="addtabledata()"
+        />
+        <!-- 分期计算按钮 -->
+        <el-button
+          type="primary"
+          class="gv-btn-primary"
+          :readonly="Submit"
+          @click="Cal()"
+        >
+          {{'calculationByStages' | translate}}
+        </el-button>
+      </div>
+      <!-- 分期-->
+      <el-table
+        class="centerTable"
+        style="padding-left: 10px; margin-top: 20px"
+        :data="Subjectmatter"
+        stripe
+      >
+        <!-- 分期信息中的再保人 -->
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <!-- <el-table :data="props.row.gcClaimPolicyList" style="width: 100%"> -->
+            <el-table
+              class="centerTable"
+              style="padding-left: 10px"
+              :data="stagesTableForm.expandstagesTableList"
+              stripe
+            >
+              <el-table-column
+                
+                v-for="(item,index) in stagesTableForm.stagesTableLabel"
+                :prop="item.prop"
+                :label="item.label"
+                :key="item.index"
+              >
+                <template slot-scope="scope">
+                  <!-- 不带百分比单位的 -->
+                  <el-form-item
+                    v-if="!item.percentage"
+                    :prop="'stagesTableList.'+ scope.$index + '.' + item.prop"
+                    :rules="item.rule"
+                  >
+                    <!-- 非日期输入框 -->
+                    <gv-input
+                      v-if="item.type!='date'"
+                      v-model="scope.row[item.prop]"
+                      :type="item.type"
+                      :readonly="!item.readonly||isExpense"
+                      :maxlength="item.maxlength"
+                      :num-len="item.numLen"
+                    >
+                    </gv-input>
+                    <!-- 日期输入框 -->
+                    <el-date-picker
+                      format="dd-MM-yyyy"
+                      value-format="dd-MM-yyyy"
+                      v-if="item.type=='date'"
+                      v-model="scope.row[item.prop]"
+                      type="date"
+                      :readonly="!item.readonly||isExpense"
+                      :placeholder="'selectDate' | translate"
+                    ></el-date-picker>
+                  </el-form-item>
+                  <!-- 带百分比单位的 -->
+                  <el-form-item v-if="item.percentage">
+                    <el-col :span="23">
+                      <gv-input
+                        v-model="scope.row[item.prop]"
+                        :type="item.type"
+                        :readonly="!item.readonly||isExpense"
+                        :maxlength="item.maxlength"
+                        :num-len="item.numLen"
+                      >
+                      </gv-input>
+                    </el-col>
+                    <el-col :span="1" style="line-height: 32px"> % </el-col>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <!-- 操作 -->
+              <el-table-column
+                :label="'gTitleOperation' | translate"
+                width="200px"
+                v-if="!isExpense"
+              >
+                <template slot-scope="scope">
+                  <!--删除-->
+                  <el-button
+                    type="primary"
+                    icon="el-icon-minus"
+                    class="gv-btn-warning"
+                    :readonly="Submit||isExpense"
+                    @click="remove(scope.$index,'tableData')"
+                  ></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-for="(item,index) in stagesTableForm.reinsurerTableLabel"
+          :prop="item.prop"
+          :label="item.label"
+          :key="item.index"
+        >
+          <template slot-scope="scope">
+            <!-- 不带币种 -->
+             <!--   :prop="'reinsurerTableList.'+ scope.$index + '.' + item.prop" -->
+            <el-form-item
+              v-if="!item.currency && !item.percentage"
+            
+              :rules="item.rule"
+            >
+              <gv-input
+                v-model="scope.row[item.prop]"
+                :type="item.type"
+                :readonly="item.readonly ||isExpense"
+                :maxlength="item.maxlength"
+                :num-len="item.numLen"
+              >
+              </gv-input>
+            </el-form-item>
+            <!-- 带币种    v-model="scope.row[item.prop]"-->
+            <el-form-item v-if="item.currency"
+         >
+              <el-row>
+                <el-col :span="10">
+                  <gv-select
+                    size="mini":type="item.type"
+                    code-type="Currency"
+                    v-model="scope.row[item.val]"
+                    :disabled="item.readonly || isExpense || expense"
+                  >
+                  </gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input
+                    class="gv-input"
+                    v-model="scope.row[item.prop]"
+                    :type="item.type"
+                    :readonly="item.readonly || isExpense"
+                    :maxlength="item.maxlength"
+                    :num-len="item.numLen"
+                  ></gv-input>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <!-- 带百分比单位的 -->
+            <el-form-item v-if="item.percentage">
+              <el-col :span="23">
+                <gv-input
+                  v-model="scope.row[item.prop]"
+                  :type="item.type"
+                  :readonly="!item.readonly||isExpense"
+                  :maxlength="item.maxlength"
+                  :num-len="item.numLen"
+                >
+                </gv-input>
+              </el-col>
+              <el-col :span="1" style="line-height: 32px"> % </el-col>
+            </el-form-item>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-form>
+    </div>
+    <!-- 批改文本 -->
+    <div style="margin-top: 20px" v-if="!isExpense">
+      <div class="endorsementtitle el-collapse-item__header noendorsementtitle">
+        {{'correctingText' | translate}}
+      </div>
+      <!--批改文本-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span>{{'correctingText' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input
+            type="textarea"
+            :rows="2"
+            style="width: 100%"
+            v-model="baseInfo.durationDescript"
+            :readonly="Cancellation"
+            :placeholder="isReadonly? '' : ('pleaseInputInsurancePeriod' | translate)"
+            maxlength="4000"
+          >
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+  <!-- 条款 -->
+  <el-dialog
+    append-to-body
+    :title="'clause' | translate"
+    :visible.sync="dialogTableVisible"
+    width="50%"
+    :close-on-click-modal="false"
+  >
+    <el-table :data="Clausesdata">
+      <el-table-column type="index" width="50" :label="'gNumber' | translate" />
+      <!-- 条款名称 -->
+      <el-table-column prop="clauseName" :label="'clauseName' | translate">
+        <template  slot-scope="scope">
+          <el-input :readonly="NonPremium && Write" v-model='scope.row.clauseName'></el-input>
+        </template>
+      </el-table-column>
+      <!-- 条款内容 -->
+      <el-table-column
+      prop="clauseContent"
+        :label="'termsAndConditions' | translate"
+      >
+        <template slot-scope="scope">
+          <el-input :readonly="NonPremium && Write"  v-model='scope.row.clauseContent'></el-input>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 保存或关闭按钮 -->
+    <div slot="footer" class="dialog-footer">
+      <el-button
+        v-if="NonPremium && Write"
+        class="gv-btn gv-btn-primary"
+        type="primary"
+        @click="dialogTableVisible=false"
+      >
+        {{'gBtnClose' | translate}}</el-button
+      >
+      <el-button
+        v-else
+        class="gv-btn gv-btn-primary"
+        type="primary"
+        @click="dialogTableVisible=false"
+      >
+        {{'gBtnSave' | translate}}</el-button
+      >
+    </div>
+  </el-dialog>
+  <!-- 打印 -->
+  <el-dialog
+  append-to-body
+    :title="'gBtnPrint' | translate"
+    :visible.sync="printTableVisible"
+    width="50%"
+    :close-on-click-modal="false"
+  >
+    <el-button
+      class="gv-btn gv-btn-primary"
+      type="primary"
+      @click="checkpolicy"
+      style="margin-top: -20px"
+    >
+      {{'importOfTerms' | translate}}
+    </el-button>
+    <el-table :data="printsdata">
+      <el-table-column type="selection" width="55"> </el-table-column>
+      <!-- 单证名称 -->
+      <el-table-column
+        prop="name"
+        :label="'nameDocument' | translate"
+      ></el-table-column>
+      <!-- 单证类型 -->
+      <el-table-column
+        prop="address"
+        :label="'documentType' | translate"
+      ></el-table-column>
+      <!-- 单证号码 -->
+      <el-table-column
+        prop="address"
+        :label="'documentNumber' | translate"
+      ></el-table-column>
+      <!-- 语种 -->
+      <el-table-column
+        prop="address"
+        :label="'languages' | translate"
+      ></el-table-column>
+    </el-table>
+    <div slot="footer" class="dialog-footer">
+      <!-- 预览 -->
+      <el-button class="gv-btn gv-btn-primary" type="primary"
+        >{{'preview' | translate}}</el-button
+      >
+      <!-- 打印 -->
+      <el-button class="gv-btn gv-btn-primary" type="primary"
+      @click='getprint'
+        >{{'gBtnPrint' | translate}}</el-button
+      >
+      <!-- 下载PDF -->
+      <el-button class="gv-btn gv-btn-primary" type="primary"
+        >{{'downloadPDF' | translate}}</el-button
+      >
+      <!-- 发送邮件 -->
+      <el-button class="gv-btn gv-btn-primary" type="primary"
+        >{{'sendMail' | translate}}</el-button
+      >
+    </div>
+  </el-dialog>
+</div>

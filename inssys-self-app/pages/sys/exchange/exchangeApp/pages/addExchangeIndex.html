@@ -1,0 +1,39 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleAddAata' | translate('Add data')" name="1">
+            <!--工具条-->
+            <el-form :inline="true" ref="exchangeVoFilters" :rules="rules" :model="exchangeVoFilters" class="table-line">
+                <table  cellpadding="0" cellspacing="0" class="tp-table">
+                    <tr>
+                        <gv-form-label  keyName="receivablePayableVoARCCY" defaultName="Currency" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="currencyCode">
+                            <gv-select size="mini"  options-set="0" po-name="ggCurrency" code-name="currencyCode" label-name="currencyCode" label-name-ex="currencyName" :filterable="true" v-model.trim="exchangeVoFilters.currencyCode"></gv-select>
+                        </gv-form-input>
+                         <gv-form-label keyName="validDateFactor"  defaultName="Valid Date" :width="3"></gv-form-label>
+                         <gv-form-input :width="5" prop="validDate">
+                            <!-- <el-date-picker size="mini"  v-model="exchangeVoFilters.time" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker> -->
+                            <el-date-picker size="mini" v-model="exchangeVoFilters.validDate"
+                              type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss">
+                            </el-date-picker>
+                        </gv-form-input>
+                        <gv-form-label keyName="receivablePayableVoExchangeRate" defaultName="Exchange Rate" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="exrate">
+                            <gv-input size="mini" :thou="true" pattern-key="Zero" maxlength="10" v-model="exchangeVoFilters.exrate" num-len="6"></gv-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-input colspan="6" align="center">
+                            <el-button size="mini" :disabled="isPreview" type="primary" @click="onExchangeAdd()">{{ 'gBtnAdd' | translate('add') }}</el-button>
+                            <el-button size="mini" @click="onHandleReturn()">
+                            {{ 'gBtnClose' | translate('Close') }}
+                            </el-button>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+
+
+
+</section>

@@ -1,0 +1,174 @@
+<!-- 保单录入页面 -->
+<section>
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="policyForm" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 基础信息 -->
+                <el-collapse-item id="baseInfo" name="baseInfo" :title="'gTitleBasics' | translate('Basic Data')">
+                  <base-info ref="baseInfo" :inputName="delbackunderlying" :vo="baseInfo" @addunderlying="parentFn"
+                    @OriginalClaim="OriginalClaim" @inquiryD="inquiryD" @gsassessmentaudit="gsassessmentaudit">
+                  </base-info>
+                </el-collapse-item>
+                <!-- 重开信息 -->
+                <el-collapse-item id="remarkInfo" name="remarkInfo"
+                  :title="'reopenInfo' | translate('List of documents')"
+                  v-if='this.$route.query.pageType == "task" || this.$route.query.pageType == "back"'>
+                  <!-- 重开信息 -->
+                  <reopen-info ref="reopenInfo" :vo="reopenInfo" type="edit" :isReadonly="isReadonly"></reopen-info>
+                </el-collapse-item>
+                <!-- 注销/恢复信息  -->
+                <el-collapse-item id="remarkInfo" name="cancel" :title="'cancelRecoveryInfo' | translate"
+                  v-if='this.$route.query.pageType == "task" || this.$route.query.pageType == "back"'>
+                  <!-- 注销/恢复信息 -->
+                  <cancel-recovery ref="cancelRecovery" :isReadonly="isReadonly" :vo="cancelRecovery"></cancel-recovery>
+                </el-collapse-item>
+                <!-- 文档资料 -->
+                <el-collapse-item v-if='this.$route.query.pageType == "task"' id="docListInfo" name="docListInfo"
+                  :title="'filedata' | translate">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="clmdocList"></upload-file>
+                </el-collapse-item>
+                <!-- 文档资料 -->
+                <el-collapse-item v-if='this.$route.query.pageType != "task" ' id="docListInfo" name="docListInfo"
+                  :title="'filedata' | translate" style="margin-bottom: 80px">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="clmdocList"></upload-file>
+                </el-collapse-item>
+                <!-- 审核信息 -->
+                <el-collapse-item v-if='this.$route.query.pageType == "task"' id="auditInfo" name="auditInfo"
+                  :title="'auditInformation'| translate" style="margin-bottom: 80px">
+                  <audit ref="auditInfo"></audit>
+                </el-collapse-item>
+              </el-collapse>
+            </el-col>
+          </el-row>
+          <div :span="24" class="ia-im-bottomDiv1" v-if="view">
+            <template v-if='$route.query.pageType !="back"'>
+              <!-- 保存 -->
+              <el-button v-if="!pass" class="gv-btn-xs gv-btn-save" type="primary" @click="saveSubmit('1')">
+                {{'gBtnSave' | translate}}
+              </el-button>
+              <!-- 提交估损审核 -->
+              <!-- <el-button v-if="!pass" class="gv-btn-xs gv-btn-submit" type="primary" @click="Savegs()">
+                {{'zbgsLossass'| translate}}</el-button> -->
+              <!-- 提交 -->
+              <el-button v-if="!pass" class="gv-btn-xs gv-btn-submit" type="primary" @click="saveSubmit('2')">
+                {{'gSubmit' | translate}}</el-button>
+              <!-- 审核通过 passs审核页面显示-->
+              <el-button v-if="pass" class="gv-btn-xs gv-btn-submit" type="primary" @click="goAudit('01')">{{'gPass' |
+                translate}}</el-button>
+              <!-- 审核不通过 -->
+              <el-button v-if="pass" class="gv-btn-xs gv-btn-warning" type="primary" @click="goAudit('06')">
+                {{'gNotPass' | translate}}</el-button>
+              <!-- 审核轨迹 passs审核页面显示-->
+              <el-button v-if="pass" type="primary" class="gv-btn-primary gv-btn-xs" @click="auditTrail()">
+                {{'auditTrail' | translate}}</el-button>
+              <!-- 返回 -->
+              <el-button v-if="pass" class="gv-btn-xs" type="primary" @click="returnPage()">
+                {{'gBtnReturn' | translate}}</el-button>
+            </template>
+            <template v-if="$route.query.pageType =='back'">
+              <!-- 关闭 -->
+              <el-button class="gv-btn-xs" type="primary" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}
+              </el-button>
+              <!-- 补录文档资料 -->
+              <el-button class="gv-btn gv-btn-primary" type="primary" @click="UPfile()">
+                {{'zbaddDocumentsClaim'|translate}}</el-button>
+            </template>
+          </div>
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+
+  <!--自保保单号查询页面 -->
+  <el-dialog :visible.sync="inquiryDialog" width="90%" class="diyDialog" append-to-body>
+    <template slot="title">
+      <h1 class="gv-panel-title">
+        <!-- 保单详情 -->
+        <i class="icon icon-saleinfo"></i>{{'policyDetails'|translate}}
+      </h1>
+    </template>
+    <inquiry id="inquiry" name="inquiry" ref="inquiry" @inquir="inquir">
+    </inquiry>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" style="z-index: 100" type="primary" @click="inquiryDialog=false">
+          {{'gBtnClose'| translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!--标的查询 -->
+  <el-dialog :visible.sync="isShow" width="80%" class="diyDialog" append-to-body>
+    <template slot="title">
+      <h1 class="gv-panel-title">
+        <i class="icon icon-saleinfo"></i>{{'targetDetail'| translate}}
+      </h1>
+    </template>
+    <un-derly ref="UnDerly" @chooseRisk="chooseRisk"> </un-derly>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" style="z-index: 100" type="primary" @click="isShow=false">{{'gBtnClose'|
+          translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!--原单赔案号查询页面 -->
+  <el-dialog :visible.sync="originalclaim" width="80%" class="diyDialog" append-to-body>
+    <template slot="title">
+      <h1 class="gv-panel-title">
+        <i class="icon icon-saleinfo"></i>{{'OriginalClaimNo'| translate}}
+      </h1>
+    </template>
+    <original-claim id="originalInfo" name="originalInfo" ref="originalApp" :origBaseinfochosse="origBaseinfochosse"
+      @originalclaimCode="originalclaimCode">
+    </original-claim>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" style="z-index: 100" type="primary" @click="originalclaim=false">
+          {{'gBtnClose'|translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!-- 提交成功后 -->
+  <el-dialog :title="'tips'| translate" :visible.sync="copyVisible" width="30%" :close-on-click-modal="false">
+    <el-row>
+      <span>{{dialogText}}</span>
+    </el-row>
+    <template slot="footer">
+      <el-button class="copyBtn" type="primary" size="medium" @click="savesubmit2()">{{'gBtnConfirm' | translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important"
+    :title="'zbnextperson'| translate" @close="close" width="60%" :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,index) in gwNextNodeExecutorsList">
+        <!-- <el-row :span="24" gutter="10" class="taskNode"> -->
+        <el-checkbox-group v-model="checkboxGroup">
+          <el-checkbox style="background-color: #ecf5ff" :label="item.userCode" border>
+            <div class="userinfo-pop">
+              <div class="avatar-box" style="float: left; margin-top: -5px">
+                <img src="../../../../../dist/img/userpic.png" />
+              </div>
+            </div>
+            <div style="margin-left: 28px">{{item.userName}}</div>
+          </el-checkbox>
+        </el-checkbox-group>
+        <!-- </el-row> -->
+      </el-row>
+      <!-- <work—flow ref="workflow"></work—flow> -->
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

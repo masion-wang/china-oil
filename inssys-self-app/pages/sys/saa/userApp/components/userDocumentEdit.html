@@ -1,0 +1,47 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" label-width="149px">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate" name="1">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysUserVoDocumentType" defaultName="Document Type" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="documentTypeCode">
+                            <gv-auto-complete :is-readonly="dialogProp.type !== 'add'" code="findGgDocumentType" @row-select="selectDocumentType" codeName="documentTypeCode"
+                                labelName="documentTypeCode,documentName" v-model="form.documentTypeCode" @change="validateUniqueDocument"></gv-auto-complete>
+                        </gv-form-input>
+
+                        <gv-form-label keyName="sysUserVoPrinter" defaultName="Printer" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="printerIp">
+                            <gv-auto-complete @row-select="selectTransferPrinter" context-name="system" url="/saa/printer/dbclick" code-name="printerIp"
+                                label-name="printerIp,printerName" v-model="form.printerIp"></gv-auto-complete>
+                        </gv-form-input>
+
+                        <gv-form-label keyName="sysUserVoPageSize" defaultName="Page Size" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="printerSlotId">
+                            <el-select v-model="form.printerSlotId">
+                                <el-option v-for="item in form.slotSelectResVos" :key="item.printerSlotId" :label="item.value" :value="item.printerSlotId">
+                                </el-option>
+                            </el-select>
+                        </gv-form-input>
+
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="sysUserVoPrinterSlot" defaultName="Printer Slot" requires></gv-form-label>
+                        <gv-form-input prop="tray">
+                            <el-input size="mini" maxlength="60" v-model.trim="form.tray"></el-input>
+                        </gv-form-input>
+                        
+                    </tr>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" type="primary" @click="onSubmit">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" @click="onResetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}
+                </el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

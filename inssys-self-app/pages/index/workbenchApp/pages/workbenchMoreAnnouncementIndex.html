@@ -1,0 +1,26 @@
+<section>
+    <!--列表-->
+    <template>
+        <el-table :data="workbenchVoMsgList" highlight-current-row border stripe>
+            <el-table-column type="index" label="序号" width="100">
+            </el-table-column>
+            <el-table-column prop="titleValue" :label="'gFormTitle' | translate('Title')" width="300">
+            </el-table-column>
+            <el-table-column prop="contentValue" :label="'gValue' | translate('Content')" show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column prop="createTime" :label="'gInTime' | translate('In Time')" width="200" :formatter="formatDate" align="right">
+            </el-table-column>
+            <el-table-column prop="" :label="'gTitleOperation' | translate('Operation')" width="200">
+                <template slot-scope="scope">
+                    <el-button class="gv-btn-primary" size="mini" @click="handleDelete(scope.$index, scope.row)">{{'detail' | translate('detail')}}</el-button>
+                    <el-button class="gv-btn-warning" size="mini" @click="onHandleDel(scope.row.messageId)">{{'gBtnDelete' | translate}}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <el-col :span="24" class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </el-col>
+</section>

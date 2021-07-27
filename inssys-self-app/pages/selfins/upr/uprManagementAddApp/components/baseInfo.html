@@ -1,0 +1,257 @@
+<div>
+  <!-- 保单基本信息组件 -->
+  <gv-form :model="baseInfo" ref="baseInfo">
+    <!-- 表单 -->
+    <div class="gv-row" style="padding-top: 20px">
+      <!--批量任务号-->
+      <gv-form-item key-name="zbBatchNo" prop="batchNo" isThree="true">
+        <el-input :disabled="true" maxlength="100" v-model="baseInfo.batchNo"
+          :placeholder="'systemAutoGenerate' | translate"></el-input>
+      </gv-form-item>
+      <!-- 机构-->
+      <gv-form-item key-name="company" isThree="true" prop="branch">
+        <el-input :disabled="true" maxlength="100" v-model="baseInfo.branch"></el-input>
+
+      </gv-form-item>
+      <!--冲销的任务批量号-->
+      <gv-form-item key-name="冲销的任务批量号" prop="reverseBatchNo" isThree="true">
+        <el-input :disabled="true" :placeholder="'systemAutoGenerate' | translate" maxlength="100"
+          v-model="baseInfo.reverseBatchNo"></el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--挂账日期-->
+      <gv-form-item key-name="zbA/CDate" isThree="true" :rules="baseInfo.baseInfoRule.acDate" prop="acDate" requires>
+        <div style="display: flex">
+          <el-date-picker size="small" format="MM-yyyy" value-format="MM-yyyy" v-model="baseInfo.acDate" type="date"
+            style="width:50%" class="datetimer" :disabled='pass'>
+          </el-date-picker>
+
+        </div>
+      </gv-form-item>
+
+      <!--计算截止日期-->
+      <gv-form-item key-name="计算截止日期" isThree="true" prop="calculateDate">
+        <div style="display: flex">
+          <el-date-picker :disabled="true" size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+            v-model="baseInfo.calculateDate" type="date" style="width:50%" class="datetimer">
+          </el-date-picker>
+        </div>
+      </gv-form-item>
+      <!--创建人-->
+      <gv-form-item key-name="founder" prop="createdBy" isThree="true">
+        <el-input :disabled="true" :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.createdBy">
+        </el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建日期-->
+      <gv-form-item key-name="creationTime" prop="createdDate" isThree="true">
+        <el-date-picker :disabled="true" :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.createdDate"
+          type="datetime" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss">
+        </el-date-picker>
+      </gv-form-item>
+      <!--审核人-->
+      <gv-form-item key-name="reviewer" prop="approvedBy" isThree="true">
+        <el-input :disabled="true" :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.approvedBy" />
+      </gv-form-item>
+
+      <!--审核通过日期-->
+      <gv-form-item key-name="dateOfApproval" prop="approvedDate" isThree="true">
+        <el-date-picker :disabled="true" :placeholder="'systemAutoGenerate' | translate" v-model="baseInfo.approvedDate"
+          type="datetime" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss">
+        </el-date-picker>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!-- 状态 -->
+      <gv-form-item key-name="ruleStatus" prop="status" isThree="true">
+        <!-- <el-input :disabled="true" v-model="baseInfo.status"  :placeholder="'systemAutoGenerate' | translate"></el-input> -->
+        <gv-select size="mini" code-type="UPRStatus" v-model="baseInfo.status" code-name="codeCode"
+          label-name="codeName" :disabled="true"></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <gv-form-item key-name="baseCurrency" prop="approvedBy1" isThree="true">
+        <!-- 本位币 -->
+        <gv-select size="mini" code-type="Currency" v-model="baseInfo.localCurrency" @row-select="changeschemeName2"
+          code-name="codeCode" label-name="codeName" :disabled="true"></gv-select>
+      </gv-form-item>
+      <!-- 换算币别 -->
+      <gv-form-item key-name="换算币别" prop="approvedBy2" isThree="true">
+        <gv-select size="mini" code-type="Currency" v-model="baseInfo.converCurrency" @row-select="changeschemeName2"
+          code-name="codeCode" label-name="codeName" :disabled='pass'></gv-select>
+      </gv-form-item>
+    </div>
+  </gv-form>
+
+
+  <!-- 分入详情 v-if="status!='add'"-->
+  <div style="margin-top: 20px" v-if="status!='add'">
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <span style="font-size: 14px; font-weight: 500; margin-left: 40px">分入详情</span>
+      <span style="margin-left:20px">
+        <!-- 导出清单 -->
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click="exportOutlist1">{{'exportManifest' | translate}}
+        </el-button>
+        <!-- 打印详细 -->
+        <el-button v-if='searchaBu' class="gv-btn gv-btn-primary" type="primary" @click="getPrintUpr('01')">
+          {{'gBtnPrint' | translate}}
+        </el-button>
+      </span>
+    </div>
+    <div class="subCollapse">
+      <el-table class="centerTable" :data="tableData1">
+        <!-- 挂账日期 -->
+        <el-table-column :label="'zbA/CDate' | translate" prop="acDate">
+        </el-table-column>
+        <!-- 自保保单号 -->
+        <el-table-column :label="'selfinsurancepolicyno' | translate" prop="policyNo">
+        </el-table-column>
+        <!-- 批单序号 -->
+        <el-table-column :label="'endorsementIndex' | translate" prop="version">
+        </el-table-column>
+        <!-- 险类 -->
+        <el-table-column :label="'riskClass' | translate" prop="riskClass">
+        </el-table-column>
+        <!-- 被保险人 -->
+        <el-table-column label="被保险人" prop="insured">
+        </el-table-column>
+        <!-- 保险期限 -->
+        <el-table-column :label="'proposalDateInterval' | translate" prop="effectiveDate">
+        </el-table-column>
+
+        <!-- 业务来源 -->
+        <el-table-column :label="'businessSource' | translate" prop="source">
+        </el-table-column>
+        <!-- 维护期 -->
+        <el-table-column :label="'maintenancePeriod' | translate" prop="effectiveDate">
+        </el-table-column>
+        <!-- 单据号 -->
+        <el-table-column :label="'documentNo' | translate" prop="dnNo">
+        </el-table-column>
+        <!-- 接入保费 -->
+        <el-table-column label="接入保费" prop="premium">
+        </el-table-column>
+        <!-- 接入佣金 :label="'institute' | translate" -->
+        <el-table-column label="接入佣金" prop="commission">
+        </el-table-column>
+        <!-- 未赚保费 -->
+        <el-table-column label="未赚保费" prop="upr">
+
+        </el-table-column>
+        <!-- DAC差 -->
+        <el-table-column label="DAC差" prop="dac">
+
+        </el-table-column>
+        <!-- 操作 -->
+        <!-- <el-table-column :label="'supOperation' | translate" prop="itemNo" width="160px">
+          <template slot-scope="scope"> -->
+        <!--修改-->
+        <!-- <el-button size="mini" type="primary" @click='remove(scope.$index,"amortization")'>
+              {{'btnModeify'| translate}}
+            </el-button> -->
+        <!--删除-->
+        <!-- <el-button size="mini" type="primary" icon="el-icon-minus" class="gv-btn-warning"
+              @click='remove(scope.$index,"amortization")'>
+            </el-button>
+          </template></el-table-column> -->
+      </el-table>
+      <div style="padding-bottom: 10px;border:0">
+        <el-pagination style="float: right;margin-top: 10px;margin-bottom: 10px;" @size-change="handleSizeChanges1"
+          @current-change="handleCurrentChangePages1" :page-sizes="[2, 20, 30, 50]" :page-size="pageSize1"
+          :page-count="pageaA" :current-page.sync="pageNo1" layout="total, sizes, prev, pager, next, jumper"
+          :total="total1">
+        </el-pagination>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 分出详情 v-if="status!='add'"-->
+  <div style="margin-top: 40px" v-if="status!='add'">
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <span style="font-size: 14px; font-weight: 500; margin-left: 40px">分出详情</span>
+      <span style="margin-left:20px">
+        <!-- 导出清单 -->
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click="exportOutlist2">{{'exportManifest' | translate}}
+        </el-button>
+        <!-- 打印详细 -->
+        <el-button v-if='searchaBu' class="gv-btn gv-btn-primary" type="primary" @click="getPrintUpr('02')">
+          {{'gBtnPrint' | translate}}
+        </el-button>
+      </span>
+    </div>
+    <div class="subCollapse">
+      <el-table class="centerTable" :data="tableData2">
+        <!--挂账日期 -->
+        <el-table-column :label="'zbA/CDate' | translate" prop="acDate">
+        </el-table-column>
+        <!-- 自保保单号 -->
+        <el-table-column :label="'selfinsurancepolicyno' | translate" prop="policyNo">
+        </el-table-column>
+        <!-- 批单序号 -->
+        <el-table-column :label="'endorsementIndex' | translate" prop="version">
+        </el-table-column>
+        <!-- 险类 -->
+        <el-table-column :label="'riskClass' | translate" prop="riskClass">
+        </el-table-column>
+        <!-- 临分/合约 -->
+        <el-table-column label="临分/合约" prop="facTreatyInd">
+        </el-table-column>
+        <!-- 保险期限 -->
+        <el-table-column :label="'proposalDateInterval' | translate" prop="effectiveDate">
+        </el-table-column>
+
+        <!-- 业务来源 -->
+        <el-table-column :label="'businessSource' | translate" prop="source">
+        </el-table-column>
+        <!-- 维护期 -->
+        <el-table-column :label="'maintenancePeriod' | translate" prop="effectiveDate">
+        </el-table-column>
+        <!-- 单据号 -->
+        <el-table-column :label="'documentNo' | translate" prop="dnNo">
+
+        </el-table-column>
+        <!-- 分出保费 -->
+        <el-table-column label="分出保费" prop="premium">
+        </el-table-column>
+        <!-- 分出佣金 :label="'commissionOut' | translate" -->
+        <el-table-column :label="'commissionOut' | translate" prop="commission">
+        </el-table-column>
+        <!-- 未赚保费 -->
+        <el-table-column label="未赚保费" prop="upr">
+
+        </el-table-column>
+        <!-- DAC差 -->
+        <el-table-column label="DAC差" prop="dac">
+
+        </el-table-column>
+        <!-- 操作 -->
+        <!-- <el-table-column :label="'supOperation' | translate" prop="itemNo" width="160px">
+          <template slot-scope="scope"> -->
+        <!--修改-->
+        <!-- <el-button size="mini" type="primary" @click='remove(scope.$index,"amortization")'>
+              {{'btnModeify'| translate}}
+            </el-button> -->
+        <!--删除-->
+        <!-- <el-button size="mini" type="primary" icon="el-icon-minus" class="gv-btn-warning"
+              @click='remove(scope.$index,"amortization")'>
+            </el-button>
+          </template></el-table-column> -->
+      </el-table>
+
+      <!-- <div style="padding-bottom: 10px;border:0"> -->
+      <el-pagination style="float: right;margin-top: 10px;margin-bottom: 10px;" @size-change="handleSizeChanges2"
+        @current-change="handleCurrentChangePages2" :page-sizes="[2, 20, 30, 50]" :page-size="pageSize2"
+        :page-count="pageaB" :current-page.sync="pageNo2" layout="total, sizes, prev, pager, next, jumper"
+        :total="total2">
+      </el-pagination>
+      <!-- </div> -->
+    </div>
+  </div>
+
+
+</div>
+
+</div>

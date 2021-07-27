@@ -1,0 +1,9 @@
+{
+    "success": "成功",
+    "switchFlag": "账期状态",
+    "operation": "操作",
+    "period1":"账期",
+    "maintainDate":"维护时间",
+    "adjust":"调整维护时间",
+    "close":"关闭维护时间"
+}

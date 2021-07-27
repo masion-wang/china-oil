@@ -1,0 +1,631 @@
+<section>
+
+
+
+  <!--2 付款 查询页面-->
+  <el-dialog :visible.sync="isShow2" width="80%" class="DialogByWS" append-to-body>
+    <gv-data-table ref="table2" @on-list-btn="onListBtn2" :table="table2">
+      <!--查询条件-->
+      <template v-slot:search="scope">
+        <div class="gv-row">
+          <!-- 账单接收人 -->
+          <gv-form-item key-name="Billreceiver" isThree="true" prop="correspondence">
+            <gv-select2 size="mini" valid='1' filterable disabled="true" clearable po-name="ggSupplierMsg"
+              code-name="supplierCode" label-name="supplierChineseName" label-name-ex="supplierCode"
+              v-model="scope.search.correspCode">
+            </gv-select2>
+          </gv-form-item>
+          <!-- 分入/分出 -->
+          <gv-form-item key-name="zbInwardOutward" isThree="true" prop="correspondence">
+            <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="paymentInAndOut"
+              v-model="scope.search.inwardInd" disabled="true" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </gv-form-item>
+          <!-- 保费/赔款 -->
+          <gv-form-item key-name="zbPremiumsclaims" isThree="true" prop="correspondence">
+            <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="BillingType"
+              v-model="scope.search.documentType" disabled="true" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </gv-form-item>
+        </div>
+        <div class="gv-row">
+          <!-- 缴费截止日期  -->
+          <gv-form-item key-name="paymentDeadline" isThree="true" class="forInput">
+            <div style="display: flex">
+              <el-date-picker style="flex: 1" v-model="scope.search.dueDatesStart" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+              </el-date-picker>
+              <div style="width: 10px; text-align: center; line-height: 32px">
+                -
+              </div>
+              <el-date-picker style="flex: 1" v-model="scope.search.dueDatesEnd" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+              </el-date-picker>
+            </div>
+          </gv-form-item>
+          <!--单据类型-->
+          <gv-form-item key-name="zbTypeDocument" isThree="true" prop="correspondence">
+            <el-select v-model="scope.search.billType" filterable clearable placeholder="请选择">
+              <el-option v-for="item in guFeetypeVos" :label="item.feetypeName" :value="item.feetypeCode">
+              </el-option>
+            </el-select>
+            <!-- <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="documentType"
+            v-model="scope.search.feetypeCode" code-name="codeCode" label-name="codeName"> -->
+          </gv-form-item>
+        </div>
+      </template>
+      <!--查询结果-->
+      <template v-slot:toolbar="scope">
+        <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="addData1">添加</el-button>
+      </template>
+    </gv-data-table>
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow2=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--3 付款申请-->
+  <div v-if="paymentMark=='01'">
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <span style="font-size: 14px; font-weight: 500">基础信息 </span>
+      <!--打印  {{'originalPolicySelected' | translate}} ???-->
+      <el-button style="margin-left:10px" class="gv-btn gv-btn-primary" type="primary"
+        @click="printTableVisible2('付款')">
+        {{'gBtnPrint' | translate('Print')}}</el-button>
+    </div>
+    <!-- 一基础信息-->
+    <gv-form :model="baseInfo1" ref="baseInfo1" :rules="baseInfo1.baseInfoRule">
+      <div class="gv-row" style="background-color: white;">
+        <!--付款申请号-->
+        <gv-form-item key-name="zbPaymentApplicationN" prop="applicationNo" isThree="true">
+          <el-input v-model="baseInfo1.applicationNo" disabled='true'></el-input>
+        </gv-form-item>
+        <!--凭证号-->
+        <gv-form-item key-name="zbCertificatenumber" prop="voucherNo" isThree="true">
+          <el-input v-model="baseInfo1.voucherNo" disabled='true'></el-input>
+        </gv-form-item>
+        <!--账单接收人   v-if="Approve"  :disabled="Endorsement || view"   @input="changething(scope.row)"-->
+        <gv-form-item key-name="Billreceiver" :rules="baseInfo1.baseInfoRule.renewalSign" prop="correspCode"
+          isThree="true" requires>
+          <!-- <gv-select :disabled="Submit" @change="changeContinueSign(baseInfo1.renewalSign)" size="mini"
+            code-type="ResumeRemark" v-model="baseInfo1.renewalSign" code-name="codeCode" label-name="codeName">
+          </gv-select> -->
+          <gv-select2 size="mini" valid='1' filterable clearable po-name="ggSupplierMsg" code-name="supplierCode"
+            label-name="supplierChineseName" label-name-ex="supplierCode" v-model="baseInfo1.correspCode"></gv-select2>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row" style="background-color: white;">
+        <!--保费/赔款-->
+        <gv-form-item key-name="zbPremiumsclaims" prop="documentType" isThree="true" requires>
+          <!-- <el-input v-model="baseInfo1.documentType"></el-input> -->
+          <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="BillingType"
+            v-model="baseInfo1.documentType" code-name="codeCode" label-name="codeName">
+          </gv-select>
+        </gv-form-item>
+        <!-- 分入/分出 -->
+        <gv-form-item key-name="zbInwardOutward" prop="inwardInd" isThree="true" requires>
+          <gv-select v-model="baseInfo1.inwardInd" style="margin-right: 5px" size="mini" code-type="paymentInAndOut"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!--截止缴费日期-->
+        <gv-form-item key-name="截止缴费日期" isThree="true" class="forInput" requires>
+          <div style="display: flex">
+
+            <el-date-picker style="flex: 1" v-model="baseInfo1.dueDatesStart" format="dd-MM-yyyy HH:mm:ss"
+              value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'nyr' | translate">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker style="flex: 1" v-model="baseInfo1.dueDatesEnd" format="dd-MM-yyyy HH:mm:ss"
+              value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'nyr' | translate">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row" style="background-color: white;">
+        <!--预期付款日期-->
+        <gv-form-item :rules="baseInfo1.baseInfoRule.expectedPayDate" key-name="zbExpectedDapayment" isThree="true"
+          prop="expectedPayDate" requires>
+          <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo1.expectedPayDate" type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--付款日期-->
+        <gv-form-item :rules="baseInfo1.baseInfoRule.expectedPayDate" key-name="zbDatePayment" isThree="true"
+          prop="expectedPayDate">
+          <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss" v-model="baseInfo1.payDate"
+            type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--申请总金额-->
+        <gv-form-item key-name="zbTotalamountapplication" prop="outstanding" isThree="true">
+          <el-input v-model="baseInfo1.outstanding" disabled='true'></el-input>
+        </gv-form-item>
+        <!--付款申请状态-->
+        <gv-form-item key-name="zbPaymentapplicationst" prop="status" isThree="true">
+          <!-- <el-input v-model="baseInfo1.status"></el-input> -->
+          <gv-select v-model="baseInfo1.status" style="margin-right: 5px" size="mini"
+            code-type="PaymentApplicationStatus" code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row" style="background-color: white;">
+        <!--创建人-->
+        <gv-form-item key-name="ggCodeEntryUser" prop="createBy" isThree="true">
+          <el-input v-model="baseInfo1.createBy" disabled='true'></el-input>
+        </gv-form-item>
+        <!--修改人-->
+        <gv-form-item key-name="modifiedBy" prop="updateBy" isThree="true">
+          <el-input v-model="baseInfo1.updateBy" disabled='true'></el-input>
+        </gv-form-item>
+        <!--审核人-->
+        <gv-form-item key-name="auditor" prop="auditBy" isThree="true">
+          <el-input v-model="baseInfo1.auditBy" disabled='true'></el-input>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row" style="background-color: white;">
+        <!--创建日期 -->
+        <gv-form-item key-name="ggCodeEntryDate" :rules="baseInfo1.baseInfoRule.createDate" prop="createDate"
+          isThree="true">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo1.createDate" type="datetime" disabled='true' :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--修改日期  key-name="expiryDateInsurance"-->
+        <gv-form-item key-name="datechanged" :rules="baseInfo1.baseInfoRule.updateDate" isThree="true"
+          prop="updateDate">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo1.updateDate" type="datetime" disabled='true' :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--审核日期-->
+        <gv-form-item key-name="auditDate" :rules="baseInfo1.baseInfoRule.auditDate" isThree="true" prop="auditDate">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo1.auditDate" type="datetime" disabled='true' :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+      </div>
+      <div class="gv-row" style="background-color: white;">
+        <div style="display: flex;align-items: center;justify-content: center;">
+          <div class="gvinput" style="display:inline-block;width: 5%;">
+            {{'gRemarks' | translate}}:
+          </div>
+          <el-input :autosize="{ minRows: 5}" style="display:inline-block" v-model="baseInfo1.note" type="textarea"
+            :rows="2" style="width: 82%;position: relative;left:1%" :disabled="Submit" maxlength="4000">
+          </el-input>
+        </div>
+      </div>
+    </gv-form>
+    <!-- 二已选结果 -->
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <!--{{'originalPolicySelected' | translate}}-->
+      <span style="font-size: 14px; font-weight: 500">
+
+        已选结果</span>
+      <i style="float: right; margin-right: 25px">
+        <!-- 新增  {{'gBtnCreate' | translate}}-->
+        <el-button class="gv-btn gv-btn-primary" type="primary" :disabled="Submit">
+          新增
+        </el-button>
+        <!-- 新增单据  {{'gBtnDelete' | translate}}-->
+        <el-button class="gv-btn gv-btn-primary" type="primary" :disabled="Submit" @click="openpaymentadd">
+          新增单据</el-button>
+      </i>
+    </div>
+    <div class="subCollapse">
+      <el-table :data="guPolicyVoListfukuan" @selection-change="handleSelectionChange" class="centerTable">
+        <el-table-column type="selection" width="55"> </el-table-column>
+        <!-- 账单日期 :label="'zbA/CaDate' | translate" -->
+        <el-table-column :label="'zbA/CaDate' | translate" prop="createDate">
+        </el-table-column>
+        <!-- 业务号 :label="'workbenchAppVoBusinessId' | translate"-->
+        <el-table-column :label="'workbenchAppVoBusinessId' | translate" prop="businessNo">
+        </el-table-column>
+        <!-- 单据类型 :label="'zbTypeDocument' | translate" -->
+        <el-table-column :label="'zbTypeDocument' | translate" prop="billType">
+
+        </el-table-column>
+        <!-- 单据号 -->
+        <el-table-column :label="'documentNo' | translate" prop="billNo">
+        </el-table-column>
+        <!-- 币别    @row-select="changeschemeName2($event,scope.$index)" -->
+        <el-table-column :label="'currency' | translate" prop="currency">
+          <template slot-scope="scope">
+            <gv-select size="mini" code-type="Currency" placeholder="请选择" v-model="scope.row.currency" disabled='true'
+              code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </template>
+        </el-table-column>
+        <!-- 账单金额 -->
+        <el-table-column :label="'zbTbillamount' | translate" prop="amount">
+        </el-table-column>
+        <!-- 期次  -->
+        <el-table-column :label="'period' | translate" prop="instalmentNo">
+        </el-table-column>
+        <!-- 可申请金额  -->
+        <el-table-column :label="'zbApplicableamoun' | translate" prop="outstanding">
+        </el-table-column>
+        <!-- 申请状态 下拉菜单-->
+        <el-table-column :label="'zbApplicationStatus' | translate" prop="EP">
+          <template slot-scope="scope">
+            <!-- <span>{{scope.row.EP}}</span> -->
+            <gv-select size="mini" code-type="ApplicationStatus" placeholder="请选择" v-model="scope.row.EP"
+              @row-select="changeschemeName2($event,scope.row,scope.$index)" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </template>
+        </el-table-column>
+        <!-- 申请金额 input框-->
+        <el-table-column :label="'zbapplyamount' | translate" prop="applicationsAmount">
+          <template slot-scope="scope">
+            <!-- <span>{{scope.row.EP}}</span> -->
+            <el-input @change='getrestMoneyfukuan($event,scope.row,scope.$index)' v-model="scope.row.applicationsAmount"
+              :disabled="scope.row.EP=='01'" maxlength="200">
+            </el-input>
+          </template>
+        </el-table-column>
+        <!-- 剩余申请金额  -->
+        <el-table-column :label="'zbRemainingApplicationAmount' | translate" prop="availAmount">
+        </el-table-column>
+        <!--操作-->
+        <el-table-column :label="'gTitleOperation' | translate">
+          <template slot-scope="scope">
+            <el-button class="gv-btn gv-btn-primary" type="primary" @click="removefukuan(scope.$index)"
+              :disabled="Submit">
+              {{'gBtnDelete' | translate}}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 三文档资料列表-->
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px;margin-top:20px;">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <span style="font-size: 14px; font-weight: 500">文档资料列表</span>
+    </div>
+    <upload-file ref="uploadFile" type="07" :vo.sync="docList" :readonly="isReadonly"></upload-file>
+    <!--移除 提交-->
+
+    <div style="text-align: center;margin-top:10px;">
+      <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="removedata">
+        移除</el-button>
+      <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="calfukuan">
+        提交</el-button>
+    </div>
+
+  </div>
+
+
+  <!--4 收款 查询页面 -->
+  <el-dialog :visible.sync="isShow4" width="80%" class="DialogByWS" append-to-body>
+    <gv-data-table ref="table4" @on-list-btn="onListBtn2" :table="table4">
+      <!--查询条件-->
+      <template v-slot:search="scope">
+        <div class="gv-row">
+          <!-- 账单接收人 -->
+          <gv-form-item key-name="Billreceiver" isThree="true" prop="correspondence">
+            <gv-select2 size="mini" valid='1' filterable clearable po-name="ggSupplierMsg" code-name="supplierCode"
+              label-name="supplierChineseName" disabled="true" label-name-ex="supplierCode"
+              v-model="scope.search.correspCode">
+            </gv-select2>
+          </gv-form-item>
+          <!-- 分入/分出 -->
+          <gv-form-item key-name="zbInwardOutward" isThree="true" prop="correspondence">
+            <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="paymentInAndOut"
+              v-model="scope.search.inwardInd" disabled="true" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </gv-form-item>
+          <!-- 保费/赔款 -->
+          <gv-form-item key-name="zbPremiumsclaims" isThree="true" prop="correspondence">
+            <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="BillingType"
+              v-model="scope.search.documentType" disabled="true" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </gv-form-item>
+        </div>
+        <div class="gv-row">
+          <!-- 缴费截止日期  -->
+          <gv-form-item key-name="paymentDeadline" isThree="true" class="forInput">
+            <div style="display: flex">
+              <el-date-picker style="flex: 1" v-model="scope.search.dueDatesStart" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+              </el-date-picker>
+              <div style="width: 10px; text-align: center; line-height: 32px">
+                -
+              </div>
+              <el-date-picker style="flex: 1" v-model="scope.search.dueDatesEnd" format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+              </el-date-picker>
+            </div>
+          </gv-form-item>
+          <!--单据类型-->
+          <gv-form-item key-name="zbTypeDocument" isThree="true" prop="correspondence">
+            <el-select v-model="scope.search.billType" filterable clearable placeholder="请选择">
+              <el-option v-for="item in guFeetypeVos" :label="item.feetypeName" :value="item.feetypeCode">
+              </el-option>
+            </el-select>
+            <!-- <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="documentType"
+              v-model="scope.search.feetypeCode" code-name="codeCode" label-name="codeName"> -->
+          </gv-form-item>
+        </div>
+      </template>
+      <!--查询结果-->
+      <template v-slot:toolbar="scope">
+        <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="addData2">添加</el-button>
+      </template>
+    </gv-data-table>
+
+
+
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow2=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--5 收款确定-->
+  <div v-if="paymentMark=='00'">
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <span style="font-size: 14px; font-weight: 500">基础信息 </span>
+      <!--打印  -->
+      <el-button style="margin-left:10px" class="gv-btn gv-btn-primary" type="primary"
+        @click="printTableVisible2('收款')">
+        {{'gBtnPrint' | translate('Print')}}</el-button>
+    </div>
+    <!-- 一基础信息-->
+    <gv-form :model="baseInfo12" ref="baseInfo12" :rules="baseInfo12.baseInfoRule">
+      <div class="gv-row" style="padding-top: 20px">
+        <!--收款确认号-->
+        <gv-form-item key-name="zbCollnumber" prop="applicationNo" isThree="true">
+          <el-input v-model="baseInfo12.applicationNo" disabled="false"></el-input>
+        </gv-form-item>
+        <!--凭证号-->
+        <gv-form-item key-name="zbCertificatenumber" prop="voucherNo" isThree="true">
+          <el-input v-model="baseInfo12.voucherNo" disabled="false"></el-input>
+        </gv-form-item>
+        <!--账单接收人  -->
+        <gv-form-item key-name="Billreceiver" :rules="baseInfo12.baseInfoRule.renewalSign" prop="correspCode"
+          isThree="true" requires>
+
+          <gv-select2 size="mini" filterable valid='1' clearable po-name="ggSupplierMsg" code-name="supplierCode"
+            label-name="supplierChineseName" label-name-ex="supplierCode" v-model="baseInfo12.correspCode"></gv-select2>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row">
+        <!--保费/赔款-->
+        <gv-form-item key-name="zbPremiumsclaims" prop="documentType" isThree="true" requires>
+          <!-- <el-input v-model="baseInfo12.documentType"></el-input> -->
+          <gv-select @change="PaymentApplicationStatusEvent" size="mini" code-type="BillingType"
+            v-model="baseInfo12.documentType" code-name="codeCode" label-name="codeName">
+          </gv-select>
+        </gv-form-item>
+        <!-- 分入/分出 -->
+        <gv-form-item key-name="zbInwardOutward" prop="inwardInd" isThree="true" requires>
+          <gv-select v-model="baseInfo12.inwardInd" style="margin-right: 5px" size="mini" code-type="paymentInAndOut"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!--缴费截止日期-->
+        <gv-form-item key-name="paymentDeadline" isThree="true" class="forInput" requires>
+          <div style="display: flex">
+
+            <el-date-picker style="flex: 1" v-model="baseInfo12.dueDatesStart" format="dd-MM-yyyy HH:mm:ss"
+              value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'nyr' | translate">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker style="flex: 1" v-model="baseInfo12.dueDatesEnd" format="dd-MM-yyyy HH:mm:ss"
+              value-format="dd-MM-yyyy HH:mm:ss" type="datetime" :placeholder="'nyr' | translate">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row">
+        <!--预期收款日期-->
+        <gv-form-item :rules="baseInfo12.baseInfoRule.expectedPayDate" key-name="zbExpecteddatereceipt" isThree="true"
+          prop="expectedPayDate">
+          <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo12.expectedPayDate" type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--收款日期-->
+        <gv-form-item :rules="baseInfo12.baseInfoRule.expectedPayDate" key-name="zbPaymentApplicationN" isThree="true"
+          prop="expectedPayDate">
+          <el-date-picker format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss" v-model="baseInfo12.payDate"
+            type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--确认总金额-->
+        <gv-form-item key-name="zbTotaamountcon" prop="outstanding" isThree="true">
+          <el-input v-model="baseInfo12.outstanding" disabled='true'></el-input>
+        </gv-form-item>
+        <!--收款确认状态-->
+        <gv-form-item key-name="zbCollecticonrmationstatus" prop="status" isThree="true">
+          <!-- <el-input v-model="baseInfo12.status"></el-input> -->
+          <gv-select v-model="baseInfo12.status" style="margin-right: 5px" size="mini"
+            code-type="PaymentApplicationStatus" code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row">
+        <!--创建人-->
+        <gv-form-item key-name="ggCodeEntryUser" prop="createBy" isThree="true">
+          <el-input v-model="baseInfo12.createBy" disabled="true"></el-input>
+        </gv-form-item>
+        <!--修改人-->
+        <gv-form-item key-name="modifiedBy" prop="updateBy" isThree="true">
+          <el-input v-model="baseInfo12.updateBy" disabled="true"></el-input>
+        </gv-form-item>
+        <!--审核人-->
+        <gv-form-item key-name="auditor" prop="auditBy" isThree="true">
+          <el-input v-model="baseInfo12.auditBy" disabled="true"></el-input>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row">
+        <!--创建日期 -->
+        <gv-form-item key-name="ggCodeEntryDate" :rules="baseInfo12.baseInfoRule.createDate" prop="createDate"
+          isThree="true">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo12.createDate" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--修改日期 key-name="expiryDateInsurance"-->
+        <gv-form-item key-name="datechanged" :rules="baseInfo12.baseInfoRule.updateDate" isThree="true"
+          prop="updateDate">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo12.updateDate" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+        <!--审核通过日期-->
+        <gv-form-item key-name="checkTime" :rules="baseInfo12.baseInfoRule.auditDate" isThree="true" prop="auditDate">
+          <el-date-picker style="flex: 1" format="dd-MM-yyyy HH:mm:ss" value-format="dd-MM-yyyy HH:mm:ss"
+            v-model="baseInfo12.auditDate" disabled="true" type="datetime" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+      </div>
+
+      <div class="gv-row" style="background-color: white;">
+        <div style="display: flex;align-items: center;justify-content: center;">
+          <div class="gvinput" style="display:inline-block;width: 5%;">
+            {{'gRemarks' | translate}}:
+          </div>
+          <el-input :autosize="{ minRows: 5}" style="display:inline-block" v-model="baseInfo1.note" type="textarea"
+            :rows="2" style="width: 82%;position: relative;left:1%" :disabled="Submit" maxlength="4000">
+          </el-input>
+        </div>
+      </div>
+
+    </gv-form>
+    <!-- 二已选结果 -->
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <!--{{'originalPolicySelected' | translate}}-->
+      <span style="font-size: 14px; font-weight: 500">
+
+        已选结果</span>
+      <i style="float: right; margin-right: 25px">
+        <!-- 新增  {{'gBtnCreate' | translate}}-->
+        <el-button class="gv-btn gv-btn-primary" type="primary" :disabled="Submit">
+          新增
+        </el-button>
+        <!-- 新增单据  {{'gBtnDelete' | translate}}-->
+        <el-button class="gv-btn gv-btn-primary" type="primary" :disabled="Submit" @click="openpaymentadd22">
+          新增单据</el-button>
+      </i>
+    </div>
+    <div class="subCollapse">
+      <el-table :data="guPolicyVoListshoukuan" @selection-change="handleSelectionChange" class="centerTable">
+        <el-table-column type="selection" width="55"> </el-table-column>
+        <!-- 账单日期 :label="'originalWarrantyNumber' | translate" -->
+        <el-table-column :label="'zbA/CaDate' | translate" prop="createDate">
+        </el-table-column>
+        <!-- 业务号 :label="'originalInsurance' | translate"-->
+        <el-table-column :label="'workbenchAppVoBusinessId' | translate" prop="businessNo">
+        </el-table-column>
+        <!-- 单据类型 :label="'zbTypeDocument' | translate" -->
+        <el-table-column :label="'zbTypeDocument' | translate" prop="billType"></el-table-column>
+        <!-- 单据号 -->
+        <el-table-column :label="'documentNo' | translate" prop="billNo">
+        </el-table-column>
+        <!-- 币别  :label="'selfInsuranceRatio' | translate" @row-select="changeschemeName2($event,scope.$index)"-->
+        <el-table-column :label="'currency' | translate" prop="currency">
+          <template slot-scope="scope">
+            <gv-select size="mini" code-type="Currency" placeholder="请选择" v-model="scope.row.currency" disabled='true'
+              code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </template>
+        </el-table-column>
+        <!-- 账单金额 :label="'principalSubordinate' | translate"-->
+        <el-table-column :label="'zbTbillamount' | translate" prop="amount">
+        </el-table-column>
+        <!-- 期次  -->
+        <el-table-column :label="'period' | translate" prop="instalmentNo">
+        </el-table-column>
+        <!-- 可确认金额  -->
+        <el-table-column :label="'zbAmoconfirmed' | translate" prop="outstanding">
+        </el-table-column>
+        <!-- 确认状态 下拉菜单-->
+        <el-table-column label="确认状态" prop="EP">
+          <template slot-scope="scope">
+            <!-- <span>{{scope.row.EP}}</span> -->
+            <gv-select size="mini" code-type="ApplicationStatus" placeholder="请选择" v-model="scope.row.EP"
+              @row-select="changeschemeName3($event,scope.row,scope.$index)" code-name="codeCode" label-name="codeName">
+            </gv-select>
+          </template>
+        </el-table-column>
+        <!-- 确认金额 input框-->
+        <el-table-column :label="'zbConfirmeamou' | translate" prop="applicationsAmount">
+          <template slot-scope="scope">
+            <!-- <span>{{scope.row.EP}}</span> -->
+            <el-input @change='getrestMoneyshoukuan($event,scope.row,scope.$index)'
+              v-model="scope.row.applicationsAmount" :disabled="scope.row.EP=='01'" maxlength="200">
+            </el-input>
+          </template>
+        </el-table-column>
+        <!-- 剩余确认金额 -->
+        <el-table-column :label="'zbsyconfAmoubt' | translate" prop="availAmount">
+        </el-table-column>
+        <!--操作-->
+        <el-table-column :label="'gTitleOperation' | translate">
+          <template slot-scope="scope">
+            <el-button class="gv-btn gv-btn-primary" type="primary" @click="removeshoukuan(scope.$index)"
+              :disabled="Submit">
+              {{'gBtnDelete' | translate}}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 三文档资料列表-->
+    <div style="background-color: #f4f5f9; height: 45px; line-height: 45px;margin-top:20px;">
+      <img class="ia-im-collapseTitle" src="../../../dist/img/zongbaofei.png" style="margin-left:20px" />
+      <span style="font-size: 14px; font-weight: 500">文档资料列表</span>
+    </div>
+    <upload-file ref="uploadFile" type="07" :vo.sync="docList" :readonly="isReadonly"></upload-file>
+    <!--移除 提交-->
+    <div style="text-align: center;margin-top:10px;">
+      <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="removedata">
+        移除</el-button>
+      <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="calfukuanOrcalshoukuan">
+        提交</el-button>
+    </div>
+  </div>
+
+
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important" title="选择下一环节操作人/审批人"
+    @close="close" width="60%" :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,index) in gwNextNodeExecutorsList">
+        <!-- <el-row :span="24" gutter="10" class="taskNode"> -->
+        <el-checkbox-group v-model="checkboxGroup">
+          <el-checkbox style="background-color: #ecf5ff" :label="item.userCode" border>
+            <div class="userinfo-pop">
+              <div class="avatar-box" style="float: left; margin-top: -5px">
+                <img src="../../../../../dist/img/userpic.png" />
+              </div>
+            </div>
+            <div style="margin-left: 28px">{{item.userName}}</div>
+          </el-checkbox>
+        </el-checkbox-group>
+        <!-- </el-row> -->
+      </el-row>
+      <!-- <work—flow ref="workflow"></work—flow> -->
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

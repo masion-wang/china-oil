@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "eslint": "^5.2.0",
+    "gulp-cached": "^1.1.1",
+    "gulp-eslint": "^5.0.0",
+    "gulp-if": "^2.0.2"
+  },
+  "name": "tphw_web",
+  "description": "This is sys",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-cmd-pack": "^1.0.9",
+    "gulp-replace": "^0.6.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "czl",
+  "license": "ISC"
+}

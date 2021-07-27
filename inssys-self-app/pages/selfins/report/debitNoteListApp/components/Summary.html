@@ -1,0 +1,51 @@
+<div>
+    <!-- tableData.slice((currentPage-1)*pageSize,currentPage*pageSize) -->
+    <el-table ref="multipleTable" :data="tableData" stripe row-key="planCode">
+        <!--  Insurance Category-->
+        <el-table-column label="Insurance Category" prop="riskCode" width='65px'> </el-table-column>
+        <!-- Ccy -->
+        <el-table-column label="Ccy" prop="currency"> </el-table-column>
+        <!--Inward Insured Value(100%) -->
+        <el-table-column label="Inward Insured Value  (100%)" prop="insuredValueI" width='100px'></el-table-column>
+        <!--Inward Insured Value of CIL -->
+        <el-table-column label="Inward Insured Value of CIL" prop="insuredValueCIL" width='100px'>
+        </el-table-column>
+        <!--Inward Gross Premium (100%) -->
+        <el-table-column label="Inward Gross Premium (100%)" prop="annualPrmI" width='100px'></el-table-column>
+        <!--Inward Gross Premium-->
+        <el-table-column label="Inward Gross Premium" prop="grossPremiumI" width='100px'></el-table-column>
+        <!--Inward  Commission-->
+        <el-table-column label="Inward Commission" prop="commissionI" width='100px'> </el-table-column>
+        <!--Inward Net Premium -->
+        <el-table-column label="Inward Net Premium" prop="netPremiumI" width='100px'> </el-table-column>
+        <!--Inward Net Premium(USD) -->
+        <el-table-column label="Inward Net Premium(USD)" prop="netPremiumIByUSD" width='100px'> </el-table-column>
+        <!--Inward Brokerage -->
+        <el-table-column label="Inward Brokerage" prop="brokerageI" width='100px'></el-table-column>
+        <!--Inward PC -->
+        <el-table-column label="Inward PC" prop="pcI" width='100px'></el-table-column>
+        <!--Inward MWS Pool-->
+        <el-table-column label="Inward MWS Pool" prop="mwsPoolI" width='100px'></el-table-column>
+        <!--Inward others fee-->
+        <el-table-column label="Inward others fee" prop="others1I" width='100px'></el-table-column>
+        <!--Outward Gross Premium (100%)  -->
+        <el-table-column label="Outward Gross Premium (100%)" prop="grossPremiumO100P" width='100px'></el-table-column>
+        <!--Outward Gross Premium-->
+        <el-table-column label="Outward Gross Premium" prop="grossPremiumO" width='100px'></el-table-column>
+        <!--Outward  Commission-->
+        <el-table-column label="Outward Commission" prop="commissionO"> </el-table-column>
+        <!--Outward Net Premium -->
+        <el-table-column label="Outward Net Premium" prop="netPremiumO" show-overflow-tooltip="true"> </el-table-column>
+        <!--Outward Net Premium(USD) -->
+        <el-table-column label="Outward Net Premium(USD)" prop="netPremiumOByUSD" width='100px'> </el-table-column>
+        <!--Outward Brokerage -->
+        <el-table-column label="Outward Brokerage" prop="brokerageO"></el-table-column>
+        <!--Outward PC -->
+        <el-table-column label="Outward PC" prop="pcO"></el-table-column>
+        <!--Outward MWS Pool-->
+        <el-table-column label="Outward MWS Pool" prop="mwsPoolO"></el-table-column>
+        <!--Outward others fee-->
+        <el-table-column label="Outward others fee" prop="others1O"></el-table-column>
+
+    </el-table>
+</div>

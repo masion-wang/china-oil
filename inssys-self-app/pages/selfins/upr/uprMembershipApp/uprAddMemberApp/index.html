@@ -1,0 +1,240 @@
+<!-- 保单录入页面 -->
+<section>
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="policyForm" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 基础信息 -->
+                <el-collapse-item
+                  id="baseInfo"
+                  name="baseInfo"
+                  :title="'gTitleBasics' | translate('Basic Data')"
+                >
+                  <gv-form :model="baseInfo" ref="baseInfos">
+                    <!-- 表单 -->
+                    <div class="gv-row" style="padding-top: 20px">
+                      <!--会费年份-->
+                      <gv-form-item
+                        key-name="会费年份"
+                        prop="year"
+                        isThree="true"
+                        :rules="baseInforules.year"
+                        requires
+                      >
+                        <el-date-picker
+                          :readonly="pass"
+                          v-model="baseInfo.year"
+                          type="year"
+                          format="yyyy"
+                          value-format="yyyy"
+                        >
+                        </el-date-picker>
+                      </gv-form-item>
+                      <!-- 费用类型-->
+                      <gv-form-item
+                        key-name="feeType"
+                        isThree="true"
+                        prop="feeType"
+                        :rules="baseInforules.feeType"
+                        requires
+                      >
+                        <el-input v-model="baseInfo.feeType"></el-input>
+                      </gv-form-item>
+                      <!-- 会费金额 -->
+                      <gv-form-item key-name="会费金额" isThree="true" requires>
+                        <el-row>
+                          <el-col :span="6">
+                            <el-form-item
+                              prop="currency"
+                              style="margin-bottom: 0"
+                              :rules="baseInforules.currency"
+                            >
+                              <gv-select
+                                size="mini"
+                                code-type="Currency"
+                                v-model="baseInfo.currency"
+                              ></gv-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :span="10" :offset="1">
+                            <el-form-item
+                              prop="amount"
+                              style="margin-bottom: 0"
+                              :rules="baseInforules.amount"
+                            >
+                              <gv-input
+                                v-model="baseInfo.amount"
+                                maxlength="21"
+                                num-len="2"
+                              ></gv-input>
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+                      </gv-form-item>
+                    </div>
+                    <div class="gv-row">
+                      <!--创建人-->
+                      <gv-form-item
+                        key-name="founder"
+                        prop="createdBy"
+                        isThree="true"
+                      >
+                        <el-input
+                          disabled="true"
+                          v-model="baseInfo.createdBy"
+                        ></el-input>
+                      </gv-form-item>
+                      <!--修改人-->
+                      <gv-form-item
+                        key-name="modifiedBy"
+                        prop="amendedBy"
+                        isThree="true"
+                      >
+                        <el-input
+                          disabled="true"
+                          v-model="baseInfo.amendedBy"
+                        ></el-input>
+                      </gv-form-item>
+                    </div>
+                    <div class="gv-row">
+                      <!--创建时间-->
+                      <gv-form-item
+                        key-name="creationTime"
+                        prop="createdDate"
+                        isThree="true"
+                      >
+                        <el-date-picker
+                          v-model="baseInfo.createdDate"
+                          type="datetime"
+                          disabled="true"
+                          format="dd-MM-yyyy HH:mm:ss"
+                          value-format="dd-MM-yyyy HH:mm:ss"
+                        >
+                        </el-date-picker>
+                      </gv-form-item>
+                      <!--修改时间-->
+                      <gv-form-item
+                        key-name="modificationTime"
+                        prop="amendedDate"
+                        isThree="true"
+                      >
+                        <el-date-picker
+                          v-model="baseInfo.amendedDate"
+                          type="datetime"
+                          disabled="true"
+                          format="dd-MM-yyyy HH:mm:ss"
+                          value-format="dd-MM-yyyy HH:mm:ss"
+                        >
+                        </el-date-picker>
+                      </gv-form-item>
+                    </div>
+
+                    <!-- 季度、费用  -->
+                    <el-table
+                      class="tabletitle formTable"
+                      style="width: 40%"
+                      :data="feeList"
+                    >
+                      <!-- 季度 -->
+                      <el-table-column label="季度" prop="sourceNo">
+                        <template slot-scope="scope">
+                          <el-form-item prop="sourceNo" style="color: #909399">
+                            {{scope.row.sourceNo}}
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <!-- 金额 -->
+                      <el-table-column
+                        :label="'payment'| translate"
+                        prop="itemNo"
+                      >
+                        <template slot-scope="scope">
+                          <el-form-item prop="itemNo">
+                            <gv-input
+                              v-model="scope.row.itemNo"
+                              num-len="2"
+                            ></gv-input>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </gv-form>
+                </el-collapse-item>
+              </el-collapse>
+              <div :span="24" class="ia-im-bottomDiv1" v-if="view">
+                <el-row type="flex" justify="center">
+                  <template v-if='$route.query.pageType !="back"'>
+                    <!-- 保存 -->
+                    <!-- <el-button
+                      v-if="!pass"
+                      class="gv-btn gv-btn-save"
+                      type="primary"
+                      @click="saveSubmit('0')"
+                    >
+                      {{'gBtnSave' | translate}}
+                    </el-button> -->
+                    <!-- 提交 -->
+                    <el-button
+                      v-if="!pass"
+                      class="gv-btn gv-btn-submit"
+                      type="primary"
+                      @click="saveSubmit('09')"
+                    >
+                      {{'gSubmit' | translate}}</el-button
+                    >
+                    <!-- 返回 -->
+                    <el-button
+                      v-if="!pass"
+                      class="gv-btn"
+                      type="primary"
+                      @click="returnPage()"
+                    >
+                      {{'gBtnReturn' | translate}}</el-button
+                    >
+                    <!-- 审核轨迹 -->
+                    <el-button
+                      v-if="pass"
+                      type="primary"
+                      class="gv-btn-primary gv-btn"
+                      >{{'auditTrail' | translate}}</el-button
+                    >
+                    <!-- 审核通过 passs审核页面显示-->
+                    <el-button
+                      v-if="pass"
+                      class="gv-btn gv-btn-submit"
+                      type="primary"
+                      type="primary"
+                      @click="goAudit('01')"
+                      >{{'gPass' | translate}}</el-button
+                    >
+                    <!-- 审核不通过 -->
+                    <el-button
+                      v-if="pass"
+                      class="gv-btn gv-btn-warning"
+                      type="primary"
+                      @click="goAudit('06')"
+                    >
+                      {{'gNotPass' | translate}}</el-button
+                    >
+                  </template>
+                  <!-- 关闭 -->
+                  <template v-if='$route.query.pageType =="back"'>
+                    <el-button
+                      class="gv-btn"
+                      type="primary"
+                      @click="returnPage()"
+                      >{{ 'gBtnClose' | translate('Close') }}</el-button
+                    >
+                  </template>
+                </el-row>
+              </div>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+</section>

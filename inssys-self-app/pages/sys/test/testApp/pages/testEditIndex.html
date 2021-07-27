@@ -1,0 +1,34 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1">
+            <gv-form :model="form" ref="form" :rules="rules">
+                <div class="gv-row">
+                    <gv-form-item key-name="testCode" prop="testcode" requires>
+                        <el-input maxlength="60" :readonly="query.type != 'add'" v-model="form.testcode"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="gCname" prop="testcname" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.testcname"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="gTname" prop="testtname" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.testtname"></el-input>
+                    </gv-form-item>
+                </div>
+                <div class="gv-row">
+                    <gv-form-item key-name="gZname" prop="testename" requires>
+                        <el-input maxlength="60" :readonly="isReadonly" v-model="form.testename"></el-input>
+                    </gv-form-item>
+                    <gv-form-item key-name="testStatus" prop="teststatus" requires>
+                        <el-input maxlength="120" :readonly="isReadonly" v-model="form.teststatus"></el-input>
+                    </gv-form-item>
+                    
+                </div>
+                
+                <el-row class="toolbar-btn txt-center">
+                    <el-button type="primary" v-if="query.type!='view'" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                    <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                    <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+                </el-row>
+            </gv-form>
+        </el-collapse-item>
+    </el-collapse>
+</section>

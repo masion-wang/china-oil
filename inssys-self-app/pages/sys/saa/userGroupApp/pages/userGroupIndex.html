@@ -1,0 +1,58 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" label-width="109px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1">
+                <table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="userGroupVoCompanyCode" defaultName="Company Code" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="companyCode" :width="5">
+                            <el-input size="mini" :readonly="query.type != 'add'" v-model="form.companyCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="userGroupVoUpperCompanyCode" defaultName="Upper Company Code" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="upperCompanyCode" :width="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.upperCompanyCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="userGroupVoCompanyLevel" defaultName="Company Level" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="companyLevel" :width="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.companyLevel"></el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="userGroupVoCompanyName" defaultName="Company Name" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="companyName" :width="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.companyName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="userGroupVoValidInd" defaultName="ValidInd" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" optionsSet="1" :disabled="isReadonly" codeType="Validind" v-model="form.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="userGroupVoDisplayNo" defaultName="DisplayNo" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="displayNo" :width="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.displayNo"></el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="userGroupVoValidDate" defaultName="Valid Date" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="validDate" :width="5">
+                            <el-date-picker size="mini" :disabled="isReadonly" :editable="false" type="date" v-model="form.validDate" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions"></el-date-picker>
+                        </gv-form-input>
+                        <gv-form-label keyName="userGroupVoInvalidDate" defaultName="Invalid Date" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="invalidDate" :width="5">
+                            <el-date-picker size="mini" :disabled="isReadonly" :editable="false" type="date" v-model="form.invalidDate" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions"></el-date-picker>
+                        </gv-form-input>
+                    </tr>
+
+                </table>
+            </el-collapse-item>
+
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnReturn' | translate('Return') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>    

@@ -1,0 +1,160 @@
+<section>
+    <el-form class="table-line" ref="form" id="" :model="form" :inline="true" :rules="rules" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1" class="table-line" id="idse1">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="saaFactorVoFactorCode" defaultName="Factor Code" requires :width="2"></gv-form-label>
+                        <gv-form-input :width="4" prop="factorCode">
+                            <el-input size="mini" maxlength="60" :readonly="query.type != 'add'" v-model="form.factorCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="saaFactorVoFactorType" defaultName="Factor Type" requires :width="2"></gv-form-label>
+                        <gv-form-input :width="4" prop="dataType">
+                            <el-input size="mini" maxlength="60" :readonly="isReadonly" v-model="form.dataType"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="saaFactorVoFactorDesc" defaultName="Factor Des" :width="2"></gv-form-label>
+                        <gv-form-input :width="4" prop="factorDesc">
+                            <el-input size="mini" maxlength="60" :readonly="isReadonly" v-model="form.factorDesc"></el-input>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-collapse-item>
+            <el-collapse-item :title="'saaFactorVoTitleAttribute' | translate('Factor Attribute')" name="2">
+                <el-table :data="form.saaFactorFields" border>
+                    <el-table-column type="index" :label="'SequenceNo'| translate('Sequence No')" width="70"></el-table-column>
+
+                    <el-table-column label-class-name="require-star" :label="'sysEntityCode'| translate('Entity Code')" width="300">
+                        <template scope="scope">
+                            <gv-form-input :prop="'saaFactorFields.' + scope.$index + '.entityCode'">
+                                <gv-auto-complete :is-readonly="isReadonly" context-name="system" url="/saa/factor/table/dbclick" code-name="tableName" label-name="tableName,description"
+                                    v-model="scope.row.entityCode"></gv-auto-complete>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label-class-name="require-star" :label="'sysFieldCode'| translate('Field Code')" width="300">
+                        <template scope="scope">
+                            <gv-form-input :prop="'saaFactorFields.' + scope.$index + '.fieldCode'">
+                                <gv-auto-complete :is-readonly="isReadonly || scope.row.entityCode == ''" context-name="system" url="/saa/factor/field/dbclick"
+                                    code-name="field" :pre-query-data="{tableName: scope.row.entityCode}" label-name="field,comment"
+                                    v-model="scope.row.fieldCode"></gv-auto-complete>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-if="!isReadonly" :label="'gTitleOperation' | translate('Operation')">
+                        <template scope="scope">
+                            <el-button size="mini" type="primary" icon="el-icon-minus" @click="onDeletes(scope.$index, form.saaFactorFields)" class="marf5"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="toolbar-btn toolbar-pagination">
+                    <el-button size="mini" type="primary" v-if="!isReadonly" icon="el-icon-plus" @click="onAdd()"></el-button>
+                </div>
+            </el-collapse-item>
+            <el-collapse-item :title="'saaPowerList' | translate('Power List')" name="3" v-if="query.type != 'add'" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysUserVoUserCode" defaultName="User Code" :width="2"></gv-form-label>
+                        <gv-form-input prop="userCode" :width="3">
+                            <el-input size="mini" v-model="filters.userCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label :width="9"></gv-form-label>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" type="primary" v-if="!isReadonly" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+                <template>
+                    <el-table :data="powers" highlight-current-row border stripe>
+                        <el-table-column prop="userCode" :label="'sysUserVoUserCode' | translate('User Code')">
+                        </el-table-column>
+                        <el-table-column prop="dataOper" :label="'sysDataOper' | translate('Data Oper')">
+                        </el-table-column>
+                        <el-table-column prop="dataValue" :label="'sysDataValue' | translate('Data Value')">
+                        </el-table-column>
+                        <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                            <template slot-scope="scope">
+                                <el-button type="primary" v-if="!isReadonly" size="mini" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                                <el-button type="danger" v-if="!isReadonly" size="mini" @click="onHandleDel(scope.row)">{{ 'gBtnDelete' | translate('Delete') }}</el-button>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </template>
+                <!--分页-->
+                <div class="toolbar-btn toolbar-pagination">
+                    <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+                    </el-pagination>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" v-if="query.type!='view'" @click.native="onSubmit()" type="primary">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+    <el-dialog top="5%" :modal="false" :title="dialogForm.title" custom-class="dialogForm" class="dialog-small" v-if="dialogForm.dialogFormVisible"
+        :visible.sync="dialogForm.dialogFormVisible" size="tiny" :close-on-click-modal="dialogForm.closeClickModal">
+        <el-form class="table-line" ref="powerForm" :model="powerForm" label-width="100px" :rules="powerRules">
+            <el-form-item :label="'sysUserVoUserCode' | translate('User Code')" prop="userCode">
+                <gv-dbclick :is-readonly="isReadonly" context-name="system" url="/user/db_click" table-one-params="userCode" :table-one-title="'sysUserVoUserCode' | translate"
+                    table-two-params="userName" :table-two-title="'sysUserVoUserName' | translate" search-one-params="userCode"
+                    v-model="powerForm.userCode" :search-one-title="'sysUserVoUserCode' | translate">
+                </gv-dbclick>
+            </el-form-item>
+            <el-form-item :label="'sysDataOper' | translate('Data Oper')" prop="dataOper">
+                <el-select size="mini" v-model="powerForm.dataOper">
+                    <el-option label="请选择" value=""></el-option>
+                    <el-option label="=" value="="></el-option>
+                    <el-option label="<" value="<"></el-option>
+                    <el-option label=">" value=">"></el-option>
+                    <el-option label="<=" value="<="></el-option>
+                    <el-option label=">=" value=">="></el-option>
+                    <el-option label="Like" value="Like"></el-option>
+                    <el-option label="In" value="In"></el-option>
+                    <el-option label="Between" value="Between"></el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item :label="'isTree'| translate('Is tree?')" prop="tableName">
+                <gv-select size="mini" @change="changeIsTree" options-set="1" code-type="YesOrNo" v-model="isTree"></gv-select>
+            </el-form-item>
+
+            <el-form-item :label="'permissionValueTable'| translate('Permission Value Table')" prop="tableName">
+                    <gv-select @change="handleSelectChange" size="mini" :code-type="codeType" v-model="tableName"></gv-select>
+            </el-form-item>
+
+            <el-form-item v-if="!isTree" :label="'permissionValue'| translate('Permission Value')" prop="fieldName">
+                <gv-auto-complete :is-readonly="isReadonly || tableName == ''" context-name="system" url="/saa/factor/field/dbclick" :pre-query-data="{tableName: tableName}"
+                    code-name="field" label-name="field,comment" v-model="fieldName"></gv-auto-complete>
+            </el-form-item>
+
+            <el-form-item v-if="!isTree" :label="'permissionValueDesc'| translate('Permission Value Description')" prop="fieldName">
+                <gv-auto-complete :is-readonly="isReadonly || tableName == ''" context-name="system" url="/saa/factor/field/dbclick" :pre-query-data="{tableName: tableName}"
+                    code-name="field" label-name="field,comment" v-model="fieldDesc"></gv-auto-complete>
+            </el-form-item>
+
+            <el-form-item v-if="isTree" :label="'tree'" prop="tree">
+                <el-tree ref="tree" @check-change="handleTreeChange" highlight-current :data="treeData" default-expand-all show-checkbox node-key="id" :props="defaultProps">
+                </el-tree>
+            </el-form-item>
+
+            <el-form-item :label="'sysDataValue' | translate('Data Value')" prop="dataValue">
+                <el-input v-if="isTree" size="mini" maxlength="2000" v-model="powerForm.dataValue"></el-input>
+                <gv-dbclick v-if="!isTree" :is-readonly="isReadonly || tableName == '' || fieldName == '' || fieldDesc == ''" :ids="fieldName" :is-more-select="true"
+                    :pre-query-data="{tableName: tableName, field: fieldName, fieldDesc: fieldDesc}" url="/saa/factor/value/dbclick" context-name="system"
+                    v-model="powerForm.dataValue" :table-one-params="fieldName" :table-one-title="fieldName" :table-two-params="fieldDesc"
+                    :table-two-title="fieldDesc" :search-one-params="fieldName" :search-one-title="fieldName"></gv-dbclick>
+            </el-form-item>
+            <el-form-item>
+                <el-button size="mini" type="primary" @click="savePower">{{ 'gBtnSave' | translate('Save')}}</el-button>
+                <el-button size="mini" @click="onClosePowerDialog">{{ 'gBtnClose' | translate('Close')}}</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</section>

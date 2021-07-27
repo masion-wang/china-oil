@@ -1,0 +1,35 @@
+<section>
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item title="Field Search" name="2" class="table-line">
+                <div class="txt-center">
+                    <gv-form-label width="20%" keyName="Field Search" defaultName="Field Search"></gv-form-label>
+                    <gv-form-input width="20%">
+                        <el-input size="mini" placeholder="输入关键字进行过滤" v-model="filterText">
+                        </el-input>
+                    </gv-form-input>
+                    <gv-form-label></gv-form-label>
+                </div>
+                <div class="txt-center">
+                    <el-tree ref="tree" highlight-current :data="source" node-key="id" :props="defaultProps" @render-content="renderContent" @node-expand="nodeExpand" :expand-on-click-node="true" :default-expanded-keys="defaultExpandedKeys" :filter-node-method="filterNode" @node-click="handleNodeClick">
+                    </el-tree>
+                </div>
+            </el-collapse-item>
+            <el-collapse-item title="Field Compare Result" name="2" class="table-line">
+                <div>
+                    <el-table :data="fieldList" highlight-current-row border stripe >
+                        <el-table-column prop="creatorCode" :label="'specialAuditLogFieldCreateCode' | translate('User Code')">
+                        </el-table-column>
+                        <el-table-column align="right" prop="createTime" :formatter="formatDate" :label="'specialAuditLogFieldCreateTime' | translate('Create Time')">
+                        </el-table-column>
+                        <el-table-column prop="field" :label="'specialAuditLogFieldName' | translate('Field Name')">
+                        </el-table-column>
+                        <el-table-column prop="value" :label="'specialAuditLogFieldValue' | translate('Value')">
+                        </el-table-column>
+                        <el-table-column prop="version" :label="'specialAuditLogFieldVersion' | translate('Version')">
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+
+</section>

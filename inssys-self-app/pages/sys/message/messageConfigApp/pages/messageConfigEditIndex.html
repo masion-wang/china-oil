@@ -1,0 +1,89 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" label-width="109px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1">
+                <table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                    	<gv-form-label keyName="ggMessageConfigMessageCode" defaultName="Message Code" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="messageCode" :width="5">
+                            <el-input size="mini" :readonly="query.type != 'add'" v-model="form.messageCode"></el-input>
+                        </gv-form-input>
+						<gv-form-label keyName="ggMessageConfigTransferType" defaultName="Transfer Type" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="transferType" :width="5">
+                            <gv-select size="mini" optionsSet="0" :disabled="isReadonly" codeType="TransferType" v-model="form.transferType"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="ggMessageConfigValidInd" defaultName="ValidInd" :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="5">
+                            <gv-select size="mini" optionsSet="0" :disabled="isReadonly" codeType="Validind" v-model="form.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigPriority" defaultName="Priority" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="priority" :width="5">
+                            <gv-select size="mini" optionsSet="0" :disabled="isReadonly" codeType="priority" v-model="form.priority"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigTitleModel" defaultName="Title Model" :width="3"></gv-form-label>
+                        <gv-form-input prop="titleModel" colspan="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.titleModel" style="width:40%;"></el-input>
+                            <el-input size="mini" readonly v-model="form.titleModelName" style="width:40%;"></el-input>
+
+                            <el-button size="mini" type="primary" @click="selectMessageModel('titleModel')" class="pd-f0" icon="el-icon-search" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button size="mini" type="primary" @click="insertMessageModel('titleModel')" class="pd-f0" icon="el-icon-plus" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button v-if="isReadonly" size="mini" type="primary" @click="viewMessageModel('titleModel')" class="pd-f0" icon="el-icon-more" style="width:8%;" ></el-button>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigReceiverModel" defaultName="Receiver Model" :width="3" ></gv-form-label>
+                        <gv-form-input prop="receiverModel" colspan="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.receiverModel" style="width:40%;"></el-input>
+                            <el-input size="mini" readonly v-model="form.receiverModelName" style="width:40%;"></el-input>
+                            <el-button size="mini" type="primary" @click="selectMessageModel('receiverModel')" class="pd-f0" icon="el-icon-search" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button size="mini" type="primary" @click="insertMessageModel('receiverModel')" class="pd-f0" icon="el-icon-plus" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button v-if="isReadonly" size="mini" type="primary" @click="viewMessageModel('receiverModel')" class="pd-f0" icon="el-icon-more" style="width:8%;" ></el-button>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigContentModel" defaultName="Content Model" :width="3"></gv-form-label>
+                        <gv-form-input prop="contentModel" colspan="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.contentModel" style="width:40%;" ></el-input>
+                            <el-input size="mini" readonly v-model="form.contentModelName" style="width:40%;"></el-input>
+                            <el-button size="mini" type="primary" @click="selectMessageModel('contentModel')" class="pd-f0" icon="el-icon-search" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button size="mini" type="primary" @click="insertMessageModel('contentModel')" class="pd-f0" icon="el-icon-plus" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button v-if="isReadonly" size="mini" type="primary" @click="viewMessageModel('contentModel')" class="pd-f0" icon="el-icon-more" style="width:8%;" ></el-button>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigAttachmentModel" defaultName="Attachment Model"  :width="3"></gv-form-label>
+                        <gv-form-input prop="attachmentModel" colspan="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.attachmentModel" style="width:40%;" ></el-input>
+                            <el-input size="mini" readonly v-model="form.attachmentModelName" style="width:40%;"></el-input>
+                            <el-button size="mini" type="primary" @click="selectMessageModel('attachmentModel')" class="pd-f0" icon="el-icon-search" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button size="mini" type="primary" @click="insertMessageModel('attachmentModel')" class="pd-f0" icon="el-icon-plus" v-if="!isReadonly" style="width:8%;" ></el-button>
+                            <el-button v-if="isReadonly" size="mini" type="primary" @click="viewMessageModel('attachmentModel')" class="pd-f0" icon="el-icon-more" style="width:8%;" ></el-button>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="ggMessageConfigSenderModel" defaultName="Sender Model" :width="3"></gv-form-label>
+                        <gv-form-input prop="senderModel" colspan="5">
+                            <el-input size="mini" :readonly="isReadonly" v-model="form.senderModel" style="width:40%;" ></el-input>
+                            <el-input size="mini" readonly v-model="form.senderModelName" style="width:40%;"></el-input>
+                            <el-button v-if="!isReadonly" size="mini" type="primary" @click="selectMessageModel('senderModel')" class="pd-f0" icon="el-icon-search" style="width:8%;" ></el-button>
+                            <el-button v-if="!isReadonly" size="mini" type="primary" @click="insertMessageModel('senderModel')" class="pd-f0" icon="el-icon-plus" style="width:8%;" ></el-button>
+                            <el-button v-if="isReadonly" size="mini" type="primary" @click="viewMessageModel('senderModel')" class="pd-f0" icon="el-icon-more" style="width:8%;" ></el-button>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

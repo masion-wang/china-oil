@@ -1,0 +1,133 @@
+<section>
+  <gv-filter-table
+    ref="table"
+    @on-list-btn="onListBtn"
+    :table="table"
+    @onExportAllExcel="onExportAllExcel"
+  >
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!--挂账日期-->
+        <gv-form-item key-name="zbA/CDate" isThree="true">
+          <div style="display: flex">
+            <el-form-item prop="acDateStart" style="flex: 1; margin: 0">
+              <el-date-picker
+                v-model="scope.search.acDateStart"
+                format="dd-MM-yyyy"
+                value-format="dd-MM-yyyy"
+                type="date"
+                :placeholder="'ryn' | translate"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="acDateEnd" style="flex: 1; margin: 0">
+              <el-date-picker
+                format="dd-MM-yyyy"
+                value-format="dd-MM-yyyy"
+                v-model="scope.search.acDateEnd"
+                type="date"
+                :placeholder="'ryn' | translate"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!-- 创建人 -->
+        <gv-form-item key-name="founder" isThree="true" prop="createdBy">
+          <el-input maxlength="21" v-model="scope.search.createdBy"></el-input>
+        </gv-form-item>
+        <!-- 创建日期 -->
+        <gv-form-item
+          key-name="createDate"
+          isThree="true"
+          prop="policyRiskCode"
+        >
+          <div style="display: flex">
+            <el-form-item prop="lossDateTimeStart" style="flex: 1; margin: 0">
+              <el-date-picker
+                v-model="scope.search.lossDateTimeStart"
+                format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss"
+                type="datetime"
+                :placeholder="'ryn' | translate"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="lossDateTimeEnd" style="flex: 1; margin: 0">
+              <el-date-picker
+                format="dd-MM-yyyy HH:mm:ss"
+                value-format="dd-MM-yyyy HH:mm:ss"
+                v-model="scope.search.lossDateTimeEnd"
+                type="datetime"
+                :placeholder="'ryn' | translate"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 状态  -->
+        <gv-form-item key-name="status" isThree="true" prop="status">
+          <gv-select
+            size="mini"
+            code-type="IbnrStatus"
+            v-model="scope.search.status"
+            filterable
+            clearable
+            code-name="codeCode"
+            label-name="codeName"
+          ></gv-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <!-- 新增按钮 -->
+      <el-button
+        class="gv-btn gv-btn-primary gv-btn-xs"
+        type="primary"
+        @click="gBtnCreate()"
+      >
+        {{'gBtnCreate' | translate}}</el-button
+      >
+    </template>
+  </gv-filter-table>
+  <!-- 任务号 -->
+  <el-dialog
+    append-to-body
+    :title="'policyDetails'| translate"
+    :visible.sync="settlingCeding"
+    width="90%"
+    top="7vh"
+    :close-on-click-modal="false"
+    class="dialogPadding10px"
+  >
+    <view-ibnr ref="viewIbnr" @close="settlingCeding = false"></view-ibnr>
+    <template slot="footer">
+      <div style="text-align: center">
+        <!-- 关闭 -->
+        <el-button
+          class="gv-btn gv-btn-back"
+          type="primary"
+          @click="settlingCeding = false"
+          >{{'gBtnClose' | translate}}</el-button
+        >
+        <!-- 打印 -->
+        <el-button
+          v-if="ViewIs"
+          class="gv-btn gv-btn-primary"
+          type="primary"
+          @click="getPrint()"
+          >{{'gBtnPrint' | translate}}</el-button
+        >
+      </div>
+    </template>
+  </el-dialog>
+</section>

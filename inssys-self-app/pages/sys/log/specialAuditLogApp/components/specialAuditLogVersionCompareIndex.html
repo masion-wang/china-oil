@@ -1,0 +1,25 @@
+<section>
+    <el-form form="specialAuditLogVersionCompareForm" :inline="true">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'specialAuditLogDetailList' | translate('Detail List')" name="2" class="table-line">
+                <template>
+                    <el-table :data="specialAuditLogList" highlight-current-row border stripe >
+                        <el-table-column prop="content.requestData" :label="'specialAuditLogRequestData' | translate('Request Data')" show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column align="right" prop="content.version" :label="'specialAuditLogVersion' | translate('Version')">
+                        </el-table-column>
+                        <el-table-column align="center" :label="'specialAuditLogVersionChoose' | translate('Version Choose')">
+                            <template slot-scope="scope">
+                                <el-checkbox @change="handleCheckAllChange(scope.row)"></el-checkbox>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <div class="toolbar-btn toolbar-pagination">
+                    <el-pagination @size-change="onHandleSizeChange()" @current-change="onHandleCurrentChange()" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+                    </el-pagination>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+    </el-form>
+</section>

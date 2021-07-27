@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html dir="ltr" mozdisallowselectionprint moznomarginboxes>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>PDF Print</title>
+    <style type="text/css">
+    #loading-block {
+        width: 200px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 6px;
+        margin: 200px auto;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .loading-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .loading-img img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .loading-text {
+        color: #fff;
+    }
+    </style>
+    <script type="text/javascript">
+    var base64 = '';
+    var xhr = new XMLHttpRequest();
+    var urlParams = getParams(document.location.search.substring(1));
+    var url = "/report/tpsgi/print/pdfBASE64?" + document.location.search.substring(1);
+    //console.log(url);
+
+    // xhr.open("GET", url, true);
+    // xhr.onreadystatechange = function() {
+    //     if (xhr.readyState == 4 && xhr.status == 200) {
+    //         base64 = xhr.responseText;
+    //         //initPdf().call(pdfjsWebLibs);
+    //         window.location = 'viewer.html' + document.location.search + "&base64=" + base64;
+    //     }
+    // }
+
+    // try {
+    //     xhr.send();
+    // } catch (ex) {
+    //     base64 = 'JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDI0OT4+c3RyZWFtCnicrdNNa4MwGMDxez7Fc+wuXd5110J72G2QWxlDNA1djbpoD/32VVfZGOPBw4OgoEl+ov98sZ1jykLOLbiK7R17YxJep7sC+HhM51xLcJE9HwQIDu7ENk/ucxr7M4RDGX9PEkqPa75s7Z+ZfH6eAttce58+yrby01ocwj/rHd/HazW/Dy5lViBSUcVzQ6Eogyg+dnV7815SSOiXWyRFINlcrZA0hWSyFZKhkBRWQyyaIvhE8Zssx4LorqmrBwLGZFgN38yJwjFYC7NDsVmNxEIYfD8ICoVjESy5UUg6wyp45EYCaayD0DbhUpxJIImF8IDWbaA7Sl9UMAplbmRzdHJlYW0KZW5kb2JqCjEgMCBvYmoKPDwvVGFicy9TL0dyb3VwPDwvUy9UcmFuc3BhcmVuY3kvVHlwZS9Hcm91cC9DUy9EZXZpY2VSR0I+Pi9Db250ZW50cyAzIDAgUi9UeXBlL1BhZ2UvUmVzb3VyY2VzPDwvQ29sb3JTcGFjZTw8L0NTL0RldmljZVJHQj4+L0ZvbnQ8PC9GMSAyIDAgUj4+Pj4vUGFyZW50IDQgMCBSL01lZGlhQm94WzAgMCA1OTUgODQyXT4+CmVuZG9iago1IDAgb2JqClsxIDAgUi9YWVogMCA4NTIgMF0KZW5kb2JqCjIgMCBvYmoKPDwvU3VidHlwZS9UeXBlMS9UeXBlL0ZvbnQvQmFzZUZvbnQvSGVsdmV0aWNhL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZz4+CmVuZG9iago0IDAgb2JqCjw8L0tpZHNbMSAwIFJdL1R5cGUvUGFnZXMvQ291bnQgMT4+CmVuZG9iago2IDAgb2JqCjw8L05hbWVzWyhKUl9QQUdFX0FOQ0hPUl8wXzEpIDUgMCBSXT4+CmVuZG9iago3IDAgb2JqCjw8L0Rlc3RzIDYgMCBSPj4KZW5kb2JqCjggMCBvYmoKPDwvTmFtZXMgNyAwIFIvVHlwZS9DYXRhbG9nL1BhZ2VzIDQgMCBSL1ZpZXdlclByZWZlcmVuY2VzPDwvUHJpbnRTY2FsaW5nL0FwcERlZmF1bHQ+Pj4+CmVuZG9iago5IDAgb2JqCjw8L01vZERhdGUoRDoyMDE3MTIwNjE1NTUyNyswOCcwMCcpL0NyZWF0b3IoSmFzcGVyUmVwb3J0cyBMaWJyYXJ5IHZlcnNpb24gNi4wLjApL0NyZWF0aW9uRGF0ZShEOjIwMTcxMjA2MTU1NTI3KzA4JzAwJykvUHJvZHVjZXIoaVRleHSuIDUuNS4wIKkyMDAwLTIwMTMgaVRleHQgR3JvdXAgTlYgXChBR1BMLXZlcnNpb25cKSk+PgplbmRvYmoKeHJlZgowIDEwCjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDMzMSAwMDAwMCBuIAowMDAwMDAwNTYyIDAwMDAwIG4gCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDY1MCAwMDAwMCBuIAowMDAwMDAwNTI3IDAwMDAwIG4gCjAwMDAwMDA3MDEgMDAwMDAgbiAKMDAwMDAwMDc1NSAwMDAwMCBuIAowMDAwMDAwNzg3IDAwMDAwIG4gCjAwMDAwMDA4OTAgMDAwMDAgbiAKdHJhaWxlcgo8PC9JbmZvIDkgMCBSL0lEIFs8MzdlNWE4MmM5ZWQzNzM3NGEwMDk2ZmU1ZDljYzFkYzA+PDM3ZTVhODJjOWVkMzczNzRhMDA5NmZlNWQ5Y2MxZGMwPl0vUm9vdCA4IDAgUi9TaXplIDEwPj4KJWlUZXh0LTUuNS4wCnN0YXJ0eHJlZgoxMDkyCiUlRU9GCg==';
+    //     window.location = 'viewer.html' + document.location.search + "&base64=" + base64;
+    // }
+window.location = 'viewer.html' + document.location.search + "&base64=" + base64;
+    function getParams(str) {
+        var obj = {};
+        var arr = str.split("&");
+
+        for (var i = 0; i < arr.length; i++) {
+            var s = arr[i].split("=");
+            obj[s[0]] = s[1];
+        }
+
+        return obj;
+    }
+    </script>
+</head>
+<div id="loading-block">
+    <div class="loading-img">
+        <img src="./images/loading1.gif" alt="Img" />
+    </div>
+    <div class="loading-text">Loading the data...</div>
+</div>
+
+</html>

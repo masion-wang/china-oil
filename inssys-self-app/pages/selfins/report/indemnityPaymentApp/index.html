@@ -1,0 +1,62 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" @onExportAllExcel="onExportAllExcel"
+    :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 统计日期  prop="positionDate"-->
+        <gv-form-item key-name="zbStatisticsdate" isThree="true" requires>
+          <div style="display: flex">
+            <el-form-item prop="startReportDate" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="endReportDate" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date"
+                v-model="scope.search.endReportDate" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!--前端公司-->
+        <gv-form-item key-name="zbfrontendcompany" isThree="true" prop="cedingCompanyList">
+          <el-select v-model="scope.search.cedingCompanyList" multiple filterable maxlength="2000" style="width:320px"
+            class="noLeftMg selecttagstexBYLDL eltagBYLDL" @change="changeriskcode2(scope.search.cedingCompanyList)">
+            <el-option v-for="item in insureCompanyArr" :key="item.cedingCompany" :label="item.cedingCompany"
+              :value="item.cedingCompany">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!--险种-->
+        <!-- 自保险种  -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCodeList">
+          <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+            v-model="scope.search.riskCodeList" multiple @change="changeriskcode1(scope.search.riskCodeList)">
+            <!-- <el-option label="All" value="All">
+            </el-option> -->
+            <el-option v-for="item in options" :key="item.codeCode" :label="item.codeName" :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- <gv-form-item key-name="险种" isThree="true" prop="currency">
+          <gv-select size="mini" filterable clearable code-type="riskCode" code-name="codeCode" label-name="codeName"
+            v-model="scope.search.riskCode"></gv-select>
+        </gv-form-item> -->
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <!--查询结果-->
+      <span style="font-size: 14px; font-weight: 500">{{'Queryresults'|translate('Query results')}}</span>
+      <!-- 导出 -->
+      <el-button style='position: relative;left:88%;' class="gv-btn gv-btn-primary " type="primary"
+        @click="exportExcel">
+        {{ 'gBtnExport' | translate('Export') }}
+      </el-button>
+
+    </template>
+  </gv-filter-table>
+</section>

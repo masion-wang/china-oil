@@ -1,0 +1,42 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="form" :rules="rules" :model="form" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysUserVoStartTimeOnLeave" defaultName="Start Time on Leave" :width="3"></gv-form-label>
+                        <gv-form-input :width="4" prop="startDateOnLeave">
+                            <el-date-picker style="width: 48%;" :editable="false" v-model="form.startDateOnLeave"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions">
+                            </el-date-picker>-
+                            <gv-select style="width: 48%;" codeType="TimeOfOnLeave" v-model="form.startTimeOnLeave"></gv-select>
+                        </gv-form-input>
+                        
+                        <gv-form-label keyName="sysUserVoEndTimeOnLeave" defaultName="End Time on Leave" :width="3"></gv-form-label>
+                        <gv-form-input :width="4" prop="endDateOnLeave">
+                            <el-date-picker style="width: 48%;" size="mini" :editable="false" v-model="form.endDateOnLeave" format="dd-MM-yyyy"
+                                value-format="yyyy-MM-dd HH:mm:ss" :picker-options="pickerOptions">
+                            </el-date-picker>-
+                          <gv-select style="width: 48%;" codeType="EndTimeOfOnLeave" v-model="form.endTimeOnLeave"></gv-select>
+                            </el-time-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="sysUserVoBuddy" defaultName="Buddy" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="buddy">
+                            <gv-dbclick :pre-query-data="buddyPreQuery" url="/user/db_click" context-name="system"
+                                v-model="form.buddy" table-one-params="userCode" :table-one-title="'sysUserVoUserCode' | translate"
+                                table-two-params="userName" :table-two-title="'sysUserVoUserName' | translate" search-one-params="userCode"
+                                :search-one-title="'sysUserVoUserCode' | translate"></gv-dbclick>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onUpdate()">{{ 'gBtnUpdate' | translate('Update') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+
+</section>

@@ -1,0 +1,63 @@
+<div style="margin-top: 20px">
+  <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+    <span style="font-size: 14px; font-weight: 500; margin-left: 40px"
+      >冲销数据</span
+    >
+  </div>
+  <div class="subCollapse">
+    <!-- <el-form :model="matterTableForm" ref="matterTableForm"> -->
+    <el-table class="centerTable" :data="recognizeeTableList">
+      <!-- 分入/分出 -->
+      <el-table-column label="分入/分出" prop="itemNo">
+        <template slot-scope="scope">
+          <el-form-item></el-form-item>
+        </template>
+      </el-table-column>
+      <!-- 业务类型 -->
+      <el-table-column :label="'businessType' | translate" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 保监险种 -->
+      <el-table-column label="保监险种" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 出险年份 -->
+      <el-table-column label="出险年份" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 挂账日期 -->
+      <el-table-column label="挂账日期" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 币别 -->
+      <el-table-column :label="'currency'| translate" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 金额 -->
+      <el-table-column :label="'payment'| translate" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 自保险种 -->
+      <el-table-column :label="'selfInsurance'| translate" prop="itemNo">
+        <template slot-scope="scope">
+          <el-form-item></el-form-item>
+        </template>
+      </el-table-column>
+      <!-- 上游/下游 -->
+      <el-table-column :label="'upstreamDownstream' | translate" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 机构 -->
+      <el-table-column :label="'institute' | translate" prop="itemNo">
+        <template slot-scope="scope"> <el-form-item></el-form-item> </template
+      ></el-table-column>
+      <!-- 交易类型 -->
+      <el-table-column label="交易类型" prop="itemNo">
+        <template slot-scope="scope">
+          <el-form-item></el-form-item>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- </el-form> -->
+  </div>
+</div>

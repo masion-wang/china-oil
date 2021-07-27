@@ -1,0 +1,259 @@
+<!-- 赔付信息组件 -->
+<div style="padding-bottom: 15px;">
+  <gv-form :model="claimInfo" ref="claimInfo" class="mt20">
+    <div class="gv-row">
+      <!--索赔状态-->
+      <gv-form-item key-name="claimStatus" prop="claimStatus" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('ClaimStatus', claimInfo.claimStatus)}}
+        </div>
+      </gv-form-item>
+      <!--注销状态-->
+      <gv-form-item key-name="cancelStatus" prop="cancelStatus" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('CancelStatus', claimInfo.cancelStatus)}}
+        </div>
+      </gv-form-item>
+      <!--重开审核状态-->
+      <gv-form-item key-name="reopenAuditStatus" prop="reopenStatus" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('ReopenStatus', claimInfo.reopenStatus)}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--索赔币别-->
+      <gv-form-item key-name="claimCurrency" prop="claimCurrency" isThree="true">
+        <gv-select size="mini" code-type="Currency" v-model="claimInfo.claimCurrency" @row-select="changeRate" :disabled="isReadonly"></gv-select>
+      </gv-form-item>
+      <!--默认币别-->
+      <gv-form-item key-name="defaultCurrency" prop="defaultCurrency" isThree="true">
+        <gv-select size="mini" code-type="Currency" v-model="claimInfo.defaultCurrency" @row-select="changeRate" :disabled="isReadonly"></gv-select>
+      </gv-form-item>
+      <!--汇率-->
+      <gv-form-item key-name="exchangeRate" prop="exchangeRate" isThree="true">
+        <!-- <el-input v-model="claimInfo.exchangeRate" :disabled="true"> </el-input> -->
+        <gv-input size="mini" :thou="true" pattern-key='Zero' v-model="claimInfo.exchangeRate" num-len="7" :readonly="true"></gv-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--应收汇总金额-->
+      <gv-form-item key-name="totalReceivableAmount" prop="totalReceivableAmountClaim" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}} {{claimInfo.totalReceivableAmountClaim}}
+        </div>
+      </gv-form-item>
+      <!--应收汇总金额-->
+      <gv-form-item key-name="totalReceivableAmount" prop="totalReceivableAmountDefault" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('Currency', claimInfo.defaultCurrency)}} {{claimInfo.totalReceivableAmountDefault}}
+        </div>
+      </gv-form-item>
+      <!--提交人-->
+      <gv-form-item key-name="submitname" prop="submitterName" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{claimInfo.submitterName}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--实收汇总金额-->
+      <gv-form-item key-name="totalReceivedAmount" prop="totalReceivedAmountClaim" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}} {{claimInfo.totalReceivedAmountClaim}}
+        </div>
+      </gv-form-item>
+      <!--实收汇总金额-->
+      <gv-form-item key-name="totalReceivedAmount" prop="totalReceivedAmountDefault" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{Vue.gvUtil.translationData('Currency', claimInfo.defaultCurrency)}} {{claimInfo.totalReceivedAmountDefault}}
+        </div>
+      </gv-form-item>
+      <!--提交日期-->
+      <gv-form-item key-name="submitTime" prop="submissionDate" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{claimInfo.submissionDate}}
+        </div>
+      </gv-form-item>
+    </div>
+  </gv-form>
+  <el-form :rules="formData.rules" :model="formData"  ref="formDom">
+    <el-table
+      :data="formData.claimAmountList"
+      :summary-method="getSummaries"
+      show-summary>
+      <el-table-column
+        prop="instalmentCount"
+        :label="'qs' | translate">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.instalmentCount" class="noLeftMg" multiple @change="((value) => {selectInstalment(value, scope.row)})" @remove-tag="removeTag" :disabled="isReadonly">
+            <el-option v-for="item in instalmentList" :label="item.instalmentCount" :value="item.instalmentCount" :disabled="disabledOptions(item.instalmentCount,scope.row)"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="paymentReceiver">
+        <template slot="header" slot-scope="scope">
+          <span style="color: red;">*</span>{{'paymentReceiver' | translate}}
+        </template>
+        <template slot-scope="scope">
+          <el-form-item :prop="'claimAmountList.' + scope.$index + '.paymentReceiver'" :rules='formData.rules.paymentReceiver'>
+            <gv-select size="mini" code-type="CaimReceiver" v-model="scope.row.paymentReceiver"
+            :ref="'claimAmountList.' + scope.$index + '.paymentReceiver'" :disabled="isReadonly"></gv-select>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="estimatedLossAmount"
+        :label="translateTableHead('estimatedLossAmount',claimInfo.claimCurrency)">
+        <template slot-scope="scope">
+          <gv-input v-model="scope.row.estimatedLossAmount" :thou="true"
+          @blur="countReceivableAmount(scope.row,'gs')"
+          num-len="2" :readonly="isReadonly"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="adjustmentAmount">
+        <template slot="header" slot-scope="scope">
+          <span style="color: red;">*</span>{{'adjustmentAmount' | translate}}({{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item :prop="'claimAmountList.' + scope.$index + '.adjustmentAmount'" :rules='formData.rules.adjustmentAmount'>
+            <gv-input
+              v-model="scope.row.adjustmentAmount" :thou="true" :ref="'claimAmountList.' + scope.$index + '.adjustmentAmount'"
+              @blur="countReceivableAmount(scope.row,'ls')"
+              num-len="2" :readonly="isReadonly"></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="deductible">
+        <template slot="header" slot-scope="scope">
+          <span style="color: red;">*</span>{{'deductibles' | translate}}({{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item :prop="'claimAmountList.' + scope.$index + '.deductible'" :rules='formData.rules.deductible'>
+            <gv-input
+              v-model="scope.row.deductible" :thou="true" :ref="'claimAmountList.' + scope.$index + '.deductible'"
+              @blur="countReceivableAmount(scope.row,'mpe')"
+              num-len="2" :readonly="isReadonly"></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('prepaidAmount',claimInfo.claimCurrency)"
+        prop="prepaidAmount">
+        <template slot-scope="scope">
+          <gv-input v-model="scope.row.prepaidAmount" :thou="true"
+          @blur="countReceivableAmount(scope.row,'yf')"
+          num-len="2" :readonly="isReadonly"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="receivableAmount">
+        <template slot="header" slot-scope="scope">
+          <span style="color: red;">*</span>{{'receivableAmount' | translate}}({{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item :prop="'claimAmountList.' + scope.$index + '.receivableAmount'" :rules='formData.rules.receivableAmount'>
+            <gv-input
+              v-model="scope.row.receivableAmount" :thou="true" :ref="'claimAmountList.' + scope.$index + '.receivableAmount'"
+              @blur="countReceivableAmount(scope.row,'bcys')"
+              num-len="2" :readonly="isReadonly"></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="receivedAmount">
+        <template slot="header" slot-scope="scope">
+          <span style="color: red;">*</span>{{'receivedAmount' | translate}}({{Vue.gvUtil.translationData('Currency', claimInfo.claimCurrency)}})
+        </template>
+        <template slot-scope="scope">
+          <el-form-item :prop="'claimAmountList.' + scope.$index + '.receivedAmount'" :rules='formData.rules.receivedAmount'>
+            <gv-input
+              v-model="scope.row.receivedAmount" :thou="true" :ref="'claimAmountList.' + scope.$index + '.receivedAmount'"
+              @blur="countReceivableAmount(scope.row,'ys')"
+              num-len="2" :readonly="isReadonly"></gv-input>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot-scope="scope">
+          <el-button type="primary" class="gv-btn-primary gv-btn-xs" @click="openOther(scope.row)">{{'other' | translate}}</el-button>
+          <el-button type="primary" class="gv-btn-warning gv-btn-xs" v-if="!isReadonly" :disabled="isReadonly" @click="removeClaimAmount(scope.$index)">-</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-form>
+  <div style="padding: 15px 0 15px 15px;" v-if="!isReadonly">
+    <el-button type="primary" class="gv-btn-primary gv-btn-xs" :disabled="isReadonly" @click="addclaimAmount">+</el-button>
+  </div>
+  <div style="width: 100%; text-align: center; padding: 15px 0;" v-if="!isReadonly">
+    <el-button type="primary" class="gv-btn-save gv-btn-xs" @click="saveClaimInfo('1')" :disabled="isReadonly">{{'gBtnSave' | translate}}</el-button>
+    <el-button type="primary" class="gv-btn-submit gv-btn-xs" @click="saveClaimInfo('0')" :disabled="isReadonly">{{'gSubmit' | translate}}</el-button>
+  </div>
+  <el-dialog :title="'claimOther' | translate" :visible.sync="otherVisible" width="50%" append-to-body>
+    <el-table :data="otherList">
+      <el-table-column
+        :label="translateTableHead('estimatedLossAmount',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.estimatedLossAmountOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('adjustmentAmount',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.adjustmentAmountOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('deductibles',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.deductibleOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('prepaidAmount',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.prepaidAmountOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('receivableAmount',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.receivableAmountOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="translateTableHead('receivedAmount',claimInfo.defaultCurrency)">
+        <template slot-scope="scope">
+          <gv-input
+          v-model="scope.row.receivedAmountOther"
+          :thou="true"
+          num-len="2"
+          :readonly="true"></gv-input>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
+</div>

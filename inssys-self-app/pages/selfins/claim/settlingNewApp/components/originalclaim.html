@@ -1,0 +1,122 @@
+<section>
+  <gv-filter-table
+    ref="table"
+    :table="table"
+    class="projectquery"
+    @on-list-btn="onListBtn"
+  >
+    <template v-slot:search="scope">
+      <!-- 赔案查询页面 -->
+      <div class="gv-row">
+        <!-- 出险通知号 -->
+        <gv-form-item
+          key-name="claimNotificationNo"
+          prop="claimNotificationNo"
+          class="forInput"
+          isThree="true"
+        >
+          <el-input v-model.trim="scope.search.claimNotificationNo"></el-input>
+        </gv-form-item>
+        <!-- 赔案号 -->
+        <gv-form-item
+          key-name="claimNo"
+          prop="claimNo"
+          class="forInput"
+          isThree="true"
+        >
+          <el-input v-model.trim="scope.search.claimNo"></el-input>
+        </gv-form-item>
+        <!-- 出险时间 -->
+        <gv-form-item
+          key-name="lossTime"
+          prop="dateList"
+          class="forInput"
+          isThree="true"
+        >
+          <div style="display: flex">
+            <el-date-picker
+              style="flex: 1"
+              v-model="scope.search.startTime"
+              type="date"
+            >
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker
+              style="flex: 1"
+              v-model="scope.search.endTime"
+              type="date"
+            >
+            </el-date-picker>
+          </div>
+          <!-- <el-date-picker
+            size="small"
+            format="yyyy-MM-dd"
+            v-model="scope.search.dateList"
+            type="daterange"
+            unlink-panels
+            class="datetimer"
+            :start-placeholder="'startDate' | translate"
+            :end-placeholder="'endDate' | translate"
+            value-format="yyyy-MM-dd HH:mm:ss"
+          >
+          </el-date-picker> -->
+        </gv-form-item>
+        <!-- 提交人 -->
+        <gv-form-item
+          key-name="submitname"
+          prop="submitterName"
+          class="forInput"
+          isThree="true"
+        >
+          <el-input v-model="scope.search.submitterName"></el-input>
+        </gv-form-item>
+        <!-- 险种 -->
+        <gv-form-item
+          key-name="riskType"
+          prop="riskCode"
+          class="forInput"
+          isThree="true"
+        >
+          <!-- <gv-select size="mini" code-type="Risk" code-name="codeCode" clearable label-name="codeName" v-model="scope.search.riskCode"></gv-select> -->
+          <gv-select
+            options-set="0"
+            po-name="ggRisk"
+            clearable
+            filterable
+            code-name="riskCode"
+            label-name="riskCname"
+            v-model="scope.search.riskCode"
+            :placeholder="'gSelect' | translate('Please Select')"
+          ></gv-select>
+        </gv-form-item>
+        <!-- 索赔状态 -->
+        <gv-form-item
+          key-name="claimStatus"
+          prop="claimStatus"
+          class="forInput"
+          isThree="true"
+        >
+          <gv-select
+            size="mini"
+            optionsSet="1"
+            clearable
+            filterable
+            code-type="ClaimStatus"
+            v-model="scope.search.claimStatus"
+            code-name="codeCode"
+            label-name="codeName"
+          ></gv-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500"
+        >{{'Queryresults'|translate('Query results')}}</span
+      >
+    </template>
+  </gv-filter-table>
+  <!-- ClaimView -->
+</section>

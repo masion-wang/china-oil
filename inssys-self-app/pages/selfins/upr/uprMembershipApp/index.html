@@ -1,0 +1,29 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 会费年份 -->
+        <gv-form-item key-name="会费年份" isThree="true" prop="year">
+          <el-date-picker
+            v-model="scope.search.year"
+            type="year"
+            format="yyyy"
+            value-format="yyyy"
+          >
+          </el-date-picker>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <!-- 新增按钮 -->
+      <el-button
+        class="gv-btn gv-btn-primary gv-btn-xs"
+        type="primary"
+        @click="gBtnCreate()"
+      >
+        {{'gBtnCreate' | translate}}</el-button
+      >
+    </template>
+  </gv-filter-table>
+</section>

@@ -1,0 +1,4 @@
+{
+    "payment_cannotBeEmpty": "账单接收人 分入/分出 保费/赔费 不能为空",
+    "payment_cannotBeEmpty2":"分入/分出 保费/赔费 不能为空"
+}

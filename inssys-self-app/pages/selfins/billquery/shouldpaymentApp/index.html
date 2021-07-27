@@ -1,0 +1,105 @@
+<section>
+  <gv-data-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 保单号 -->
+        <gv-form-item key-name="policyNumber" isThree="true" prop="policyNo">
+          <el-input v-model="scope.search.policyNo" maxlength="21">
+          </el-input>
+        </gv-form-item>
+        <!-- 赔案号 -->
+        <gv-form-item key-name="claimNo" isThree="true" prop="claimNo">
+          <el-input v-model="scope.search.claimNo"> </el-input>
+        </gv-form-item>
+        <!-- 单据号 -->
+        <gv-form-item key-name="documentNo" isThree="true" prop="billNo">
+          <el-input v-model="scope.search.billNo" maxlength="19">
+          </el-input>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 账单接收人  -->
+        <gv-form-item key-name="Billreceiver" isThree="true" prop="periodStart">
+
+          <gv-select2 size="mini" filterable valid='1' clearable po-name="ggSupplierMsg" code-name="supplierCode"
+            label-name="supplierChineseName" label-name-ex="supplierCode" v-model="scope.search.correspCode">
+          </gv-select2>
+        </gv-form-item>
+        <!-- 已清/未清 -->
+        <gv-form-item key-name="已清/未清" isThree="true" prop="isCleard">
+          <el-select v-model="scope.search.isCleard" style="width: 105%">
+            <el-option v-for="item in icCleardArr" :value="item.value" :label="item.name" :key="item.value">
+            </el-option>
+          </el-select>
+
+        </gv-form-item>
+
+        <!-- 收付款日期 -->
+        <gv-form-item key-name="收付款日期" isThree="true" prop="dueDates">
+          <div style="display: flex">
+            <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.approvedDateStart" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.approvedDateEnd" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 缴费截止日期 -->
+        <gv-form-item key-name="paymentDeadline" isThree="true" prop="dueDates">
+          <div style="display: flex">
+            <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.dueDatesStart" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+              v-model="scope.search.dueDatesEnd" type="date" style="width:50%" class="datetimer"
+              :start-placeholder="'startDate'|translate('Start Date')"
+              :end-placeholder="'endDate'|translate('End Date')">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500">{{ 'queryResult' | translate}}</span>
+      <!-- <el-button style='position:relative;left:85%;' class="gv-btn gv-btn-primary gv-btn-xs" type="primary"
+        @click="exportAll()">
+        导出全部2</el-button> -->
+    </template>
+  </gv-data-table>
+  <!--根据单据号显示弹窗保单数据-->
+  <el-dialog :visible.sync="isShow2" width="80%" class="DialogByWS" append-to-body>
+    <insure-app ref='insureapp' :policyMainId="policyMainId"></insure-app>
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow2=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--根据单据号显示弹窗赔案数据-->
+  <el-dialog :visible.sync="isShow3" width="80%" class="DialogByWS" append-to-body>
+    <settling-new-app ref='settlingnewapp' :policyMainId="policyMainId"></settling-new-app>
+    <template slot="footer">
+      <div style="text-align: center;">
+        <el-button class="gv-btn gv-btn-back" style='z-index:100;' type="primary" @click="isShow3=false">
+          关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</section>

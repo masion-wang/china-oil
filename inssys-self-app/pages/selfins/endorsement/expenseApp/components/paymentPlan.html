@@ -1,0 +1,467 @@
+<!-- 保险缴费计划 -->
+<div>
+  <el-form :model="fromData" ref="from">
+    <el-table
+      :data="fromData.paymentList"
+      :header-cell-class-name="must"
+      class="tabletitle formTable"
+    >
+      <!-- 费用序号 -->
+      <el-table-column
+        :label="'chargeSerialNumber' | translate"
+        width="50px"
+        prop="feeSeqNo"
+      >
+        <template slot-scope="scope">
+          <span>{{scope.row.feeSeqNo}}</span>
+        </template>
+      </el-table-column>
+      <!-- 费用类型fei -->
+      <el-table-column
+        prop="feeType"
+        :label="'feeType' | translate('Fee type')"
+        width="120px"
+      >
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'paymentList.'+scope.$index+'.feeType'"
+            :rules="fromData.paymentListRules.feeType"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="scope.row.feeType"
+              placement="top"
+              open-delay="500"
+              style="max-width: 500px"
+            >
+              <span v-if='scope.row.status =="01"'>{{scope.row.feeType}}</span>
+              <el-select
+                v-else
+                @change="changething(scope.row);chengefeeTypestatus(scope.row)"
+                filterable
+                clearable
+                class="selectWidth"
+                v-model="scope.row.feeType"
+                :disabled="view"
+              >
+                <el-option
+                  v-for="item in feetypecode"
+                  :key="item.feetypeCode"
+                  :label="item.billTypeCode+'-'+item.inwardInd+'-'+item.feetypeName"
+                  :value="item.billTypeCode+'-'+item.inwardInd+'-'+item.feetypeName"
+                >
+                </el-option>
+              </el-select>
+            </el-tooltip>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <!-- 收付款人 -->
+      <el-table-column prop="payee" :label="'payee' | translate" width="220px">
+        <template slot-scope="scope">
+          <el-form-item
+            :prop="'paymentList.'+scope.$index+'.payee'"
+            :rules="fromData.paymentListRules.payee"
+          >
+            <span v-if='scope.row.status =="01"'>
+              <gv-select2
+                size="mini"
+                :disabled="true"
+                po-name="ggSupplierMsg"
+                code-name="supplierEnglishName"
+                label-name="supplierChineseName"
+                label-name-ex="supplierCode"
+                v-model="scope.row.payee"
+              ></gv-select2
+            ></span>
+            <span v-else>
+              <!-- 分入   -->
+              <gv-select2
+                v-if="scope.row.cedInd =='01'"
+                size="mini"
+                catalog="0"
+                cedInd="0"
+                valid="1"
+                filterable
+                clearable
+                :disabled="view"
+                @input="changething(scope.row)"
+                po-name="ggSupplierMsg"
+                code-name="supplierEnglishName"
+                label-name="supplierChineseName"
+                label-name-ex="supplierCode"
+                v-model="scope.row.payee"
+              ></gv-select2>
+              <!-- 分出 v-if="scope.row.cedInd =='02'"-->
+              <gv-select2
+                v-if="scope.row.cedInd =='02'"
+                size="mini"
+                catalog="0"
+                cedInd="1"
+                valid="1"
+                filterable
+                clearable
+                :disabled="view"
+                @input="changething(scope.row)"
+                po-name="ggSupplierMsg"
+                code-name="supplierEnglishName"
+                label-name="supplierChineseName"
+                label-name-ex="supplierCode"
+                v-model="scope.row.payee"
+              ></gv-select2>
+              <!-- 新增的 -->
+              <el-select
+                v-if="scope.row.cedInd =='03'"
+                filterable
+                clearable
+                class="selectWidth"
+                v-model="scope.row.payee"
+                :disabled="view"
+                @change="changething(scope.row)"
+              >
+                <el-option
+                  v-for="item in chufee"
+                  :key="item.id"
+                  :label="item.supplierCode+'-'+item.supplierChineseName"
+                  :value="item.supplierEnglishName"
+                >
+                </el-option>
+              </el-select>
+            </span>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <!-- 对方账单号 -->
+      <el-table-column :label="'oppositeAccountNo' | translate" prop="payeeRef">
+        <template slot-scope="scope">
+          <el-form-item :prop="'paymentList.'+scope.$index+'.payeeRef'">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="scope.row.payeeRef"
+              placement="top"
+              open-delay="500"
+              style="max-width: 500px"
+            >
+              <span v-if='scope.row.status =="01"'>{{scope.row.payeeRef}}</span>
+              <el-input
+                v-else
+                @input="changething(scope.row)"
+                v-model="scope.row.payeeRef"
+                :disabled="view"
+                maxlength="30"
+              ></el-input>
+            </el-tooltip>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <!-- 金额 -->
+      <el-table-column
+        prop="amount"
+        width="140"
+        :label="'amountMoney' | translate"
+      >
+        <template slot-scope="scope">
+          <el-row>
+            <el-col :span="7">
+              <span style="line-height: 32px">
+                {{Vue.gvUtil.translationData('Currency',scope.row.currency)}}
+              </span>
+            </el-col>
+            <el-col :span="14" :offset="1">
+              <el-form-item
+                :prop="'paymentList.'+scope.$index+'.amount'"
+                :rules="fromData.paymentListRules.amount"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.amount"
+                  placement="top"
+                  open-delay="500"
+                  style="max-width: 500px"
+                >
+                  <span v-if='scope.row.status =="01"'
+                    >{{scope.row.amount}}</span
+                  >
+                  <gv-input
+                    v-else
+                    @blur="changething(scope.row)"
+                    @blur="changemoney(scope.row)"
+                    v-model="scope.row.amount"
+                    :disabled="view"
+                    :thou="true"
+                    maxlength="30"
+                  ></gv-input>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </template>
+      </el-table-column>
+      <!-- 备注 -->
+      <el-table-column :label="'remarks' | translate" prop="remark">
+        <template slot-scope="scope">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="scope.row.remark"
+            placement="top"
+            open-delay="500"
+            style="max-width: 500px"
+          >
+            <span v-if='scope.row.status =="01"'>{{scope.row.remark}}</span>
+            <el-input
+              v-else
+              @input="changething(scope.row)"
+              :disabled="view"
+              v-model="scope.row.remark"
+              maxlength="200"
+            ></el-input>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <!-- 状态 -->
+      <el-table-column :label="'state' | translate" prop="status">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('ExpenseStatus',scope.row.status)}}
+        </template>
+      </el-table-column>
+      <!-- 创建人 -->
+      <el-table-column prop="createdBy" :label="'founder' | translate">
+        <template slot-scope="scope"> {{scope.row.createdBy}} </template>
+      </el-table-column>
+      <!-- 创建日期 -->
+      <el-table-column
+        prop="createdOn"
+        :label="'createDate' | translate"
+        width="80"
+      >
+        <template slot-scope="scope"> {{scope.row.createdOn}} </template>
+      </el-table-column>
+      <!-- 修改人 -->
+      <el-table-column :label="'modifiedBy' | translate" prop="amendedBy">
+        <template slot-scope="scope"> {{scope.row.amendedBy}} </template>
+      </el-table-column>
+      <!-- 修改日期 -->
+      <el-table-column
+        prop="amendedOn"
+        :label="'modificationDate' | translate"
+        width="80"
+      >
+        <template slot-scope="scope"> {{scope.row.amendedOn}} </template>
+      </el-table-column>
+      <!-- 审核人 -->
+      <el-table-column :label="'reviewer' | translate" prop="approvedBy">
+        <template slot-scope="scope"> {{scope.row.approvedBy}} </template>
+      </el-table-column>
+      <!-- 审核通过日期 -->
+      <el-table-column
+        prop="approvedOn"
+        :label="'dateOfApproval' | translate"
+        width="80"
+      >
+        <template slot-scope="scope"> {{scope.row.approvedOn}} </template>
+      </el-table-column>
+      <!-- 操作 -->
+      <el-table-column :label="'gTitleOperation' | translate" width="170">
+        <template slot-scope="scope">
+          <!-- 分期 -->
+          <el-button
+            type="primary"
+            class="gv-btn gv-btn-primary gv-btn-xs"
+            @click="goDetail(scope.row,scope.$index)"
+            >{{'byStages' | translate}}</el-button
+          >
+          <!-- 删除 -->
+          <el-button
+            type="primary"
+            icon="el-icon-minus"
+            v-if="viewcheack && scope.row.status != '01'"
+            class="gv-btn-warning gv-btn gv-btn-xs"
+            @click="removePayment(scope.row,scope.$index,'paymentList')"
+          ></el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-form>
+  <!-- 新增 -->
+  <div style="padding: 15px" v-if="Approve" v-if="dorsement" v-if="viewcheack">
+    <el-button
+      type="primary"
+      icon="el-icon-plus"
+      class="gv-btn-primary"
+      @click="addPayment('paymentList')"
+    ></el-button>
+  </div>
+  <!-- 缴费收费计划 -->
+  <el-dialog
+    append-to-body
+    :close-on-click-modal="false"
+    :title="'feeCollectionScheme' | translate"
+    :visible.sync="InstallmentTableVisible"
+    width="50%"
+    :before-close="qkfeiData"
+  >
+    <el-form :model="feiData" ref="feifrom">
+      <el-table
+        class="tabletitle formTable"
+        :data="feiData.feelistdata"
+        :header-cell-class-name="must1"
+      >
+        <!-- 期次 -->
+        <el-table-column
+          :label="'period' | translate"
+          prop="'feelistdata.'+scope.$index+'.feeSeqNo"
+          width="80px"
+        >
+          <template slot-scope="scope">
+            <span v-model="scope.row.feeSeqNo=(scope.$index + 1)"
+              >{{scope.$index + 1}}</span
+            >
+          </template>
+        </el-table-column>
+        <!-- 缴费截止日期 -->
+        <el-table-column
+          :label="'paymentDeadline' | translate"
+          prop="dueDate"
+          width="170px"
+        >
+          <template slot-scope="scope">
+            <el-form-item
+              :prop="'feelistdata.'+scope.$index+'.dueDate'"
+              :rules="feiData.feiDataRules.dueDate"
+              width="120px"
+            >
+              <el-date-picker
+                @input="aa(scope.row)"
+                v-model="scope.row.dueDate"
+                type="date"
+                format="dd-MM-yyyy"
+                value-format="dd-MM-yyyy"
+                :placeholder="'gSelect' | translate('Please Select')"
+                :disabled="insideview"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <!-- 比例 -->
+        <el-table-column
+          :label="'proportion' | translate"
+          prop="installmentRate"
+        >
+          <template slot-scope="scope">
+            <el-col :span="17">
+              <el-form-item
+                :prop="'feelistdata.'+scope.$index+'.installmentRate'"
+                :rules="feiData.feiDataRules.installmentRate"
+              >
+                <gv-input
+                  v-model="scope.row.installmentRate"
+                  @blur="blur"
+                  @input.native="aa(scope.row)"
+                  maxlength="8"
+                  num-len="4"
+                  :disabled="insideview"
+                >
+                </gv-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="3" style="line-height: 40px"> % </el-col>
+          </template>
+        </el-table-column>
+        <!-- 费用 -->
+        <el-table-column
+          :label="'cost' | translate"
+          prop="premium"
+          width="200px"
+        >
+          <template slot-scope="scope">
+            <el-row>
+              <el-col :span="5">
+                <span style="line-height: 40px">
+                  {{Vue.gvUtil.translationData('Currency', scope.row.currency)}}
+                </span>
+              </el-col>
+              <el-col :span="18" :offset="1">
+                <el-form-item
+                  :prop="'feelistdata.'+scope.$index+'.premium'"
+                  :rules="feiData.feiDataRules.premium"
+                >
+                  <gv-input
+                    @input.native="aa(scope.row)"
+                    v-model="scope.row.premium"
+                    :disabled="insideview"
+                    maxlength="16"
+                    num-len="2"
+                  ></gv-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+        <!-- 操作 -->
+        <el-table-column
+          :label="'gTitleOperation' | translate"
+          v-if="Approve"
+          v-if="dorsement"
+          v-if="viewcheack"
+          v-if="fenqiview"
+        >
+          <template slot-scope="scope">
+            <div>
+              <!--删除-->
+              <el-button
+                type="primary"
+                icon="el-icon-minus"
+                size="mini"
+                style="margin-left: 5px"
+                class="gv-btn-warning gv-btn gv-btn-xs"
+                @click="removePayment(scope.row,scope.$index,'activeNames')"
+              >
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-form>
+    <div
+      style="padding: 15px"
+      v-if="Approve"
+      v-if="dorsement"
+      v-if="viewcheack"
+      v-if="fenqiview"
+    >
+      <!-- 新增 -->
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        class="gv-btn gv-btn-primary gv-btn-xs"
+        @click="addPayment('activeNames')"
+      ></el-button>
+    </div>
+    <div slot="footer" class="dialog-footer">
+      <!-- 保存 -->
+      <el-button
+        class="gv-btn gv-btn-primary"
+        type="primary"
+        @click="fqsave('feifrom')"
+        v-if="Approve"
+        v-if="dorsement"
+        v-if="viewcheack"
+        >{{'gBtnSave' | translate}}</el-button
+      >
+      <!-- 关闭 -->
+      <el-button
+        class="gv-btn gv-btn-primary"
+        type="primary"
+        v-if="!Approve"
+        @click="qkfeiData"
+        v-if="!viewcheack"
+        >{{'gBtnClose' | translate}}</el-button
+      >
+    </div>
+  </el-dialog>
+</div>

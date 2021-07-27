@@ -1,0 +1,56 @@
+<!-- 文档资料列表组件 -->
+<div>
+  <gv-panel :title="'docList' | translate">
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
+      <el-table-column
+        :label="'gNumber' | translate"
+        width="100">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="type"
+        :label="'fileClassification' | translate">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        :label="'fileName' | translate">
+      </el-table-column>
+      <el-table-column
+        prop="kind"
+        :label="'fileType' | translate">
+      </el-table-column>
+      <el-table-column
+        prop="time"
+        :label="'uploadTime' | translate">
+      </el-table-column>
+      <el-table-column
+        prop="user"
+        :label="'uploader' | translate">
+      </el-table-column>
+      <el-table-column
+        prop="description"
+        :label="'gRemarks' | translate">
+      </el-table-column>
+      <el-table-column
+        :label="'gTitleOperation' | translate"
+        width="220">
+        <template slot-scope="scope">
+          <el-button type="primary" class="gv-btn-primary gv-btn-xs">{{'gBtnDownLoad' | translate}}</el-button>
+          <el-button type="primary" class="gv-btn-warning gv-btn-xs" v-if="!isReadonly">-</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div style="padding: 15px 0 15px 60px;">
+      <el-button type="primary" class="gv-btn-primary gv-btn-xs" v-if="!isReadonly">+</el-button>
+      <el-button type="primary" class="gv-btn-warning gv-btn-xs" v-if="!isReadonly">-</el-button>
+    </div>
+  </gv-panel>
+</div>

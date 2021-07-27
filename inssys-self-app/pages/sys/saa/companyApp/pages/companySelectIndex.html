@@ -1,0 +1,4 @@
+<section>
+    <el-tree :data="treeData" show-checkbox node-key="treeId" :props="defaultProps" :default-expanded-keys="['1']" check-strictly=true ref="tree" @check-change="handleTreeChange" v-loading="treeLoading" >
+    </el-tree>
+</section>    

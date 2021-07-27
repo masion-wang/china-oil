@@ -1,0 +1,342 @@
+<!-- 基本信息组件 -->
+<div>
+  <gv-form
+    :model="baseInfo"
+    ref="baseInfo"
+    :rules="rules"
+    :statusIcon="false"
+    :class="{'mt20': !showSubBtn}"
+  >
+    <div class="gv-row">
+      <!--出险通知单号-->
+      <gv-form-item
+        key-name="claimNotificationNo2"
+        prop="claimNotificationNo"
+        isThree="true"
+      >
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.claimNotificationNo}}
+        </div>
+      </gv-form-item>
+      <!--出险通知状态-->
+      <gv-form-item
+        key-name="claimNotificationStatus"
+        prop="claimNotificationStatus"
+        isThree="true"
+      >
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{formatStatus(baseInfo.claimNotificationStatus)}}
+        </div>
+      </gv-form-item>
+      <!--巨灾代码-->
+      <gv-form-item
+        key-name="catastropheCode"
+        prop="catastropheCode"
+        isThree="true"
+      >
+        <gv-select
+          size="mini"
+          code-type="CatastropheCode"
+          clearable
+          code-name="codeCode"
+          label-name="codeName"
+          v-model="baseInfo.catastropheCode"
+          :disabled="isReadonly"
+        ></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--投保单位-->
+      <gv-form-item
+        key-name="proposalCom"
+        prop="insuredCompanyCode"
+        isThree="true"
+        requires
+      >
+        <gv-select
+          size="mini"
+          clearable
+          po-name="ehrOrg"
+          code-name="orgCode"
+          label-name="orgName"
+          ref="insuredCompanyCode"
+          v-if="!isReadonly"
+          v-model="baseInfo.insuredCompanyCode"
+          :placeholder="'gSelect' | translate('Please Select')"
+        ></gv-select>
+        <div v-else style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.insuredCompanyName}}
+        </div>
+      </gv-form-item>
+      <!--出险时间-->
+      <gv-form-item key-name="lossTime" prop="lossDate" isThree="true" requires>
+        <el-date-picker
+          ref="lossDate"
+          type="datetime"
+          v-model="baseInfo.lossDate"
+          format="yyyy-MM-dd HH:mm:ss"
+          :picker-options="expireTimeOption"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :disabled="isReadonly"
+          :placeholder="'nyr' | translate"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--出险原因-->
+      <gv-form-item
+        key-name="lossReason"
+        prop="reasonOfLoss"
+        isThree="true"
+        requires
+      >
+        <gv-select
+          ref="reasonOfLoss"
+          size="mini"
+          clearable
+          code-type="ClaimReason"
+          code-name="codeCode"
+          label-name="codeName"
+          v-model="baseInfo.reasonOfLoss"
+          :disabled="isReadonly"
+        ></gv-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--国家-->
+      <gv-form-item key-name="country" prop="country" isThree="true" requires>
+        <!-- <el-input ref="country" :placeholder="'country' | translate" v-model="baseInfo.country" :disabled="isReadonly"> </el-input> -->
+        <el-select
+          ref="country"
+          v-model="baseInfo.country"
+          clearable
+          filterable
+          :disabled="isReadonly"
+        >
+          <el-option
+            v-for="(item, index) in countryOptions"
+            :key="index"
+            :value="item.countryCode"
+            :label="item.countryCname"
+          ></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--联系人-->
+      <gv-form-item
+        key-name="contactPerson"
+        prop="contactPersonCode"
+        isThree="true"
+        requires
+      >
+        <el-input
+          ref="contactPersonCode"
+          :placeholder="'contactPerson' | translate"
+          v-model="baseInfo.contactPersonCode"
+          :disabled="isReadonly"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--联系方式-->
+      <gv-form-item
+        key-name="contactWay"
+        prop="contactNumber"
+        isThree="true"
+        requires
+      >
+        <el-input
+          ref="contactNumber"
+          :placeholder="'contactWay' | translate"
+          v-model="baseInfo.contactNumber"
+          :disabled="isReadonly"
+        >
+        </el-input>
+      </gv-form-item>
+    </div>
+    <div class="gv-row" v-if="baseInfo.country == 'CN'">
+      <!--省-->
+      <gv-form-item key-name="province" prop="province" isThree="true">
+        <el-select
+          ref="province"
+          v-model="baseInfo.province"
+          clearable
+          filterable
+          :disabled="isReadonly || baseInfo.country == ''"
+        >
+          <el-option
+            v-for="(item, index) in provinceOptions"
+            :key="index"
+            :value="item.countryCode"
+            :label="item.countryCname"
+          ></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--市-->
+      <gv-form-item key-name="city" prop="city" isThree="true">
+        <el-select
+          ref="city"
+          v-model="baseInfo.city"
+          clearable
+          filterable
+          :disabled="isReadonly || baseInfo.province == ''"
+        >
+          <el-option
+            v-for="(item, index) in cityOptions"
+            :key="index"
+            :value="item.countryCode"
+            :label="item.countryCname"
+          ></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--区-->
+      <gv-form-item key-name="area" prop="district" isThree="true">
+        <el-select
+          ref="district"
+          v-model="baseInfo.district"
+          clearable
+          filterable
+          :disabled="isReadonly || baseInfo.city == ''"
+        >
+          <el-option
+            v-for="(item, index) in districtOptions"
+            :key="index"
+            :value="item.countryCode"
+            :label="item.countryCname"
+          ></el-option>
+        </el-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--邮编-->
+      <gv-form-item key-name="postCode" prop="postalCode" isThree="true">
+        <el-input
+          :placeholder="'postCode' | translate"
+          v-model="baseInfo.postalCode"
+          :disabled="isReadonly"
+        >
+        </el-input>
+      </gv-form-item>
+      <!--创建人-->
+      <gv-form-item key-name="creatorCode" prop="submitterName" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.submitterName}}
+        </div>
+      </gv-form-item>
+      <!--修改人-->
+      <gv-form-item
+        key-name="ggCodeModifyUser"
+        prop="modifiedByName"
+        isThree="true"
+      >
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.modifiedByName}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--审核人-->
+      <gv-form-item key-name="auditor" prop="approvedName" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.approvedName}}
+        </div>
+      </gv-form-item>
+      <!--创建日期-->
+      <gv-form-item key-name="createDate" prop="createTime" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.createTime}}
+        </div>
+      </gv-form-item>
+      <!--修改日期-->
+      <gv-form-item
+        key-name="modificationDate"
+        prop="modificationDate"
+        isThree="true"
+      >
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.modificationDate}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--审核日期-->
+      <gv-form-item key-name="auditDate" prop="approvedDate" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center">
+          {{baseInfo.approvedDate}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--出险地点-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span style="color: red; margin-right: 4px">*</span
+            ><span>{{'lossLocation' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-form-item
+            prop="lossLocation"
+            class="qxw100"
+            style="margin-bottom: 0"
+          >
+            <el-input
+              ref="lossLocation"
+              type="textarea"
+              :rows="2"
+              maxlength="2000"
+              show-word-limit
+              style="width: 100%"
+              v-model="baseInfo.lossLocation"
+              :placeholder="'pleaseInputLossLocation' | translate"
+              :disabled="isReadonly"
+            >
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="gv-row">
+      <!--出险描述-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput">
+            <span>{{'lossDescription' | translate}}:</span>
+          </div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input
+            type="textarea"
+            :rows="2"
+            style="width: 100%"
+            maxlength="2000"
+            show-word-limit
+            v-model="baseInfo.lossDescription"
+            :placeholder="'pleaseInputLossDescription' | translate"
+            :disabled="isReadonly"
+          >
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="gv-row">
+      <!--备注-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%">
+          <div class="gvinput"><span>{{'gRemarks' | translate}}:</span></div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input
+            type="textarea"
+            :rows="2"
+            style="width: 100%"
+            maxlength="2000"
+            show-word-limit
+            v-model="baseInfo.remark"
+            :placeholder="'pleaseInputRemark' | translate"
+            :disabled="isReadonly"
+          >
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+</div>

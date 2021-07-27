@@ -1,0 +1,120 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="jobGroup" defaultName="jobGroup" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="jobGroup" :width="5">
+                            <el-input size="mini" :readonly="true" v-model="form.jobGroup"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="jobName" defaultName="jobName" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="jobName" :width="5">
+                            <el-input size="mini" :readonly="true" v-model="form.jobName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="triggerCron" defaultName="triggerCron" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="triggerCron" :width="5">
+                            <el-input size="mini" maxlength="64" :readonly="!isEdit" v-model="form.triggerCron"></el-input>
+                        </gv-form-input>
+
+                    </tr>
+
+                    <tr v-if="form.funcType=='3'">
+                        <gv-form-label keyName="scheduleJobRunClass" defaultName="Run Class" :width="3"></gv-form-label>
+                        <gv-form-input prop="runClass" :width="5">
+                            <el-input size="mini" readonly=true v-model="form.runClass"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="scheduleJobRunMethod" defaultName="Run Method" :width="3"></gv-form-label>
+                        <gv-form-input prop="runMethod" :width="5">
+                            <el-input size="mini" readonly=true v-model="form.runMethod"></el-input>
+                        </gv-form-input>
+                        <gv-form-input prop="isSendEmail" :width="5">
+                            <!-- <el-input size="mini" :readonly="!isEdit" v-model="form.paramFromDB"></el-input> -->
+                            <gv-select size="small" options-set="1" code-type="YesOrNo" v-model="form.isSendEmail" ></gv-select> 
+                        </gv-form-input>
+                    </tr>
+                    <tr v-if="form.funcType=='1'">
+                        <gv-form-label keyName="URL" defaultName="URL" :width="3"></gv-form-label>
+                        <gv-form-input prop="url" :width="5">
+                            <el-input size="mini" :readonly="!isEdit" v-model="form.url"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="Param" defaultName="Param" :width="3"></gv-form-label>
+                        <gv-form-input prop="param" :width="5">
+                            <el-input size="mini" :readonly="!isEdit" v-model="form.paramFromDB"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="Is Send Email" defaultName="Is Send Email" :width="3"></gv-form-label>
+                        <gv-form-input prop="isSendEmail" :width="5">
+                            <!-- <el-input size="mini" :readonly="!isEdit" v-model="form.paramFromDB"></el-input> -->
+                            <gv-select size="small" :disabled="!isEdit" @change="getIsSendEmail" code-type="YesOrNo" v-model="form.isSendEmail" ></gv-select> 
+                        </gv-form-input>
+                    </tr>
+                    <tr v-if="isDisplay">
+                        <gv-form-label keyName="Email Message Code" defaultName="Email Message Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="emailModelCode" :width="5">
+                            <!-- <el-input size="mini" :readonly="!isEdit" v-model="form.emailModelCode"></el-input> -->
+                            <gv-auto-complete :is-readonly="!isEdit" code="findMessageCode" code-name="messageCode" label-name="messageCode"
+                            v-model="form.emailModelCode"></gv-auto-complete>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-input colspan="6" :width="24" v-if="isEdit">
+                            <!-- 运行周期选择 -->
+                            <el-tabs v-model="cron_tabs" type="border-card" style="margin:15px">
+                                <el-tab-pane v-for="obj in this.timeArray" :key="obj.resultNum" :label="obj.name" :name="obj.name">
+                                    <el-select v-model="obj.selected" @change="handleSelectChange" style="width: 30%;vertical-align: top;">
+                                        <el-option v-for="item in obj.select" :key="item.value" :label="item.label" :value="item.value" />
+                                        </el-option>
+                                    </el-select>
+                                    <div style="width: 60%;margin-left: 15px;display: inline-block;">
+                                        <el-date-picker v-if="obj.selected == 1" size="mini" type="datetime" v-model="form.triggerCronShow"
+                                            @change="handleDataChange" style="width: 250px;"></el-date-picker>
+                                        <div class="checkbox-content-div" v-if="obj.selected == 2">
+                                            <el-checkbox-group v-model="obj.checked" @change="handleCheckedChange">
+                                                <el-checkbox v-for="item in obj.allElement" :label="item" :key="item" style="float:left;margin-left: 15px;">{{item}}</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                        <!-- <div v-if="obj.selected == 3">
+                                            <el-input size="mini" style="width:120px" v-model="obj.temp1" @change="handleInputChange"></el-input>
+                                            {{obj.name}}至
+                                            <el-input size="mini" style="width:120px" v-model="obj.temp2" @change="handleInputChange"></el-input>{{obj.name}}每{{obj.name}}执行一次
+                                        </div>
+                                        <div v-if="obj.selected == 4">
+                                            从
+                                            <el-input size="mini" style="width:120px" v-model="obj.temp1" @change="handleInputChange"></el-input>{{obj.name}}开始， 每
+                                            <el-input size="mini" style="width:120px" v-model="obj.temp2" @change="handleInputChange"></el-input>{{obj.name}}执行一次
+                                        </div> -->
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </gv-form-input>
+                    </tr>
+
+                </table>
+            </el-collapse-item>
+            <el-collapse-item title="Parameter Info" name="2" class="table-line" v-show="paramForm.paramField.length > 0">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <template v-for="(item,index) in paramForm.paramField">
+                        <template v-if="index%3==0">
+                            <tr>
+                        </template>
+                        <gv-form-label :keyName="item" :defaultName="item" :width="3"></gv-form-label>
+                        <gv-form-input :prop="item" :width="5">
+                            <el-input size="mini" :readonly="!isEdit" v-model="paramForm.paramValue[index]"></el-input>
+                        </gv-form-input>
+                        <template v-if="index%3==0">
+                            </tr>
+                        </template>
+                    </template>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block toolbar-btn txt-center">
+            <el-form-item>
+                <el-button v-if="!isEdit" size="mini" type="primary" @click="changeIsEdit">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                <el-button v-if="isEdit" size="mini" type="primary" @click="updateSchedule">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button v-if="isEdit" size="mini" type="primary" @click="changeIsEdit">{{ 'gBtnCancel' | translate('Cancel') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

@@ -1,0 +1,59 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'breakDownCodeResultSetsData' | translate('Benefit Code Result Sets Data')" name="1">
+            <el-form :inline="true" ref="computeResultVoFilters" :model="computeResultVoFilters" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <!-- 规则 -->
+                        <gv-form-label keyName="ruleName" defaultName="Rule" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="rule">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="computeResultVoFilters.rule"></gv-select>
+                        </gv-form-input>
+
+                        <!-- 状态 -->
+                        <gv-form-label keyName="ruleStatus" defaultName="Status" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="status">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="computeResultVoFilters.status"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label :width="8"></gv-form-label>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('computeResultVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--新增-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <template>
+        <el-table :data="computeResultVoList" highlight-current-row border stripe >
+            <el-table-column prop="factor" sortable :label="'factor' | translate('Factor')">
+            </el-table-column>
+             <el-table-column prop="factorTable" sortable :label="'resultSets' | translate('Result Sets')">
+            </el-table-column>
+            <el-table-column prop="status" :label="'ruleStatus' | translate('Status')" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.status=='1'?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{
+                    'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!-- 分页 -->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

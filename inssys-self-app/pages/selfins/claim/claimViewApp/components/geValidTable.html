@@ -1,0 +1,23 @@
+<section>
+  <el-form :model="table" ref="table">
+    <el-table id='table' ref='tTable' :class="isSelection ? '' : 'formTable'"
+      :data="paging ? table.tableData.slice((table.page.currentPage - 1) * table.page.pageSize, table.page.currentPage * table.page.pageSize) : table.tableData"
+      tooltip-effect="dark" @selection-change="handleSelectionChange" :row-key="rowKey">
+      <el-table-column v-if='isSelection' type="selection" :reserve-selection="true" width="70">
+      </el-table-column>
+      <el-table-column v-if='isSerial' type="index" :label="'gNumber'| translate('SequenceNo')" :index='indexMethod' width="70">
+      </el-table-column>
+      
+      <gv-valid-column v-for='(v,index) in table.head' :key='index' :prop='v' :paging='paging' :isReadonly='isReadonly' :rules='rules'>
+      </gv-valid-column>
+      <slot></slot>
+    </el-table>
+  </el-form>
+  <el-row style="padding: 10px 2px;overflow: hidden;">
+    <slot name='toolBtn'></slot>
+    <el-pagination v-if='paging' style="float: right;" @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+      :page-sizes="[10, 20, 30, 50]" :page-size="table.page.pageSize" layout="total, sizes, prev, pager, next, jumper"
+      :total="table.tableData.length" :current-page.sync="table.page.currentPage">
+    </el-pagination>
+  </el-row>
+</section>

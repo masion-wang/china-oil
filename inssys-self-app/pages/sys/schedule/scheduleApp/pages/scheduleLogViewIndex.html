@@ -1,0 +1,72 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" :model="voFilters" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="scheduleLastStartDate" defaultName="Last Start Date" :width="3"></gv-form-label>
+                        <gv-form-input :width="5">
+                            <!-- <el-date-picker v-model="voFilters.startDateBetween" type="daterange" range-separator="TO" start-placeholder="开始日期" end-placeholder="结束日期" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss" >
+                            </el-date-picker> -->
+                            <el-date-picker size="mini" style="width:47%" v-model="voFilters.startDateStart" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss"
+                                type="date">
+                            </el-date-picker> -
+                            <el-date-picker size="mini" style="width:47%" v-model="voFilters.startDateEnd" format="dd-MM-yyyy" value-format="yyyy-MM-dd 23:59:59"
+                                type="date">
+                            </el-date-picker>
+                        </gv-form-input>
+
+                        <gv-form-label></gv-form-label>
+                        <gv-form-input :width="5"></gv-form-input>
+                        <gv-form-label></gv-form-label>
+                        <gv-form-input :width="5"></gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+    </div>
+
+    <template>
+        <el-table :data="list" highlight-current-row border :row-class-name="tableRowClassName">
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                        <tr v-for="obj in props.row.childList">
+                            <el-form-item style="width:100%">
+                                <span>[{{ obj.lastEndDate }}]:
+                                    <div style="display: inline;white-space:normal;word-break:break-all;word-wrap:break-word;">{{ obj.resData }}
+                                        <div>
+                                </span>
+                            </el-form-item>
+                        </tr>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <el-table-column prop="lastStartDate" :label="'scheduleLastStartDate' | translate('Last Start Date')" width="200">
+            </el-table-column>
+            <el-table-column prop="lastEndDate" :label="'scheduleLastEndDate' | translate('Last End Date')" width="200">
+            </el-table-column>
+            <el-table-column prop="scheduleJobGroup" :label="'scheduleJobGroup' | translate('Schedule Job Group')" width="200">
+            </el-table-column>
+            <el-table-column prop="scheduleJobName" :label="'scheduleJobName' | translate('Schedule Job Name')" width="200">
+            </el-table-column>
+            <el-table-column prop="status" :label="'scheduleJobStatus' | translate('任务状态')" width="200" :formatter="formatStatus">
+            </el-table-column>
+
+            <el-table-column width="280"></el-table-column>
+        </el-table>
+    </template>
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

@@ -1,0 +1,162 @@
+<section>
+	<el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" @submit.prevent="onSubmit">
+		<el-collapse v-model="mixinObject.activeNames">
+			<el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1">
+				<table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<gv-form-label keyName="documentVoDocumentCode" defaultName="DocumentCode" requires :width="3"></gv-form-label>
+						<gv-form-input prop="documentCode" :width="5">
+						   <el-input size="mini" :readonly="query.type != 'add'" v-model="form.documentCode"></el-input>
+						</gv-form-input>
+						<gv-form-label keyName="documentVoDocumentName" defaultName="DocumentName" requires :width="3"></gv-form-label>
+						<gv-form-input prop="documentName" :width="5">
+							<el-input size="mini" :readonly="isReadonly" v-model="form.documentName"></el-input>
+						</gv-form-input>
+					</tr>
+					<tr>
+						<gv-form-label keyName="documentVoBusinessType" defaultName="BusinessType" requires :width="3"></gv-form-label>
+						<gv-form-input prop="businessType" :width="5">
+							<el-input size="mini" :readonly="isReadonly" v-model="form.businessType"></el-input>
+						</gv-form-input>
+						<gv-form-label keyName="documentVoValidInd" defaultName="ValidInd" requires :width="3"></gv-form-label>
+						<gv-form-input prop="validInd" :width="5">
+							<gv-select size="mini" optionsSet="1" :disabled="isReadonly" codeType="ValidInd" v-model="form.validInd">
+							</gv-select>
+						</gv-form-input>
+					</tr>
+					<tr>
+						 <gv-form-label keyName="documentVoRemark" defaultName="Remark" requires :width="3"></gv-form-label>
+						 <gv-form-input prop="remark" :width="5">
+							<el-input size="mini" :readonly="isReadonly" v-model="form.remark"></el-input>
+						</gv-form-input>
+					</tr>
+				</table>
+			</el-collapse-item>
+			
+
+			<!-- ggformDefine -->
+	<el-form class="table-line" ref="form" :model="form" :inline="true" :rules="rules" @submit.prevent="onSubmit">
+		<el-collapse v-model="mixinObject.activeNames"> 
+		<el-collapse-item :title="'gTitleFormData' | translate('Form Data')" name="1">
+
+				<el-table :data="form.formDefineVoList"  border style="width: 100%;" >
+					<el-table-column prop="formCode" :label="'formDefineVoFormcode'| translate('Formcode')" width="80">
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.formCode'">
+	                            <gv-auto-complete options-set="1" po-name="ggDocumentSort" code-name="formCode" label-name="innerproduct,formCode" :readonly="query.type != 'add'" v-model="scope.row.formCode"
+	                            @row-select="selectForm"></gv-auto-complete>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="formName" :label="'formDefineVoFormname'| translate('Formname')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.formName'">
+								<el-input size="mini" :readonly="isReadonly" v-model="scope.row.formName"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="documentCode" :label="'formDefineVoDocumentCode'| translate('DocumentCode')" >
+						 <template scope="scope">
+						 	<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.documentCode'">
+							<el-input size="mini" :readonly="isReadonly" v-model="scope.row.documentCode"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="documentName" :label="'formDefineVoDocumentName'| translate('DocumentName')" >
+						 <template scope="scope">
+						 	<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.documentName'">
+							<el-input size="mini" :readonly="isReadonly" v-model="scope.row.documentName"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="inputInd" :label="'formDefineVoInputInd'| translate('InputInd')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.inputInd'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.inputInd"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="inputFormUrl" :label="'formDefineVoInputformurl'| translate('Inputformurl')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.inputFormUrl'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.inputFormUrl"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="processInd" :label="'formDefineVoProcessind'| translate('Processind')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.processInd'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.processInd"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="processId" :label="'formDefineVoProcessid'| translate('Processid')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.processId'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.processId"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="processName" :label="'formDefineVoProcessname'| translate('Processname')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.processName'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.processName"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="businessApi" :label="'formDefineVoBusinessapi'| translate('Businessapi')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.businessApi'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.businessApi"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="approvalApi" :label="'formDefineVoApprovalapi'| translate('Approvalapi')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.approvalApi'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.approvalApi"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="endTaskApi" :label="'formDefineVoEndtaskapi'| translate('Endtaskapi')" >
+						<template scope="scope">
+							<gv-form-input :prop="'formDefineVoList.' + scope.$index + '.endTaskApi'">
+							<el-input size="mini" :readonly="isReadonly" v-model.trim="scope.row.endTaskApi"></el-input>
+							</gv-form-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="validInd" :label="'formDefineVoValidInd' | translate('ValidInd')" width="100" align="center">
+						<template slot-scope="scope">
+							<!-- <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd=='1'?'el-icon-check':'el-icon-close'"></el-button> -->
+							<gv-select size="mini" optionsSet="1" :disabled="isReadonly" codeType="ValidInd" v-model="scope.row.validInd">
+							</gv-select>
+						</template>
+					</el-table-column>
+					 <!-- 操作 -->
+					<el-table-column v-if="query.type!='view'" :label="'gTitleOperation' | translate('Operation')" width="80">
+						<template slot-scope="scope">
+							 <el-button size="mini" type="primary" icon="el-icon-minus" @click="onDeletes('formDefineVoList', scope.$index)"></el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<div class="toolbar-btn toolbar-pagination">
+					<el-button size="mini" type="primary" icon="el-icon-plus" @click="onAddAttrs" v-if="query.type!='view'"></el-button>
+				</div>
+			
+			</el-collapse-item>
+		</el-collapse>
+	</el-form>
+
+
+	  	<div class="block mrgt5 toolbar-btn txt-center">
+			<el-form-item>
+				<!--保存-->
+				<el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit">{{ 'gBtnSave' | translate('Save') }}</el-button>
+				<!--清除-->
+				<el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+				<!--返回-->
+				<el-button size="mini" @click="returnPage">{{ 'gBtnClose' | translate('Close') }}</el-button>
+			</el-form-item>
+		</div>
+	</el-form>
+</section>    

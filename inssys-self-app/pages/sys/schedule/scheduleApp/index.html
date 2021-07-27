@@ -1,0 +1,133 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form ref="scheduleJobVofilters" :inline="true" :model="scheduleJobVofilters" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="scheduleJobGroup" defaultName="Job Group" :width="3"></gv-form-label>
+                        <gv-form-input prop="jobGroup" :width="5">
+                            <el-input size="mini" v-model="scheduleJobVofilters.jobGroup"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="scheduleJobName" defaultName="Job Name" :width="3"></gv-form-label>
+                        <gv-form-input prop="jobName" :width="5">
+                            <el-input size="mini" @keyup.enter.native="onGetList()" v-model="scheduleJobVofilters.jobName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="scheduleJobQueryStatus" defaultName="Running Status" :width="3"></gv-form-label>
+                        <gv-form-input prop="queryStatus" :width="5">
+                            <gv-select size="mini" optionsSet="1" codeType="ScheduleRunningStatus" v-model="scheduleJobVofilters.queryStatus">
+                            </gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="scheduleJobUrl" defaultName="Schedule Job Url" :width="3"></gv-form-label>
+                        <gv-form-input prop="url" :width="5">
+                            <el-input size="mini" v-model="scheduleJobVofilters.url"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="scheduleJobUserCode" defaultName="User Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="userCode" :width="5">
+                            <el-input size="mini" v-model="scheduleJobVofilters.userCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="scheduleJobCreateTime" defaultName="Job Time" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="createTime">
+                            <el-date-picker size="mini" style="width:47%" v-model="scheduleJobVofilters.startCreateTime" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss"
+                                type="date">
+                            </el-date-picker> -
+                            <el-date-picker size="mini" style="width:47%" v-model="scheduleJobVofilters.endCreateTime" format="dd-MM-yyyy" value-format="yyyy-MM-dd 23:59:59"
+                                type="date">
+                            </el-date-picker>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetFormData()">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <template>
+        <el-table :data="scheduleJobVoList" highlight-current-row border stripe :default-sort = "{prop: 'jobName', order: 'descending'}">
+            <el-table-column prop="jobGroup" sortable :label="'scheduleJobGroup' | translate('Schedule Job Group')"></el-table-column>
+            <el-table-column sortable :label="'scheduleJobName' | translate('Schedule Job Name')" prop="jobName">
+                <template slot-scope="scope">
+                    <a href="javascript:;" @click="onHandleEdit(scope.row, 'VIEW')"> {{scope.row.jobName}} </a>
+                </template>
+            </el-table-column>
+<!--             <el-table-column prop="triggerName" :label="'triggerName' | translate('Trigger Name ')" width="100"></el-table-column> -->
+            <el-table-column prop="triggerType" sortable :label="'triggerType' | translate('Trigger Type')"></el-table-column>
+            <el-table-column prop="triggerCron" sortable :label="'triggerCron' | translate('Trigger Cron ')" >
+                <template slot-scope="scope">
+                    <a href="javascript:;" @click="searchNextRunTime(scope.row.triggerCron)">{{scope.row.triggerCron}}</a>
+                </template>
+            </el-table-column>
+            <el-table-column prop="queryStatus" sortable :label="'scheduleJobStatus'| translate('Schedule Job Status')" :formatter="transRunStatus" sortable>
+            </el-table-column>
+            <el-table-column prop="submitUser" sortable :label="'scheduleJobSubmitUser' | translate('Submit User')"></el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="400">
+                <template slot-scope="scope">
+                <span>
+<!--                 <el-button
+                    v-show="scope.row.status == 'PAUSED'"
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'RESUME')">
+                    RESUME
+                </el-button>
+                <el-button
+                    v-show="scope.row.status != 'PAUSED' && scope.row.status != 'NONE' "
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'PAUSED')">
+                    PAUSED
+                </el-button> -->
+                <el-button
+                    v-show="scope.row.status == 'BLOCKED' "
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'UNLOCK')">
+                    UNLOCK
+                </el-button>
+                <el-button
+                    v-show="scope.row.status == 'NONE' "
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'RESTART')">
+                    RESTART
+                </el-button>
+                <el-button
+                    v-show="scope.row.status != 'NONE' "
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'STOP')">
+                    STOP
+                </el-button>
+                <el-button
+                    v-show="scope.row.status == 'NONE' "
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'DELETE')">
+                    DELETE
+                </el-button>
+                <el-button
+                    size="mini" type="primary"
+                    @click="onHandleEdit(scope.row, 'IMMEDIATE')">
+                    IMMEDIATE
+                </el-button>
+                <el-button
+                    size="mini" type="primary"
+                    @click="onHandleViewLog(scope.row, 'LOG')">
+                    LOG
+                </el-button>
+                {{sstatus}}
+                </span>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

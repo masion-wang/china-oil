@@ -1,0 +1,21 @@
+<section>
+    <el-button style="display: none;" class="gv-btn-primary" size="mini" type="primary" @click="onGetList()">{{ 'gBtnInquiry' | translate('Inquiry') }}</el-button>
+    <!--列表-->
+    <template>
+        <el-table :data="workbenchVoList" highlight-current-row border stripe :row-class-name="tableRowClassName">
+            <el-table-column prop="taskid" :label="'workbenchAppVoTaskId' | translate('task Id')" sortable>
+            </el-table-column>
+            <el-table-column prop="type" :label="'workbenchAppVoStatus' | translate('Status')" sortable>
+            </el-table-column>
+            <el-table-column prop="userid" :label="'workbenchAppVoDestinationUser' | translate('destination User')" sortable>
+            </el-table-column>
+            <el-table-column prop="logtime" :formatter="formatTime" :label="'workbenchAppVoInTime' | translate('In Time')" align="right" sortable></el-table-column>
+        </el-table>
+        <el-row class="table-footer">
+            <el-col :span="16">
+                <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+                </el-pagination>
+            </el-col>
+        </el-row>
+    </template>
+</section>

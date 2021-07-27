@@ -1,0 +1,98 @@
+<!-- 保单录入页面 -->
+<section>
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="policyForm" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 基础信息 -->
+                <el-collapse-item id="baseInfo" name="baseInfo" :title="'gTitleBasics' | translate('Basic Data')">
+                  <base-info ref="baseInfo"></base-info>
+                  <!-- 已添加数据 -->
+                  <add-data ref="adddata" @maxacDate="maxacDate"></add-data>
+                  <!-- 冲销数据 -->
+                  <sterilisation ref="sterilisation"></sterilisation>
+                </el-collapse-item>
+                <!-- 文档资料 -->
+                <el-collapse-item id="docListInfo" name="docListInfo" :title="'filedata' | translate">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="docList" :readonly="isReadonly"></upload-file>
+                </el-collapse-item>
+                <!-- 审核信息 -->
+                <el-collapse-item v-if="pass" id="auditInfo" name="auditInfo" :title="'auditInformation'| translate">
+                  <audit ref="auditInfo"></audit>
+                </el-collapse-item>
+              </el-collapse>
+              <div :span="24" class="ia-im-bottomDiv1" v-if="view">
+                <el-row type="flex" justify="center">
+                  <template v-if='$route.query.pageType !="back"'>
+                    <!-- 保存 -->
+                    <el-button v-if="!pass" class="gv-btn gv-btn-save" type="primary" @click="saveSubmit('0')">
+                      {{'gBtnSave' | translate}}
+                    </el-button>
+                    <!-- 提交 -->
+                    <el-button v-if="!pass" class="gv-btn gv-btn-submit" type="primary" @click="saveSubmit('09')">
+                      {{'gSubmit' | translate}}</el-button>
+                    <!-- 返回 -->
+                    <el-button v-if="!pass" class="gv-btn" type="primary" @click="returnPage()">
+                      {{'gBtnReturn' | translate}}</el-button>
+                    <!-- 审核轨迹 -->
+                    <el-button v-if="pass" type="primary" class="gv-btn-primary gv-btn" @click="auditTrail">
+                      {{'auditTrail' | translate}}</el-button>
+                    <!-- 审核通过 passs审核页面显示-->
+                    <el-button v-if="pass" class="gv-btn gv-btn-submit" type="primary" type="primary"
+                      @click="goAudit('01')">{{'gPass' | translate}}</el-button>
+                    <!-- 审核不通过 -->
+                    <el-button v-if="pass" class="gv-btn gv-btn-warning" type="primary" @click="goAudit('06')">
+                      {{'gNotPass' | translate}}</el-button>
+
+                  </template>
+                  <!-- 关闭 -->
+                  <template v-if='$route.query.pageType =="back"'>
+                    <el-button class="gv-btn" type="primary" @click="returnPage()">{{ 'gBtnClose' | translate('Close')
+                      }}</el-button>
+                  </template>
+                </el-row>
+              </div>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+  <!-- 保存成功 -->
+  <el-dialog :title="'tips'| translate" :visible.sync="copyVisible" width="30%" :close-on-click-modal="false">
+    <el-row>
+      <span>{{dialogText}}</span>
+    </el-row>
+    <template slot="footer">
+      <el-button class="copyBtn" type="primary" size="medium" @click="copyVisible=false">{{'gBtnConfirm' | translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+  <!-- 工作流弹框 -->
+  <el-dialog :visible.sync="workflowdialog" class="choseNode" style="font-size: 14px！important"
+    :title="'zbnextperson'| translate" @close="close" width="60%" :close-on-click-modal="false">
+    <el-card>
+      <el-row v-for="(item,index) in gwNextNodeExecutorsList">
+        <el-checkbox-group v-model="checkboxGroup">
+          <el-checkbox style="background-color: #ecf5ff" :label="item.userCode" border>
+            <div class="userinfo-pop">
+              <div class="avatar-box" style="float: left; margin-top: -5px">
+                <img src="../../../../../dist/img/userpic.png" />
+              </div>
+            </div>
+            <div style="margin-left: 28px">{{item.userName}}</div>
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-row>
+      <el-row style="float: right; margin-right: 30px; margin-top: 15px">
+        <el-button class="gv-btn-primary" style="float: right; margin-top: 10px" type="primary" size="medium"
+          @click="confirmExecotor">
+          {{'gBtnConfirm' | translate}}
+        </el-button>
+      </el-row>
+    </el-card>
+  </el-dialog>
+</section>

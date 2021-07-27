@@ -1,0 +1,61 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+
+            <!-- 根据documentName查询 -->
+            <el-form :inline="true" ref="documentVoFilters" :model="documentVoFilters" class="table-line">
+                <table  cellpadding="0" cellspacing="0" class="tp-table">
+                    <tr>
+                        <gv-form-label keyName="generalInquiryVoDocumentName" defaultName="Document Name" :width="3">
+                        </gv-form-label>
+                        <gv-form-input :width="5" prop="documentName">
+                            <el-input size="mini" v-model.trim="documentVoFilters.documentName" maxlength="30">
+                            </el-input>
+                         </gv-form-input>
+                        <gv-form-input width="8" colspan="6" align="center">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('documentVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </gv-form-input>
+                        <gv-form-label width="8"></gv-form-label>
+
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+
+    <div class="table-toolbar">
+       <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+
+    <!--列表-->
+    <template>
+        <el-table :data="documentVoList" id="documentVoList" ref="documentVoListRef" highlight-current-row border stripe >
+
+            <el-table-column prop="documentCode" :label="'documentVoDocumentCode'| translate('Document Code')">
+            </el-table-column>
+           <!--  <el-table-column prop="documentName" :label="'documentVoDocumentName'| translate('Document Name')" >
+            </el-table-column> -->
+            <el-table-column prop="documentName" :label="'documentVoDocumentName'| translate('Document Name')" >
+            </el-table-column>
+            <el-table-column prop="validInd" :label="'documentVoValidInd' | translate('ValidInd')" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd=='1'?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+           <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                <template slot-scope="scope">
+                    <el-button v-if="scope.row.validInd == '1'" size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button v-else size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')" style="visibility:hidden">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template> 
+    
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 100, 350, 1000, 3000]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

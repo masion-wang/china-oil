@@ -1,0 +1,151 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="taskTransferAppVoFilters" :model="taskTransferAppVoFilters" class="table-line">
+                <table cellpadding="0" cellspacing="0" class="tp-table">
+                    <tr>
+                        <gv-form-label keyName="workbenchAppVoTaskId" defaultName="Task Id" :width="3"></gv-form-label>
+                        <gv-form-input prop="taskId" :width="5">
+                            <gv-input size="mini" type="number" v-model="taskTransferAppVoFilters.taskId" num-len="0"></gv-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchAppVoProcessDesc" defaultName="Process Desc" :width="3"></gv-form-label>
+                        <gv-form-input prop="processId" :width="5">
+                            <gv-select size="mini" options-set="2" @row-select="onProcessIdChange" po-name="bpmProcessDefinition" code-name="processId" v-model="taskTransferAppVoFilters.processId" filterable="true" label-name="processId"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchAppVoTaskCode" defaultName="Task Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="taskCode" :width="5">
+                            <gv-select size="mini" options-set="2" po-name="bpmNodeConfig" code-name="nodeCode" v-model="taskTransferAppVoFilters.taskCode" filterable="true" label-name="nodeCode" :search-object="{processId:taskTransferAppVoFilters.processId,viewUrl: ''}"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="workbenchAppVoStatus" defaultName="Status" :width="3"></gv-form-label>
+                        <gv-form-input prop="statusList" :width="5">
+                            <el-checkbox-group v-model="taskTransferAppVoFilters.statusList">
+                                <el-checkbox label="0" >{{'workbenchAppVoPending' | translate('Pending')}}</el-checkbox>
+                                <el-checkbox label="1">{{'workbenchAppVoProcessing' | translate('Processing')}}</el-checkbox>
+                            </el-checkbox-group>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchAppVoPriority" defaultName="Priority" :width="3"></gv-form-label>
+                        <gv-form-input prop="priorityList" :width="5">
+                            <el-checkbox-group v-model="taskTransferAppVoFilters.priorityList">
+                                <el-checkbox label="0">{{'workbenchAppVoLow' | translate('Low')}}</el-checkbox>
+                                <el-checkbox label="1">{{'workbenchAppVoMedium' | translate('Medium')}}</el-checkbox>
+                                <el-checkbox label="2">{{'workbenchAppVoHigh' | translate('High')}}</el-checkbox>
+                                <el-checkbox label="3">{{'workbenchAppVoOverdue' | translate('Overdue')}}</el-checkbox>
+                            </el-checkbox-group>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchAppVoInTime" defaultName="In Time" :width="3"></gv-form-label>
+                        <gv-form-input prop="inTime" :width="5">
+                            <el-date-picker size="mini" type="date" v-model="taskTransferAppVoFilters.inTime" format="dd-MM-yyyy" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="workbenchAppVoInnerRefNo" defaultName="Inner Ref No" :width="3"></gv-form-label>
+                        <gv-form-input prop="innerRefNo" :width="5">
+                            <el-input size="mini" v-model="taskTransferAppVoFilters.innerRefNo"></el-input>
+                        </gv-form-input>
+                        <!-- <gv-form-label keyName="workbenchAppVoIncludeSubTask" defaultName="View Subordinate Task" :width="3"></gv-form-label>
+                        <gv-form-input prop="includeSubTask" :width="5">
+                            <gv-radio-group size="mini" code-type="YesOrNo" default-value="false" v-model="taskTransferAppVoFilters.includeSubTask"></gv-radio-group>
+                        </gv-form-input> -->
+                        
+                        <gv-form-label keyName="workbenchAppVoAgent" defaultName="Agent" :width="3"></gv-form-label>
+                        <gv-form-input prop="agentCode" :width="5">
+                            <el-input size="mini" v-model.trim="taskTransferAppVoFilters.agentCode" style="width:33%;" placeholder="Agent Code"></el-input>
+                            <el-input size="mini" v-model="taskTransferAppVoFilters.agentName" style="width:65%;" placeholder="Agent Name"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchAppVoInsured" defaultName="Insured" :width="3"></gv-form-label>
+                        <gv-form-input prop="clientCode" :width="5">
+                            <el-input size="mini" v-model.trim="taskTransferAppVoFilters.clientCode" style="width:33%;" placeholder="Insured Code"></el-input>
+                            <el-input size="mini" v-model="taskTransferAppVoFilters.clientName" style="width:65%;" placeholder="Insured Name"></el-input>
+                        </gv-form-input>
+
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="workbenchAppVoIncludeEquativeTask" defaultName="View equative Task" :width="3"></gv-form-label>
+                        <gv-form-input prop="includeSubTask" :width="5">
+                            <gv-radio-group size="mini" code-type="YesOrNo" default-value="false" v-model="taskTransferAppVoFilters.includeSubTask"></gv-radio-group>
+                        </gv-form-input>
+                        <gv-form-label keyName="workbenchModule" defaultName="Module" :width="3"></gv-form-label>
+                        <gv-form-input prop="module" :width="5">
+                            <!-- <gv-select size="mini" options-set="2"  po-name="bpmProcessDefinition" code-name="processId" v-model="workbenchAppVoFilters.processId" filterable="true" label-name="processId"></gv-select> -->
+                            <gv-select size="mini" options-set="2" codeType="Module" v-model="taskTransferAppVoFilters.module"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-input colspan="6" align="center">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('taskTransferAppVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--列表-->
+    <template>
+        <el-table :data="taskTransferVoList" highlight-current-row border stripe >
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                        <!--外部参考号-->
+                        <el-form-item :label="'workbenchAppVoOuterRefNo' | translate('Outer Ref No.')">
+                            <span>{{ props.row.outerRefNo }}</span>
+                        </el-form-item>
+                        <!--参考金额-->
+                        <el-form-item :label="'workbenchAppVoRefAmount' | translate('Ref Amount')">
+                            <span>{{ props.row.refAmount }}</span>
+                        </el-form-item>
+                        <!--客户名称-->
+                        <el-form-item  :label="'workbenchAppVoClientName' | translate('Client Name')">
+                            <span>{{ props.row.clientName }}</span>
+                        </el-form-item>
+                        <!--中介名称-->
+                        <el-form-item :label="'workbenchAppVoAgentName' | translate('Agent Name')">
+                            <span>{{ props.row.agentName }}</span>
+                        </el-form-item>
+                        <!--操作角色-->
+                        <el-form-item :label="'workbenchAppVoDestinationRole' | translate('destination Role')" label-width="150px">
+                            <span> {{props.row.handlerRole}}</span>
+                        </el-form-item>
+                        <!--任务节点-->
+                        <el-form-item :label="'workbenchAppVoTaskCode' | translate('Task Code')">
+                            <span> {{props.row.taskCode}}</span>
+                        </el-form-item>
+                        <!--businessId-->
+                        <el-form-item :label="'workbenchAppVoBusinessId' | translate('businessId')" label-width="150px">
+                            <span>{{props.row.businessId}}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <el-table-column prop="priority" :formatter="formatPriority" :label="'workbenchAppVoPriority' | translate('priority')" width="80" sortable>
+            </el-table-column>
+            <el-table-column prop="processDesc" :label="'workbenchAppVoProcessDesc' | translate('Process Desc')" sortable>
+            </el-table-column>
+            <el-table-column prop="taskName" :label="'workbenchAppVoTaskName' | translate('Task Name')" sortable>
+            </el-table-column>
+            <!--内部参考号-->
+            <el-table-column prop="innerRefNo" :label="'workbenchAppVoInnerRefNo' | translate('Inner Ref No.')" sortable>
+            </el-table-column>
+            <el-table-column prop="status" :label="'workbenchAppVoStatus' | translate('Traditional Name')" width="100" sortable>
+            </el-table-column>
+            <el-table-column prop="taskId" sortable :label="'workbenchAppVoTaskId' | translate('task Id')">
+            </el-table-column>
+            <el-table-column prop="inTime" :formatter="formatTime" :label="'workbenchAppVoInTime' | translate('In Time')" width="150" align="right" sortable></el-table-column>
+            <!--操作用户-->
+            <el-table-column prop="handlerCode" :label="'workbenchAppVoDestinationUser' | translate('Destination User')" sortable>
+            </el-table-column>
+            <el-table-column  :label="'gTitleOperation' | translate('Operation')" width="120">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary" @click="onUserInquery(scope.row)">{{ 'gBtnAssign' | translate('Assign') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <el-col :span="24" class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </el-col>
+</section>

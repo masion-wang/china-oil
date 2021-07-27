@@ -1,0 +1,18 @@
+<!-- 除了出险通知审核的审核信息组件 -->
+<div>
+  <gv-form :model="reviewInfo" ref="reviewInfo" :rules="rules" class="mt20">
+    <div class="gv-row" style="padding-top: 20px;">
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%;">
+          <div class="gvinput"><span style="color: red;">*</span><span>{{'auditOpinion' | translate}}:</span></div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-form-item prop="remark" class="qxw100">
+            <el-input ref="remark" type="textarea" :rows="3" style="width:100%;" :disabled="isReadonly" placeholder="请输入审核意见" v-model="reviewInfo.remark">
+          </el-form-item>
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+</div>

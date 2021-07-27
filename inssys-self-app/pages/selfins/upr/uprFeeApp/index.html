@@ -1,0 +1,45 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 统计时点 -->
+        <gv-form-item key-name="统计时点" isThree="true" prop="claimNo">
+          <el-date-picker
+            v-model="scope.search.lossDateTimeStart"
+            format="dd-MM-yyyy"
+            value-format="dd-MM-yyyy"
+            type="date"
+            :placeholder="'ryn' | translate"
+          >
+          </el-date-picker>
+        </gv-form-item>
+        <!-- 币别 -->
+        <gv-form-item key-name="currency" isThree="true" prop="sourceClaimNo">
+          <gv-select
+            size="mini"
+            code-type="Currency"
+            v-model="scope.search.sourceClaimNo"
+          ></gv-select>
+        </gv-form-item>
+        <!-- 自保险种  -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCode">
+          <gv-select
+            size="mini"
+            code-type="RiskType"
+            v-model="scope.search.riskCode"
+            filterable
+            label-name-ex="codeCode"
+            code-name="codeCode"
+            label-name="codeName"
+          ></gv-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <span style="font-size: 14px; font-weight: 500"
+        >{{'Queryresults'|translate('Query results')}}</span
+      ></template
+    >
+  </gv-filter-table>
+</section>

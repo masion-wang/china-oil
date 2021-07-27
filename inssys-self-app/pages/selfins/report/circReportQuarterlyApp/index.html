@@ -1,0 +1,48 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" @onExportAllExcel="onExportAllExcel"
+    :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 统计日期 -->
+        <gv-form-item key-name="zbStatisticsdate" isThree="true" prop="positionDate" requires>
+          <div style="display: flex;width: 320px;">
+            <el-form-item prop="startReportDate" style="flex: 1; margin: 0">
+              <el-date-picker v-model="scope.search.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                type="date" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="endReportDate" style="flex: 1;">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date"
+                v-model="scope.search.endReportDate" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+        <!-- 币别  -->
+        <gv-form-item key-name="currency" isThree="true" prop="currency" requires>
+          <gv-select size="mini" code-type="Currency" v-model="scope.search.currency" code-name="codeCode"
+            label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 统计单位  -->
+        <gv-form-item key-name="zbStatisticalunit" isThree="true" prop="unitOfReport" requires>
+          <el-select v-model="scope.search.unitOfReport">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--查询结果-->
+    <template v-slot:toolbar="scope">
+      <!-- 导出 -->
+      <!-- <el-button style='position: relative;left:92%;' class="gv-btn gv-btn-primary " type="primary"
+        @click="exportExcel">
+        {{'gBtnExportAll' | translate('Export All')}}
+      </el-button> -->
+      <!-- <span style="font-size: 14px; font-weight: 500">{{'Queryresults'|translate('Query results')}}</span> -->
+    </template>
+  </gv-filter-table>
+</section>

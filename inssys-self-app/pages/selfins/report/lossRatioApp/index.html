@@ -1,0 +1,203 @@
+<section>
+  <!--查询条件-->
+  <gv-form :table="commonList" class="gv-query-table">
+    <div class="clearfix query-title" style="
+          padding: 5px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <!-- 搜索数据 -->
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+
+        {{'gTitleSearchData'| translate}}
+      </h1>
+    </div>
+
+    <div class="gv-row" style='padding-top: 15px;'>
+      <!-- 统计方式 -->
+      <gv-form-item key-name="zbStatisticalmethods" isThree="true" prop="type">
+        <el-select v-model="commonList.type"
+          @change='changetype(commonList.type,commonList.startReportDate,commonList.endReportDate)'>
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+      <div class="gv-row">
+        <!-- 统计日期 -->
+        <gv-form-item key-name="zbStatisticsdate" isThree="true" prop="positionDate" requires
+          v-if='commonList.type=="project"||commonList.type=="insuer"||commonList.type=="policyNo"||commonList.type=="uwYear"||commonList.type=="riskCode"'>
+          <div style="display: flex">
+            <el-form-item prop="startReportDate" style="flex: 1; margin: 0">
+              <el-date-picker v-model="commonList.startReportDate" format="dd-MM-yyyy" value-format="dd-MM-yyyy"
+                @change='changeReportDate(commonList.startReportDate,commonList.endReportDate)' type="date"
+                :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-form-item prop="endReportDate" style="flex: 1; margin: 0">
+              <el-date-picker format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date"
+                @change='changeReportDate(commonList.startReportDate,commonList.endReportDate)'
+                v-model="commonList.endReportDate" :placeholder="'ryn' | translate">
+              </el-date-picker>
+            </el-form-item>
+          </div>
+        </gv-form-item>
+
+        <!-- 项目名称 -->
+        <gv-form-item key-name="entryName" isThree="true" prop="projectNameList" v-if='commonList.type=="project"'>
+          <el-select v-model="commonList.projectNameList" filterable clearable multiple
+            @change="changecode(commonList.projectNameList,'projectNameList')"
+            class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px">
+            <el-option v-for="item in projectNameListOption" :key="item" :label="item" :value="item">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- 投保单位 -->
+        <gv-form-item key-name="proposalCom" isThree="true" prop="insuredList" v-if='commonList.type=="insuer"'>
+          <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+            @change="changecode(commonList.insuredList,'insuredList')" v-model="commonList.insuredList" multiple>
+            <el-option v-for="item in insuredListOption" :key="item.supplierChineseName"
+              :label="item.supplierChineseName" :value="item.supplierChineseName">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        </gv-form-item>
+        <!-- 自保保单号  -->
+        <gv-form-item key-name="selfinsurancepolicyno" isThree="true" prop="policyNoList"
+          v-if='commonList.type=="policyNo"'>
+          <el-select v-model="commonList.policyNoList" filterable clearable multiple
+            @change="changecode(commonList.policyNoList,'policyNoList')" class="noLeftMg selecttagstexBYLDL eltagBYLDL"
+            style=" width: 320px">
+            <el-option v-for="item in result" :key="item" :label="item" :value="item">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- 承保年度 -->
+        <gv-form-item key-name="underwritingYear" isThree="true" prop="uwyearList" v-if='commonList.type=="uwYear"'>
+          <el-select v-model="commonList.uwyearList" filterable clearable multiple
+            @change="changecode(commonList.uwyearList,'uwyearList')" class="noLeftMg selecttagstexBYLDL eltagBYLDL"
+            style=" width: 320px">
+            <el-option v-for="item in uwyearListOption" :key="item" :label="item" :value="item">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+        <!-- 自保险种 -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCodeList" v-if='commonList.type=="riskCode"'>
+          <el-select clearable filterable class="noLeftMg selecttagstexBYLDL eltagBYLDL" style=" width: 320px"
+            @change="changecode(commonList.riskCodeList,'riskCodeList')" v-model="commonList.riskCodeList" multiple>
+            <el-option v-for="item in riskCodeLiOption" :key="item.codeCode" :label="item.codeCode"
+              :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+    </div>
+    <div class="query-bottom">
+      <div class="pull-left">
+        <el-button class="gv-btn gv-btn-white" @click="dialogFormVisible = true">{{ 'gBtnSaveFi' | translate }}
+        </el-button>
+        <el-button class="gv-btn gv-btn-white" @click="dialogTableVisible = true">{{ 'gBtnMaFi' | translate }}
+        </el-button>
+        <el-select @change="getFilterEx" size="small" :placeholder="'gSelectFi' | translate" class="gv-filter-select"
+          filterable v-model="filterEx">
+          <el-option v-for="item in optionsFieldsEx" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="pull-right">
+        <el-button class="gv-btn gv-btn-primary" type="primary" @click='handleSearch'>
+          {{ 'gBtnSearch' | translate('Search') }}</el-button>
+        <el-button class="gv-btn gv-btn-warning" @click='handleReset'>
+          {{ 'gBtnClear' | translate('Clear') }}</el-button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <!-- <div class="query-more">
+      <div class="query-bottom" style="height: 54px; line-height: 35px">
+        <div class="pull-left"></div>
+        <div class="pull-right">
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="seachlist">查询</el-button>
+          <el-button class="el-button gv-btn gv-btn-warning el-button--default" @click="reset">重置</el-button>
+        </div>
+      </div>
+    </div> -->
+  </gv-form>
+
+
+  <!-- 查询结果 -->
+  <gv-form class="gv-query-table">
+    <div class="clearfix query-title" style="
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  ">
+      <!--    查询结果 -->
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        {{'queryResult'| translate}}
+      </h1>
+      <div class="pull-right">
+        <el-button class="gv-btn-primary gv-btn-xs" icon="el-icon-download" @click="onExportAllExcel">
+          {{ 'gBtnToExecl' | translate('ToExecl') }}</el-button>
+      </div>
+    </div>
+    <template v-if='cols.length>0'>
+      <el-table :data="tableData">
+        <!--序号 -->
+        <el-table-column type="index" width="50" :label="'gNumber' | translate">
+        </el-table-column>
+        <el-table-column v-for="col in cols" :prop="col.prop" :label="col.title | translate"
+          show-overflow-tooltip="true">
+        </el-table-column>
+      </el-table>
+      <el-pagination style="float: right" @size-change="tableDataonHandleSizeChange"
+        @current-change="tableDataonHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="totalTableData" :current-page.sync="currentPage">
+      </el-pagination>
+    </template>
+    <template v-else>
+      <el-table>
+        <div class="el-table__empty-block">
+          <!-- 暂无数据 -->
+          <span class="el-table__empty-text">{{ 'zbemptyText' | translate }}</span>
+        </div>
+      </el-table>
+    </template>
+
+  </gv-form>
+  <el-dialog :title="'gTitlePrompt' | translate" custom-class="gv-dialog" :visible.sync="dialogFormVisible">
+    <gv-form :model="fromFiltersEx" ref="fromFiltersEx" :inline="false">
+      <el-form-item :label="'gName' | translate" label-width="120px">
+        <el-input v-model="fromFiltersEx.name" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item :label="'gRemarks' | translate" label-width="120px">
+        <el-input v-model="fromFiltersEx.remarks" autocomplete="off"></el-input>
+      </el-form-item>
+    </gv-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button class="gv-btn gv-btn-warning" @click="dialogFormVisible = false">{{ 'gBtnCancel' | translate }}
+      </el-button>
+      <el-button class="gv-btn gv-btn-submit" type="primary" @click="onSubmit">{{ 'gSubmit' | translate }}</el-button>
+    </div>
+  </el-dialog>
+  <el-dialog custom-class="gv-dialog" :title="'gBtnMaFi' | translate" :visible.sync="dialogTableVisible">
+    <div class="gv-query-table" style="margin-top:15px;">
+      <div class="query-content">
+        <el-table :data="optionsFieldsEx">
+          <el-table-column prop="label" :label="'gName' | translate" width="150"></el-table-column>
+          <el-table-column prop="remarks" :label="'gRemarks' | translate" width="200"></el-table-column>
+          <el-table-column prop="time" :label="'gData' | translate" show-overflow-tooltip>
+            <template #default="{row}">{{row.time | time('yyyy-MM-dd HH:mm:ss')}}</template>
+          </el-table-column>
+          <el-table-column :label="'gTitleOperation' | translate">
+            <template v-slot="scope">
+              <el-button @click="onHandleDel(scope.row)" class="gv-btn-warning gv-btn-xs" type="primary">
+                {{ 'gBtnDelete' | translate }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+  </el-dialog>
+</section>

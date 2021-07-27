@@ -1,0 +1,70 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'ruleData' | translate('Rule Data')" name="1">
+            <el-form class="table-line" :inline="true" ref="ruleFilters" :model="ruleFilters" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="ruleCode" defaultName="Rule Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="code" :width="5">
+                            <el-input size="mini" v-model="ruleFilters.code"></el-input>
+                        </gv-form-input>
+
+                        <gv-form-label keyName="ruleCodeDesc" defaultName="Rule Code Desc" :width="3"></gv-form-label>
+                        <gv-form-input prop="codeDesc" :width="5">
+                            <el-input size="mini" v-model="ruleFilters.codeDesc"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ruleStatus" defaultName="Status" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="validInd">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="ruleFilters.validInd"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('ruleFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--新增-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+
+    <template>
+        <el-table :data="ruleList" highlight-current-row border stripe >
+
+            <el-table-column prop="code" sortable :label="'ruleCode' | translate('Rule Code')">
+            </el-table-column>
+             <el-table-column prop="codeDesc" sortable :label="'ruleCodeDesc' | translate('Rule Code Desc')">
+            </el-table-column>
+            <el-table-column prop="formEngineFactorCode" sortable :label="'formEngineCode' | translate('Form Engine Code')">
+            </el-table-column>
+            <el-table-column prop="formEngineResultCode" sortable :label="'formEngineCode' | translate('Form Engine Code')">
+            </el-table-column>
+
+            <!-- <el-table-column prop="factor" :label="'ruleFactor' | translate('RuleFactor')" width="120">
+            </el-table-column>
+            <el-table-column prop="assemble" :label="'ruleAssemble' | translate('Rule Assemble')" width="120"> -->
+            </el-table-column>
+            <el-table-column :label="'ruleStatus' | translate('Status')" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd==true?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                <template slot-scope="scope">
+                    <el-button  v-if="scope.row.validInd == true" size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">                    {{'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!-- 分页 -->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

@@ -1,0 +1,195 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :rules="rules" :inline="true"  @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate" name="1" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <!-- 表单引擎父级 -->
+                        <gv-form-label requires keyName="pubViewObjectVoViewObjectForm" defaultName="View Object Form" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="form">
+                            <gv-dbclick :is-readonly="isReadonly" po-name="pubViewObject" v-model="form.form" @row-select="selectsViewObject" table-one-params="viewObjectForm" :table-one-title="'pubViewObjectVoViewObjectForm' | translate" table-two-params="formTitleKey" :table-two-title="'pubViewObjectVoFormTitleKey' | translate" search-one-params="viewObjectForm" :search-one-title="'pubViewObjectVoViewObjectForm' | translate">
+                            </gv-dbclick>
+                        </gv-form-input>
+                        <!-- 输入类型 及表单类型-->
+                        <template v-if="form.dataType === 'string' || form.dataType === 'int'">
+                            <gv-form-label requires keyName="pubViewObjectEleVoTextType" defaultName="Text Type" :width="3"></gv-form-label>
+                            <gv-form-input :width="5" prop="textType">
+                                <el-select v-model="form.textType" :disabled="isReadonly">
+                                    <el-option v-for="item in textTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                        <template v-if="form.dataType === 'list' || form.dataType === 'object'">
+                            <gv-form-label :width="3"></gv-form-label>
+                            <gv-form-input :width="5"></gv-form-input>
+                        </template>
+                        <template v-if="form.textType !== 'bottomBtn'">
+                            <gv-form-label :width="3"></gv-form-label>
+                            <gv-form-input :width="5"></gv-form-input>
+                        </template>
+                    </tr>
+                    <tr v-if="form.textType !== 'blank'">
+                        <!-- 元素编码 elementCode -->
+                        <gv-form-label requires keyName="pubViewObjectEleVoElementCode" defaultName="Element Code" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="elementCode">
+                            <el-input size="mini" maxlength="100" :readonly="isReadonly" v-model="form.elementCode"></el-input>
+                        </gv-form-input>
+                        <!-- 元素名称 nameKey 对应国际化字段 -->
+                        <template v-if="form.dataType === 'string' || form.dataType === 'int'">
+                            <gv-form-label requires keyName="pubViewObjectEleVoNameKey" defaultName="Name Key" :width="3"></gv-form-label>
+                            <gv-form-input :width="5" prop="nameKey">
+                                <el-input size="mini" maxlength="50" :readonly="isReadonly" v-model="form.nameKey"></el-input>
+                            </gv-form-input>
+                        </template>
+                        <template v-if="form.dataType === 'list' || form.dataType === 'object'">
+                            <gv-form-label :width="3"></gv-form-label>
+                            <gv-form-input :width="5"></gv-form-input>
+                        </template>
+                        <!-- 数据类型 Todo, 先别管-->
+                        <template v-if="form.textType !== 'bottomBtn'">
+                            <gv-form-label requires keyName="pubViewObjectEleVoDataType" defaultName="Data Type" :width="3"></gv-form-label>
+                            <gv-form-input :width="5" prop="dataType">
+                                <gv-select size="mini" optionsSet="0" codeType="DataTypeOptions" :disabled="isReadonly" v-model="form.dataType"></gv-select>
+                            </gv-form-input>
+                        </template>
+                    </tr>
+                    <tr>
+                        <!-- 元素状态 -->
+                        <gv-form-label keyName="pubViewObjectEleVoValidInd" defaultName="Valid Ind" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="validInd">
+                            <gv-select size="mini" optionsSet="2" codeType="Validind" :disabled="isReadonly" v-model="form.validInd"></gv-select>
+                        </gv-form-input>
+                        <!-- 顺序 确定元素位置 -->
+                        <gv-form-label requires keyName="pubViewObjectEleVoSorting" defaultName="Sorting" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="sorting">
+                            <el-input size="mini" type="number" maxlength="5" :readonly="isReadonly" v-model="form.sorting"></el-input>
+                        </gv-form-input>
+                        <!-- 输入域所占单元格 -->
+                        <template v-if="form.textType !== 'bottomBtn' && form.dataType !== 'list' && form.dataType !== 'object'">
+                            <gv-form-label requires keyName="pubViewObjectEleVoColSize" defaultName="Col Size" :width="3"></gv-form-label>
+                            <gv-form-input :width="5" prop="colSize">
+                                <gv-select size="mini" optionsSet="0" codeType="ColSizeOptions" :disabled="isReadonly" v-model="form.colSize"></gv-select>
+                            </gv-form-input>
+                        </template>
+                        <!-- 嵌套对象 Todo -->
+                        <template v-if="form.dataType === 'list' || form.dataType === 'object'">
+                            <gv-form-label keyName="pubViewObjectEleVoObjectForm" defaultName="Object Form" :width="3"></gv-form-label>
+                            <gv-form-input colspan="3" :width="5" prop="objectForm">
+                                <gv-dbclick po-name="pubViewObject" v-model="form.objectForm" @row-select="selectsViewObject" table-one-params="viewObjectForm" :table-one-title="'pubViewObjectVoViewObjectForm' | translate" table-two-params="formTitleKey" :table-two-title="'pubViewObjectVoFormTitleKey' | translate" search-one-params="viewObjectForm" :search-one-title="'pubViewObjectVoViewObjectForm' | translate">
+                                </gv-dbclick>
+                            </gv-form-input>
+                        </template>
+                    </tr>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <el-collapse v-model="mixinObject.activeNames" v-if="showAttr">
+            <el-collapse-item :title="'pubViewObjectVoConfigAttribute' | translate" name="2" class="table-line">
+                <el-table :data="form.attrs" border>
+                    <!-- 序号 -->
+                    <el-table-column label-class-name="require-star" :label="'gNumber' | translate('SN')" width="70" align="center">
+                        <template scope="scope">
+                            <span>{{scope.$index + 1}}</span>
+                        </template>
+                    </el-table-column>
+                    <!-- 属性 -->
+                    <el-table-column label-class-name="require-star" :label="'pubViewObjectVoAttribute' | translate">
+                        <template scope="scope">
+                            <gv-form-input :prop="'attrs.' + scope.$index + '.prop'">
+                                <el-select v-model="scope.row.prop" :disabled="scope.row.readonly || isReadonly" filterable allow-create>
+                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 值 -->
+                    <el-table-column label-class-name="require-star" :label="'pubViewObjectVoValue' | translate">
+                        <template slot-scope="scope">
+                            <gv-form-input :prop="'attrs.' + scope.$index + '.value'">
+                                <el-input size="mini" v-model="scope.row.value" :readonly="isReadonly"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 操作 -->
+                    <el-table-column :label="'gTitleOperation' | translate('Operation')" width="120">
+                        <template slot-scope="scope">
+                            <el-button v-if="!scope.row.readonly && !isReadonly" size="mini" type="primary" icon="el-icon-minus" @click="onDeletes('attrs', scope.$index)"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="toolbar-btn toolbar-pagination">
+                    <el-button size="mini" type="primary" icon="el-icon-plus" @click="onAddAttrs"></el-button>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+        <el-collapse v-model="mixinObject.activeNames" v-if="showRule">
+            <el-collapse-item :title="'pubViewObjectVoConfigRule' | translate" name="3" class="table-line">
+                <el-table :data="form.rules" border>
+                    <!-- 序号 -->
+                    <el-table-column label-class-name="require-star" :label="'gNumber' | translate('SN')" width="70" align="center">
+                        <template scope="scope">
+                            <span>{{scope.$index + 1}}</span>
+                        </template>
+                    </el-table-column>
+                    <!-- 触发条件 -->
+                    <el-table-column label-class-name="require-star" :label="'pubViewObjectVoTriggers' | translate">
+                        <template scope="scope">
+                            <gv-form-input :prop="'rules.' + scope.$index + '.trigger'">
+                                <el-select v-model="scope.row.trigger" :disabled="isReadonly">
+                                    <el-option :label="'pubViewObjectVoBlur' | translate" value="blur"></el-option>
+                                    <el-option :label="'pubViewObjectVoChange' | translate" value="change"></el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 规则 -->
+                    <el-table-column label-class-name="require-star" :label="'pubViewObjectVoRule' | translate">
+                        <template slot-scope="scope">
+                            <gv-form-input :prop="'rules.' + scope.$index + '.pattern'">
+                                <el-radio v-if="!scope.$index" v-model="scope.row.pattern" label="required" @change="handleRuleChg(scope.$index)" :disabled="isReadonly">{{'pubViewObjectVoRequired' | translate}}</el-radio>
+                                <el-radio v-if="!scope.$index" v-model="scope.row.pattern" label="notrequired" @change="handleRuleChg(scope.$index)" :disabled="isReadonly" >{{'pubViewObjectVoNotRequired' | translate}}</el-radio>
+                                <el-select v-if="scope.$index" v-model="scope.row.pattern" :disabled="isReadonly" @change="handleRuleChg(scope.$index)" filterable allow-create>
+                                    <el-option v-for="item in patterns" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 提示语 -->
+                    <el-table-column label-class-name="require-star" :label="'pubViewObjectVoMessage' | translate">
+                        <template slot-scope="scope">
+                            <gv-form-input :prop="'rules.' + scope.$index + '.message'" v-show="scope.row.pattern !== 'notrequired'">
+                                <el-select v-model="scope.row.message" :disabled="scope.row.readonly || isReadonly" filterable allow-create>
+                                    <el-option v-for="item in messages" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <!-- 操作 -->
+                    <el-table-column :label="'gTitleOperation' | translate('Operation')" width="120">
+                        <template slot-scope="scope">
+                            <el-button v-if="!scope.row.readonly && !isReadonly" size="mini" type="primary" icon="el-icon-minus" @click="onDeletes('rules', scope.$index)"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="toolbar-btn toolbar-pagination">
+                    <el-button size="mini" type="primary" icon="el-icon-plus" @click="onAddRules"></el-button>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+        
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <!--保存-->
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <!--清除-->
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <!--返回-->
+                <el-button size="mini" @click="returnPage">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

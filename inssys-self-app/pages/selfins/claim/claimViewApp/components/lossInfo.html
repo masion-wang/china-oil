@@ -1,0 +1,94 @@
+<!-- 出险信息 -->
+<div>
+  <gv-form :model="lossInfo" ref="lossInfo" :rules="rules" class="mt20">
+    <div class="gv-row">
+      <!--出险原因-->
+      <gv-form-item key-name="lossReason" prop="lossReason" isThree="true">
+        <gv-select ref="lossReason" size="mini" code-type="ClaimReason" code-name="codeCode" label-name="codeName"
+          v-model="lossInfo.lossReason" :disabled="isReadonly"></gv-select>
+      </gv-form-item>
+      <!--出险时间-->
+      <gv-form-item key-name="lossTime" prop="lossDate" isThree="true" requires>
+        <el-date-picker
+          type="datetime"
+          :disabled="isReadonly"
+          ref="lossDate"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          v-model="lossInfo.lossDate"
+          :placeholder="'nyr' | translate">
+        </el-date-picker>
+      </gv-form-item>
+      <!--提交人-->
+      <gv-form-item key-name="submitter" prop="submitterName" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{lossInfo.submitterName}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--国家-->
+      <gv-form-item key-name="country" prop="country" isThree="true">
+        <el-select ref="country" v-model="lossInfo.country" clearable filterable @change="selectCountry" :disabled="isReadonly">
+          <el-option v-for="(item, index) in countryOptions" :key="index" :value="item.countryCode" :label="item.countryCname"></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--邮编-->
+      <gv-form-item key-name="postCode" prop="postalCode" isThree="true">
+        <el-input :placeholder="isReadonly? '' : '请输入邮编'" :disabled="isReadonly" v-model="lossInfo.postalCode"></el-input>
+      </gv-form-item>
+      <!--提交日期-->
+      <gv-form-item key-name="submitDate" prop="submissionDate" isThree="true">
+        <div style="height: 32px; line-height: 32px; text-align: center;">
+          {{lossInfo.submissionDate}}
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row" v-if="lossInfo.country == 'CN'">
+      <!--省-->
+      <gv-form-item key-name="province" prop="province" isThree="true">
+        <el-select ref="province" v-model="lossInfo.province" clearable filterable @change="selectProvince" :disabled="isReadonly || lossInfo.country == ''">
+          <el-option v-for="(item, index) in provinceOptions" :key="index" :value="item.countryCode" :label="item.countryCname"></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--市-->
+      <gv-form-item key-name="city" prop="city" isThree="true">
+        <el-select ref="city" v-model="lossInfo.city" clearable filterable @change="selectCity" :disabled="isReadonly || lossInfo.province == ''">
+          <el-option v-for="(item, index) in cityOptions" :key="index" :value="item.countryCode" :label="item.countryCname"></el-option>
+        </el-select>
+      </gv-form-item>
+      <!--区-->
+      <gv-form-item key-name="area" prop="district" isThree="true">
+        <el-select ref="district" v-model="lossInfo.district" clearable filterable :disabled="isReadonly || lossInfo.city == ''">
+          <el-option v-for="(item, index) in districtOptions" :key="index" :value="item.countryCode" :label="item.countryCname"></el-option>
+        </el-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--出险描述-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%;">
+          <div class="gvinput"><span>{{'lossLocation' | translate}}:</span></div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input type="textarea" :rows="2" style="width:100%;" v-model="lossInfo.address" :disabled="isReadonly" :placeholder="isReadonly? '' : '请输入地址详情'">
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="gv-row">
+      <!--备注-->
+      <el-row :gutter="20" class="cellfou ia_im_area">
+        <el-col :span="4" style="padding-right: 4.3%;">
+          <div class="gvinput"><span>{{'lossDescription' | translate}}:</span></div>
+        </el-col>
+        <el-col :span="20" class="ia_im_describ">
+          <el-input type="textarea" :rows="2" style="width:100%;" v-model="lossInfo.lossDescription" :disabled="isReadonly" :placeholder="isReadonly? '' : '请输入出险描述'">
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+  </gv-form>
+  <div style="width: 100%; text-align: center; padding: 15px 0;" v-if="!isReadonly">
+    <el-button type="primary" class="gv-btn-save gv-btn-xs" @click="submitLossInfo" :disabled="isReadonly">{{'gSubmit' | translate}}</el-button>
+  </div>
+</div>

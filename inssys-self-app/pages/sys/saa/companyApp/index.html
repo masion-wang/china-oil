@@ -1,0 +1,29 @@
+<section>
+    <gv-data-table ref="table" @on-list-btn="onListBtn" :table="table">
+        <template v-slot:search="scope">
+            <div class="gv-row">
+                <gv-form-item key-name="ggCompanyVoCompanyCode" prop="companyCode">
+                    <el-input size="mini" v-model.trim= "scope.search.companyCode"></el-input>
+                </gv-form-item>
+                <gv-form-item key-name="ggCompanyVoUpperCompanyCode" prop="upperCompanyCode">
+                    <el-input size="mini" v-model.trim= "scope.search.upperCompanyCode"></el-input>
+                </gv-form-item>
+                <gv-form-item key-name="ggCompanyVoCompanyName" prop="companyName">
+                    <el-input size="mini" v-model.trim= "scope.search.companyName"></el-input>
+                </gv-form-item>
+            </div>
+            <div class="gv-row">
+                <gv-form-item key-name="ggCompanyVoValidInd" prop="validInd">
+                    <gv-select size="mini" options-set="1" code-type="ValidInd" v-model="scope.search.validInd" ></gv-select> 
+                </gv-form-item>
+            </div>
+        </template>
+        <!--工具条-->
+        <template v-slot:toolbar="scope">
+            <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="onHandleAdd()">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+        </template>
+    </gv-data-table>
+    <transition name="dialog-fade">
+        <company-edit-index @searchList="searchLists" v-if="edit.show" :companyCode="edit.companyCode" :type="edit.type" @close="onClose"/>
+    </transition>
+</section>

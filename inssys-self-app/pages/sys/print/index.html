@@ -1,0 +1,14 @@
+<section style="height:99%">
+	<iframe :src="iframeSrc"  frameborder="0" width="99%" scrolling="no" height="100%"></iframe>
+	
+	<!-- margin:-30px;会阻挡滚动栏-->
+	<!-- 没有margin:-30px;会被遮挡-->
+	<!-- 改成margin:-50px;-->
+	<div v-if="!isReadOnly" style="margin: -50px;width: 99%;z-index: 100;position: absolute;text-align: center;">
+		<el-checkbox label="" v-model="isUpload" v-if="!(riFlag||finFlag)">upload</el-checkbox>
+
+		<el-button size="mini" @click.prevent="onPrint" type="primary" :disabled="isPrintAbled">Print</el-button>
+		<el-button size="mini" @click.prevent="onDownload" type="primary">Download</el-button>
+		<el-button size="mini" @click="showEmail" v-if="!riFlag" type="primary">Email</el-button>
+	</div>
+</section>

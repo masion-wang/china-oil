@@ -1,0 +1,11 @@
+<section>
+    <el-form form="specialAuditLogTwoVersionsCompareForm" :inline="true">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'specialAuditLogVersionCompare' | translate('Version Compare')" name="1">
+                <el-row>
+                    <div id="app3" v-html="diffoutput"></div>
+                </el-row>
+            </el-collapse-item>
+        </el-collapse>
+    </el-form>
+</section>

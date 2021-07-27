@@ -1,0 +1,88 @@
+<template>
+  <!-- 日期区间 -->
+  <el-table-column v-if='prop.config.type == "dateRange"' :key='prop.dataEname[0]+prop.request' 
+     :min-width='prop.width ?prop.width : "" '>
+    <template v-slot:header >
+      <div style="display: flex; justify-content: space-around;">
+        <span><span v-if='prop.request == "1"' style="color: #ff4949">*</span> {{Vue.gvUtil.getInzTranslate(prop.dataEname[0])}}</span>
+        <span><span v-if='prop.request == "1"' style="color: #ff4949">*</span> {{Vue.gvUtil.getInzTranslate(prop.dataEname[1])}}</span>
+      </div>
+    </template>
+    <template slot-scope="scope">
+      <!-- 日期区间 有联动校验 -->
+      <date-range :propPath="'tableData.' + initPath(scope) + '.'+ prop.infoCode[0]" :required='prop.request == "1"'
+        :startDate.sync='scope.row[prop.infoCode[0]]' :endDate.sync='scope.row[prop.infoCode[1]]'></date-range>
+    </template>
+  </el-table-column>
+  <!-- 普通输入 -->
+  <el-table-column v-else :label="prop.dataEname | translate" :prop="rules[prop.dataEname] ? prop.infoCode : ''"
+    :min-width='prop.width ?prop.width : "" ' :render-header="rules[prop.dataEname] ? requiredField : ''"
+    :key='prop.dataEname+prop.request'>
+    <template slot-scope="scope">
+      <el-form-item :prop="'tableData.' + initPath(scope) + '.'+ prop.infoCode"
+        :rules='rules[prop.dataEname] ? rules[prop.dataEname] : "" '>
+        <!-- 普通文本 -->
+        <span v-if='prop.config.type == "txt"' key='txt'>{{scope.row[prop.infoCode]}}</span>
+        <!-- poName  Select下拉-->
+        <template v-else-if='prop.config.type == "selectPo"' key='selectPo'>
+
+          <gv-select v-if='!isReadonly && prop.readonly == "0"' size="mini" options-set="0"
+            :po-name="prop.config.poName" :code-name="prop.config.code" :label-name="prop.config.name"
+            v-model="scope.row[prop.infoCode]" :placeholder="'gSelect' | translate('Please Select')">
+          </gv-select>
+          <span v-else>{{Vue.gvUtil.translationPoData(prop.config, scope.row[prop.infoCode])}}</span>
+        </template>
+
+
+        <!-- 普通输入框 -->
+        <template v-else-if='prop.config.type == "input"' key='input'>
+          <el-input v-if='!isReadonly && prop.readonly == "0"'
+            :maxlength="prop.config.maxlength ? prop.config.maxlength : '60'" :readonly="isReadonly"
+            :placeholder="'gInput' | translate" v-model="scope.row[prop.infoCode]"
+            @blur='inputBlur(prop.dataEname,scope.row, $event)'>
+          </el-input>
+          <span v-else>{{scope.row[prop.infoCode]}}</span>
+        </template>
+
+        <!-- ggcode Select下拉 -->
+        <template v-else-if='prop.config.type == "ggcode"' key='ggcode'>
+          <gv-select v-if='!isReadonly && prop.readonly == "0"' size="mini" options-set="0" :default-value="prop.config.defaultValue"
+            :code-type="prop.config.codeType" v-model="scope.row[prop.infoCode]" ></gv-select>
+          <span v-else>{{Vue.gvUtil.translationData(prop.config.codeType, scope.row[prop.infoCode]) }}</span>
+        </template>
+
+        <!-- num输入 -->
+        <template v-else-if='prop.config.type == "numInput"' key='numInput'>
+          <gv-input v-if='!isReadonly && prop.readonly == "0"' size="mini" :readonly="isReadonly"
+            :maxlength="prop.config.maxlength ? prop.config.maxlength : '60'" :pattern-key='prop.config.patternKey'
+            :thou='prop.config.thou' :num-len="prop.config.numLen"
+            @blur='numInputBlur(prop.dataEname,scope.row, $event)' :placeholder="'gInput' | translate"
+            v-model="scope.row[prop.infoCode]">
+          </gv-input>
+          <span v-else>{{scope.row[prop.infoCode]}}</span>
+        </template>
+
+        <!-- 日期 :picker-options="pickerOptions[initPath(scope)]" @change="changeDate('0',initPath(scope), $event)" -->
+        <template v-else-if='prop.config.type == "date"' key='date'>
+          <el-date-picker v-if='!isReadonly && prop.readonly == "0"' class="datetimer"
+            v-model="scope.row[prop.infoCode]" :format="prop.config.format ? prop.config.format : 'yyyy-MM-dd'"
+            unlink-panels :value-format='prop.config.valFormat ? prop.config.valFormat : "yyyy-MM-dd"'
+            :type="prop.config.datePickType?prop.config.datePickType : 'date'"
+            :placeholder="prop.config.placeholder ? prop.config.placeholder : '年/月/日'" start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+          <span v-else>{{scope.row[prop.infoCode]}}</span>
+        </template>
+        <!-- url select下拉 -->
+        <template v-else-if='prop.config.type == "select"' key='select'>
+          <gv-select :url='prop.config.url' context-name='product' :searchObject='prop.config.data'
+            :codeName='prop.config.code' :labelName='prop.config.name' v-model="scope.row[prop.infoCode]"></gv-select>
+          <span v-else>{{Vue.gvUtil.translationSelectData(prop.config, scope.row[prop.infoCode]) }}</span>
+        </template>
+      </el-form-item>
+    </template>
+  </el-table-column>
+
+
+
+</template>

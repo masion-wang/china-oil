@@ -1,0 +1,373 @@
+<div class="wrokBeachTop" :style="{'margin-top': isChangeMenu?'0px':'60px'}">
+  <el-dialog title="提醒" :visible.sync="showRemindDialog">
+    <el-card style="height: 100px">
+      <el-row style="margin-top: 20px; font-size: 14px">
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;{{remindContent}}</span>
+      </el-row>
+    </el-card>
+    <el-row style="float: right; margin-top: 5px">
+      <el-button type="primary" @click="closeDailog">确认</el-button>
+    </el-row>
+  </el-dialog>
+
+  <!-- <div class="cxl-workbench" v-if="layoutType === 'left'">
+        <a href="javascript:void(0)"
+            @click="onWorkbenchMoreMsg()">{{'workbenchAppVoMyReminder' | translate('My Reminder')}}</a>
+        <a href="javascript:void(0)" @click="onMoreMsg()">{{'workbenchAppVoMessage' | translate('Message')}}</a>
+    </div> -->
+  <div class="workbench flex">
+    <section class="flex-t" id="flex-t">
+      <section class="flex-t-left">
+        <el-card class="box-card flex-t-top-top">
+          <!-- <div class="menu-list">
+                        <div class="menu-item">
+                            <el-image class="menu-logo" src="./dist/img/workbench_3.png" fit="cover"></el-image>
+                            <el-image class="showMore-logo" src="./dist/img/workbench_showMenu.png" fit="cover"></el-image>
+                            <div class="menu-name">保险安排</div>
+                        </div>
+                        <div class="menu-item">
+                            <el-image class="menu-logo" src="./dist/img/workbench_3.png" fit="cover"></el-image>
+                            <el-image class="showMore-logo" src="./dist/img/workbench_showMenu.png" fit="cover"></el-image>
+                            <div class="menu-name">索赔管理</div>
+                        </div>
+                        <div class="menu-item">
+                            <el-image class="menu-logo" src="./dist/img/workbench_4.png" fit="cover"></el-image>
+                            <el-image class="showMore-logo" src="./dist/img/workbench_showMenu.png" fit="cover"></el-image>
+                            <div class="menu-name">保险服务管理</div>
+                        </div>
+                        <div class="menu-item">
+                            <el-image class="menu-logo" src="./dist/img/workbench_2.png" fit="cover"></el-image>
+                            <el-image class="showMore-logo" src="./dist/img/workbench_showMenu.png" fit="cover"></el-image>
+                            <div class="menu-name">主数据管理</div>
+                        </div>
+                        <div class="menu-item">
+                            <el-image class="menu-logo" src="./dist/img/workbench_5.png" fit="cover"></el-image>
+                            <el-image class="showMore-logo" src="./dist/img/workbench_showMenu.png" fit="cover"></el-image>
+                            <div class="menu-name">风险检验</div>
+                        </div>
+                        <div class="add-menu">
+                            <el-image class="menu-logo" src="./dist/img/workbench_1.png" fit="cover"></el-image>
+                            <div class="menu-name">添加自定义功能</div>
+                        </div>
+                    </div> -->
+          <!-- S首页菜单 -->
+          <el-menu class="homeMenu" mode="horizontal" menu-trigger="hover" default-active="1" :unique-opened="false"
+            @open="handleOpen" @close="handleClose">
+            <div v-for="(item,indexs) in menusdData" :key="indexs" :class="menusClass[indexs]">
+              <el-submenu :index="indexs+''" v-if="item.children != null && item.children.length"
+                popper-class="homeItem">
+                <template slot="title">
+                  <!--cticon  leftNav_1-->
+                  <p :class="menusIconClass[indexs]"></p>
+                  <span>{{item.label}}</span>
+                </template>
+                <el-menu-item-group v-if="item.children != null && item.children.length">
+                  <!-- items.url -->
+                  <el-menu-item :index="indexs+'-'+oindex" v-for="(items,oindex) in item.children" :key="oindex"
+                    @click="path(items.url,items.label,items.pkey)"
+                    v-if="items.children == null || items.children.length==0">
+                    {{items.label}}
+                  </el-menu-item>
+                  <el-submenu :index="indexs+'-'+oindex" v-for="(items,oindex) in item.children" :key="oindex"
+                    v-if="items.children != null && items.children.length>0">
+                    <template slot="title">{{items.label}}</template>
+                    <!-- oitems.url -->
+                    <el-menu-item :index="indexs+'-'+oindex+'-'+oindexs" v-for="(oitems,oindexs,) in items.children"
+                      :key="oindexs" @click="path(oitems.url)">
+                      {{oitems.label}}
+                    </el-menu-item>
+                  </el-submenu>
+                </el-menu-item-group>
+              </el-submenu>
+              <el-menu-item :index="indexs+''" @click="path(item.url)" v-else popper-class="homeItem">
+                <template slot="title">
+                  <!--cticon  leftNav_1-->
+                  <p :class="menusIconClass[indexs]"></p>
+                  <span style="padding-top: 12px">{{item.label}}</span>
+                </template>
+              </el-menu-item>
+            </div>
+            <!-- <div class="addMenu">
+                            <i class="addMenu_icon"></i>
+                            <p>添加自定义功能</p>
+                        </div> -->
+          </el-menu>
+          <!-- E首页菜单 -->
+        </el-card>
+
+      </section>
+      <section class="flex-t-right">
+        <el-card class="box-card task-card message-card" style="height: 100%">
+          <div class="message-title">我的消息</div>
+          <div class="message-content" style="height: 300px">
+            <section class="msg-wrapper msg-extend" v-loading="messageLoading">
+              <el-alert class="cust-msg" @close="closeMessage(reminderMsg.messageId)"
+                v-for="(reminderMsg,index) in msgListNoRead" :title="reminderMsg.titleValue" type="info"
+                :show-icon="false">
+                <img :src="reminderMsg.readStatus ? './dist/img/read.svg' : './dist/img/noread.svg'" alt="已读"
+                  class="msg-icon" />
+                <div :class="{'el-alert__description': !reminderMsg.open}"
+                  @click.stop="onShowDialogMsg(index,reminderMsg)">
+                  {{reminderMsg.contentValue}}
+                  <i :class="{'el-icon-caret-bottom': isShowFullMsg && msgIndex === index, 'el-icon-caret-right': !isShowFullMsg || msgIndex !== index}"
+                    class="detail"></i>
+                </div>
+              </el-alert>
+              <el-alert class="cust-msg" @close="closeMessage(reminderMsg.messageId)"
+                v-for="(reminderMsg,index) in msgListRead" :title="reminderMsg.titleValue" type="info"
+                :show-icon="false">
+                <img src="./dist/img/read.svg" alt="已读" class="msg-icon" />
+                <div :class="{'el-alert__description': !reminderMsg.open}"
+                  @click.stop="onShowDialogMsgRead(index,reminderMsg)">
+                  {{reminderMsg.contentValue}}
+                  <i :class="{'el-icon-caret-bottom': isShowFullMsg && msgIndex === index + 'd', 'el-icon-caret-right': !isShowFullMsg || msgIndex !== index + 'd'}"
+                    class="detail"></i>
+                </div>
+              </el-alert>
+
+              <div v-if="reminderMsgListNoRead.length == 0" style="text-align: center; padding-top: 30px">
+                {{'gNotData' | translate}}
+              </div>
+              <div @click="onWorkbenchMoreMsg" class="showMore">
+                {{'loadMore' | translate}}
+              </div>
+            </section>
+          </div>
+        </el-card>
+      </section>
+    </section>
+
+    <section class="flex-b" v-if="layoutType === 'top'">
+      <!-- <section class="flex-r-top">
+                <el-card class="box-card task-card message-card" style="height: 100%">
+                    <div class="message-title">我的消息</div>
+                    <div class="message-content">
+                        <section class="msg-wrapper msg-extend" v-loading="messageLoading">
+
+                            <el-alert class="cust-msg" @close="closeMessage(reminderMsg.messageId)"
+                                v-for="(reminderMsg,index) in msgListNoRead" :title="reminderMsg.titleValue" type="info"
+                                :show-icon="false">
+                                <img :src="reminderMsg.readStatus ? './dist/img/read.svg' : './dist/img/noread.svg'"
+                                    alt="已读" class="msg-icon">
+                                <div :class="{'el-alert__description': !reminderMsg.open}"
+                                    @click.stop="onShowDialogMsg(index,reminderMsg)">
+                                    {{reminderMsg.contentValue}}
+                                    <i :class="{'el-icon-caret-bottom': isShowFullMsg && msgIndex === index, 'el-icon-caret-right': !isShowFullMsg || msgIndex !== index}"
+                                        class="detail"></i>
+                                </div>
+                            </el-alert>
+                            <el-alert class="cust-msg" @close="closeMessage(reminderMsg.messageId)"
+                                v-for="(reminderMsg,index) in msgListRead" :title="reminderMsg.titleValue" type="info"
+                                :show-icon="false">
+                                <img src="./dist/img/read.svg" alt="已读" class="msg-icon">
+                                <div :class="{'el-alert__description': !reminderMsg.open}"
+                                    @click.stop="onShowDialogMsgRead(index,reminderMsg)">
+                                    {{reminderMsg.contentValue}}
+                                    <i :class="{'el-icon-caret-bottom': isShowFullMsg && msgIndex === index + 'd', 'el-icon-caret-right': !isShowFullMsg || msgIndex !== index + 'd'}"
+                                        class="detail"></i>
+                                </div>
+                            </el-alert>
+
+
+
+
+                            <div v-if="reminderMsgListNoRead.length == 0" style="text-align:center;padding-top: 30px;">
+                                {{'gNotData' | translate}}</div>
+                            <div @click="onWorkbenchMoreMsg" class="showMore">{{'loadMore' | translate}}</div>
+                        </section>
+                    </div>
+                </el-card>
+            </section> -->
+      <section class="flex-b-left">
+        <el-card class="box-card task-card">
+          <div class="text item">
+            <div class="task-wrapper2">
+              <div>
+                <!--<div>-->
+                <!--<el-button size="mini" type="primary" v-show="addOrDelete" @click.native="displayIframe()">display iFrame</el-button>-->
+                <!--<el-button size="mini" type="primary" v-show="addOrDelete == false" @click.native="deleteIframe()">delete iFrame</el-button>-->
+                <!--</div>-->
+                <iframe :style="style" :width="iframeWidth" :height="iframeHeight" scrolling="yes" :src="showView"
+                  v-if="showView">
+                  <p>Your browser does not support iframes.</p>
+                </iframe>
+              </div>
+              <div class="tasklist-header" style="height: 49px">
+                <ul class="task-list2" style="margin-top: 7px">
+                  <!-- <li class="task-item primary">{{'workbenchAppVoTodayTask' | translate('Today Task')}}<i class="task-num">0</i></li>
+                                    <li class="task-item primary">{{'workbenchAppVoOvertimeTask' | translate('Overtime Task')}}<i class="task-num">1</i></li> -->
+                  <el-badge :value="pendingTasks" class="item">
+                    <li :class="status=='01'?'task-item primary':'task-item default'" @click="getPendingTasks">
+                      {{'workbenchAppVoPending' | translate('Pending')}}
+                    </li>
+                  </el-badge>
+                  <!-- <el-badge :value="processingTasks" class="item">
+                                    <li :class="status=='02'?'task-item primary':'task-item default'"
+                                        @click="getProcessingTasks">
+                                        {{'workbenchAppVoProcessing' | translate('Processing')}}</li>
+                                        </el-badge> -->
+                  <el-badge :value="processedTasks" type="warning">
+                    <!--  自保修改   状态改为02  原本03-->
+                    <li :class="status=='02'?'task-item primary':'task-item default'" @click="getProcessedTasks">
+                      {{'workbenchAppVoProcessed' | translate('Processed')}}
+                    </li>
+                  </el-badge>
+                </ul>
+                <!-- <div class="task-see-more2">
+                                    <span @click="onMore(null, 'add')"
+                                        style="font-size:12px">{{'workbenchAppVoSeeMore' | translate('See More')}}</span>
+                                </div> -->
+                <!-- 搜索 -->
+                <div class="task-see-more2" style="padding-right: 22px">
+                  <!-- <el-input v-model="searchField" style="font-size:14px" :placeholder="'indexBusinessNum' | translate" type="text">
+                                        <el-button type="primary" slot="append" @click="onSearch" style="font-size:14px">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                                    </el-input> -->
+                  <el-input class="search-task-input" v-model="searchField"
+                    :placeholder="'indexBusinessNum' | translate" type="text" @keyup.enter.native="onSearch">
+                    <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                  </el-input>
+                </div>
+              </div>
+            </div>
+            <el-row style="margin-bottom: 0px">
+              <div style="float: left; font-size: 14px" v-for="(item,index) in taskKind">
+                <!-- <el-badge v-if="status!=03" :value="taskkindNum[index]" class="item">
+                                <el-button :class="{btnbackg:index == cliNum}" @click="clickBtnNodeName(item,index)">{{item}}</el-button>
+                            </el-badge>
+                            <el-badge v-if="status==03" :value="taskkindNum[index]" type="warning">
+                                <el-button :class="{btnbackg:index == cliNum}" @click="clickBtnNodeName(item,index)">{{item}}</el-button>
+                            </el-badge> -->
+                <el-button :class="{btnbackg:index == cliNum}" @click="clickBtnNodeName(item,index)">{{item}}
+                </el-button>
+              </div>
+            </el-row>
+            <el-table v-if="show" style="width: 100%; min-height: 388px" :data="workbenchVoList" highlight-current-row
+              ref="table" border stripe @sort-change="sortChange" :row-class-name="tableRowClassName">
+              <!-- <el-table v-if="show" style="margin-top: 10px;":data="workbenchVoList" highlight-current-row border height="100%" stripe :row-class-name="tableRowClassName"> -->
+              <el-table-column type="expand" width="50">
+                <template slot-scope="props">
+                  <el-form label-position="left" inline class="demo-table-expand">
+                    <!--任务号-->
+
+                    <el-form-item :label="'taskNo' | translate('task No.')">
+                      <span>{{ props.row.param3}}</span>
+                    </el-form-item>
+
+                    <!--参考金额-->
+                    <el-form-item :label="'status' | translate('status')">
+                      <span>{{Vue.gvUtil.translationData('TaskStatus',props.row.taskStatus)
+                        }}</span>
+                    </el-form-item>
+                    <!--客户名称-->
+                    <el-form-item :label="'priority' | translate('priority')" label-width="110px">
+                      <span>{{ props.row.clientName }}</span>
+                    </el-form-item>
+                    <!--任务名称-->
+                    <el-form-item :label="'taskName' | translate('taskName')">
+                      <span>{{ props.row.taskName }}</span>
+                    </el-form-item>
+                    <!--任务描述-->
+                    <el-form-item :label="'taskDes' | translate('taskDes')">
+                      <span> {{props.row.param2}}</span>
+                    </el-form-item>
+                    <el-form-item :label="'zbserial' | translate('serialNo')" label-width="110px">
+                      <span>{{props.row.innerRefNo}}</span>
+                    </el-form-item>
+                    <!--所属人-->
+                    <el-form-item :label="'onwer' | translate('onwer')">
+                      <span>{{props.row.code}}</span>
+                    </el-form-item>
+
+                    <el-form-item :label="'createDate' | translate('createDate')">
+                      <span>{{props.row.createTime}}</span>
+                    </el-form-item>
+                    <el-form-item :label="'endDate' | translate('endDate')">
+                      <span>{{props.row.endTime}}</span>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
+
+              <el-table-column type="index" :label="Vue.gvUtil.getInzTranslate('index')">
+              </el-table-column>
+              <!-- 任务号 -->
+              <el-table-column :label="'taskNo' | translate('task No.')" class="taskLink" prop="param3"
+                sortable="custom" width="170">
+                <template slot-scope="scope">
+                  <span style="color: #0187fb; cursor: pointer" @click="clickTaskNo(scope)">{{scope.row.param3}}</span>
+                </template>
+              </el-table-column>
+              <!-- 填报人  -->
+              <el-table-column :label="'proposalCreateName' | translate('creater')" prop="code" sortable="custom">
+              </el-table-column>
+              <!--任务名称-->
+              <el-table-column :label="'taskName' | translate('taskName')" prop="taskName" sortable="custom">
+              </el-table-column>
+              <!--任务描述-->
+              <el-table-column :label="'taskDes' | translate('taskDes')" prop="param2" sortable="custom">
+              </el-table-column>
+              <!-- 保单名称 -->
+              <el-table-column :label="'policyCName' | translate('onwer')" prop="policyName" sortable="custom">
+              </el-table-column>
+              <!-- 出险时间 -->
+              <el-table-column :label="'lossTime' | translate('onwer')" prop="dangerTime" sortable="custom" width="75">
+              </el-table-column>
+
+              <!-- 创建日期 -->
+              <el-table-column :label="'createDate' | translate('createDate')" prop="createTime" sortable="custom"
+                width="75">
+              </el-table-column>
+              <!-- 结束日期 -->
+              <el-table-column width="75" :label="'endDate' | translate('endDate')" prop="endTime" sortable="custom">
+              </el-table-column>
+              <!-- 审核轨迹 -->
+              <el-table-column :label="'auditTrail' | translate('auditTrail')" fixed="right" width="100">
+                <template slot-scope="scope">
+                  <div>
+                    <el-button size="mini" class="gv-btn-primary" type="primary" @click="onHistoryInquiry(scope.row)">
+                      {{ 'gBtnView' | translate('view') }}
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-row class="table-footer">
+              <el-col :span="16">
+                <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+                  :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize"
+                  layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total"
+                  :current-page.sync="mixinObject.searchSet.currentPage">
+                </el-pagination>
+              </el-col>
+            </el-row>
+          </div>
+        </el-card>
+      </section>
+      <section class="flex-b-right">
+        <el-card class="box-card task-card message-card" style="height: 100%">
+          <div class="message-title">我的提醒</div>
+          <div class="message-content">
+            <div v-if="reminderMsgListNoRead.length > 0" class="text item">
+              <div v-for="(reminderMsg,index) in reminderMsgListNoRead" @click="remindDialog(reminderMsg)">
+                <el-alert class="cust-msg" @close="closeMessage(reminderMsg)" :title="reminderMsg.titleValue"
+                  type="info" :closable="reminderMsg.readStatus==1" :show-icon="false">
+                  <img :src="reminderMsg.readStatus=='1' ? './dist/img/read.svg' : './dist/img/noread.svg'" alt="已读"
+                    class="msg-icon" />
+                </el-alert>
+              </div>
+            </div>
+            <div v-if="reminderMsgListNoRead.length == 0" style="text-align: center; padding-top: 30px">
+              {{'gNotData' | translate}}
+            </div>
+            <div @click="onWorkbenchMoreRemind" class="showMore">
+              {{'loadMore' | translate}}
+            </div>
+          </div>
+        </el-card>
+      </section>
+    </section>
+  </div>
+  <el-dialog :visible.sync="sendEmailDialog" title="发送邮件" width="80%" :close-on-click-modal="false">
+    <sendEmail :embedCode="embedCode" @CloseDialog="sendEmailDialog = false"></sendEmail>
+  </el-dialog>
+</div>

@@ -1,0 +1,24 @@
+{
+   "inspectionNo": "Inspection No.",
+   "inspectionName": "Inspection Name",
+   "inspectionType": "Inspection Type",
+   "institute": "Institute",
+   "inspectionContent": "Inspection Content",
+   "responsibleParty": "Responsible Party",
+   "inspectionInd": "Inspection Ind.",
+   "inspectionResult": "Inspection Result",
+   "auditRemark": "Remark",
+   "pectionServiceType": "Service Type",
+   "inspectionCode": "Inspection Code",
+   "department": "Department",
+   "uploadReport": "Upload Report",
+   "rectificationContent": "Rectification Content",
+   "rectificationDetail": "Rectification Detail",
+   "rectificationInd": "Rectification Ind.",
+   "rectificationResult": "Rectification Result",
+   "abort": "Abort",
+   "inspectionPleaseChoose": "Please double-click to select!",
+   "inspectionInfo": "Inspection details"
+
+
+}

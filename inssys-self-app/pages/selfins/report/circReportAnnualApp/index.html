@@ -1,0 +1,96 @@
+<section>
+  <!--查询条件-->
+  <gv-form :table="table" class="gv-query-table">
+    <div class="clearfix query-title" style="
+          padding: 5px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <!-- 当前账期 -->
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        {{'zbCaccountingperiod'|translate('Query results')}}
+      </h1>
+    </div>
+    <div class="gv-row" style="padding-top: 15px;">
+      <!-- 统计日期 -->
+      <gv-form-item key-name="zbStatisticsdate" isThree="true" prop="policyNo">
+        <el-input v-model="table.policyNo"> </el-input>
+      </gv-form-item>
+      <!-- 统计币别 -->
+      <gv-form-item key-name="zbStatisticalcurrency" isThree="true" prop="policyNo">
+        <el-input v-model="table.policyNo"> </el-input>
+      </gv-form-item>
+      <!-- 统计单位 -->
+      <gv-form-item key-name="zbStatisticalunit" isThree="true" prop="supplierName">
+        <el-date-picker v-model="table.supplierName" type="date">
+        </el-date-picker>
+
+      </gv-form-item>
+    </div>
+
+    <div class="query-more">
+      <div class="query-bottom" style="height: 54px; line-height: 35px">
+        <div class="pull-left"></div>
+        <div class="pull-right">
+          <!-- 查询 -->
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="seachlist">{{ 'gBtnSearch' |
+            translate('Search') }}</el-button>
+          <!-- 重置 -->
+          <el-button class="el-button gv-btn gv-btn-warning el-button--default" @click="reset">{{ 'gBtnClear' |
+            translate('Clear') }}</el-button>
+          <!-- 导出Excel -->
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="seachlist">导出Excel</el-button>
+          <!-- 导出Xml -->
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="reset">导出Xml</el-button>
+          <!-- 发送邮件 -->
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="seachlist">{{'sendMail' |
+            translate}}</el-button>
+        </div>
+      </div>
+    </div>
+  </gv-form>
+
+
+  <!-- 查询结果 -->
+  <gv-form class="gv-query-table">
+    <div class="clearfix query-title" style="
+          padding: 5px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        {{'Queryresults'|translate('Query results')}}
+      </h1>
+      <div style="float: right">
+        <el-button v-if="this.risk=='OOPD'||this.risk=='CARD'||this.risk=='CARU'"
+          class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="multiAdd">
+          {{ 'gBtnCreate' | translate('New')}}</el-button>
+      </div>
+    </div>
+    <el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" stripe
+      row-key="planCode">
+
+      <!--  统计日期-->
+      <el-table-column :label="'zbStatisticsdate' | translate" prop="projectCode">
+      </el-table-column>
+      <!-- 统计币别 -->
+      <el-table-column :label="'zbStatisticalcurrency' | translate" prop="supplierShortName">
+      </el-table-column>
+
+      <!-- 操作 -->
+      <el-table-column :label="'operation' | translate">
+        <!-- 增加 -->
+        <template slot-scope="scope">
+          <!-- <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click='add(scope.row)'>
+            {{ 'gBtnCreate' | translate('New')}}</el-button> -->
+      </el-table-column>
+      </template>
+    </el-table>
+    <el-pagination style="float: right" @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+      :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      :total="tableData.length" :current-page.sync="currentPage">
+    </el-pagination>
+  </gv-form>
+</section>

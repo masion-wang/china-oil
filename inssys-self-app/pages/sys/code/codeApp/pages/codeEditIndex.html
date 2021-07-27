@@ -1,0 +1,32 @@
+<section>
+    <el-form class="table-line" ref="codeTypeForm" :model="codeTypeForm" :inline="true" :rules="rules" label-width="149px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate('Basics Data')" name="1" class="table-line">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="ggCodeCodeType" defaultName="Code Type" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="codeType" :width="4">
+                            <el-input size="mini" maxlength="50" :disabled="editReadonly" v-model="codeTypeForm.codeType"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ggCodeCodeTypeName" defaultName="Code Type Name" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="codeName" :width="4">
+                            <el-input size="mini" maxlength="200" v-model="codeTypeForm.codeName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="ggCodeValidInd" defaultName="ValidInd" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="validInd" :width="4">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="codeTypeForm.validInd">
+                            </gv-select>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-collapse-item>
+        </el-collapse>
+        <div class="block mgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" v-if="type!='view'" @click.native="onSubmit()" type="primary">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" v-if="type!='view'" @click="resetForm('codeTypeForm')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

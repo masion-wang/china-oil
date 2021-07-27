@@ -1,0 +1,70 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'ggMessageData' | translate('Message Data')" name="1">
+            <el-form class="table-line" :inline="true" ref="mq" :model="mq" class="table-line">
+            	<table class="tp-table" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<gv-form-label keyName="Topic" defaultName="Topic" :width="3"></gv-form-label>
+						<gv-form-input prop="topic" :width="5">
+                            <el-select v-model="mq.topic" filterable placeholder="请选择">
+                                <el-option label="System" value="System"></el-option>
+                            </el-select>
+                        </gv-form-input>
+<!--                         <gv-form-label keyName="Tag" defaultName="Tag" :width="3"></gv-form-label>
+<gv-form-input prop="tag" :width="5">
+    <el-input size="mini" v-model="mq.tag"></el-input>
+</gv-form-input> -->
+
+                        <gv-form-label keyName="Search Date" defaultName="Search Date" :width="3"></gv-form-label>
+                        <gv-form-input prop="searchDate" :width="5">
+                            <el-date-picker size="mini" v-model="mq.searchDate" type="daterange" value-format="yyyy-MM-dd HH:mm:ss">
+                            </el-date-picker>
+                        </gv-form-input>
+
+                        <gv-form-label :width="3"></gv-form-label>
+                        <gv-form-input :width="5"></gv-form-input>
+					</tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('ggMessageModelVoFilters')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+				</table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+	<!--工具条-->
+    <div class="block table-toolbar" >
+<!--         <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button> -->
+    </div>
+    <!--列表-->
+    <template>
+        <el-table :data="mqMessageList" highlight-current-row border stripe>
+
+            <el-table-column prop="offsetMsgId" sortable :label="'aa' | translate('Message Id')">
+            </el-table-column>
+            <el-table-column prop="tags" sortable :label="'aa' | translate('Tag')">
+            </el-table-column>
+            <el-table-column prop="keys" sortable :label="'aa' | translate('Keys')">
+            </el-table-column>
+            <el-table-column prop="storeTimestamp" sortable :formatter="formatDate" :label="'aa' | translate('Store Time')" width="150">
+            </el-table-column>
+
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="120">
+                <template slot-scope="scope">
+
+<!--                     <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button> -->
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+<!--                     <el-button type="danger" size="mini" @click="onHandleDel(scope.row)">{{ 'gBtnDelete' | translate('Delete') }}</el-button> -->
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+
+</section>

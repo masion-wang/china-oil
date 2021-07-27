@@ -1,0 +1,50 @@
+<!-- 资产详情组件 -->
+<div>
+  <el-table
+    :data="tableData"
+    :max-height="maxHeight"
+    style="width: 100%">
+    <!-- 分公司 -->
+    <el-table-column
+      :label="'分公司' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.partCompany"></el-input>
+      </template>
+    </el-table-column>
+    <!-- 作业区/作业分公司 -->
+    <el-table-column
+      :label="'operationAreaBranch' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.workPartCompany"></el-input>
+      </template>
+    </el-table-column>
+    <!-- 油田 -->
+    <el-table-column
+      :label="'油田' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.yt"></el-input>
+      </template>
+    </el-table-column>
+    <!-- 财产名称 -->
+    <el-table-column
+      label="'assetPropertyName' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.assetName"></el-input>
+      </template>
+    </el-table-column>
+    <!-- 财产类型 -->
+    <el-table-column
+      :label="'propertyType' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.assetType"></el-input>
+      </template>
+    </el-table-column>
+    <!-- 标的描述 -->
+    <el-table-column
+      :label="'标的描述' | translate">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row.bdms"></el-input>
+      </template>
+    </el-table-column>
+  </el-table>
+</div>

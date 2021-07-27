@@ -1,0 +1,49 @@
+<section >
+    <el-form ref="vo" id="" :model="vo" :inline="true" :rules="rules" 
+    label-width="50px" @submit.prevent="onSubmit" class="table-line">
+        <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item title="Send Email Config" name="1">
+			<table cellpadding="0" cellspacing="0" class="tp-table">
+	           	<tr>
+	            	<gv-form-label keyName="Title" defaultName="Title" :width="2"></gv-form-label>
+	            	<gv-form-input :width="5">
+	                    <el-input size="mini" v-model="vo.titleValue" placeholder></el-input>
+	                </gv-form-input>
+	            </tr>
+	            <tr>
+	            	<gv-form-label keyName="Receiver" defaultName="Receiver" :width="2"></gv-form-label>
+	            	<gv-form-input :width="5">
+	                    <el-input size="mini" v-model="vo.receiverValue" placeholder style="width:95%;" ></el-input>
+	                    <el-button size="mini" type="primary" class="pd-f0" icon="el-icon-search" style="width:3%;" 
+                        @click="searchEmail(index1)"></el-button>
+	                </gv-form-input>
+	            </tr>
+	            <tr>
+	            	<gv-form-label keyName="Content" defaultName="Content" :width="2"></gv-form-label>
+	            	<gv-form-input :width="5">
+	                    <!-- <el-input size="mini" v-model="vo.contentValue" placeholder></el-input> -->
+	                    <gv-quill-editor colspan="12" v-model="vo.contentValue" ></gv-quill-editor>
+	                </gv-form-input>
+	            </tr>
+	            <tr>
+	            	<gv-form-label keyName="Attachment" defaultName="Attachment" :width="2"></gv-form-label>
+	            	<gv-form-input :width="5">
+	            		<template v-for="item in vo.attachments">
+	                    <el-input size="mini" v-model="item.fileName" readonly placeholder></el-input>
+	                    </template>
+	                </gv-form-input>
+	            </tr>
+	            <tr>
+	            	<!-- <span>{{vo.attachments}}</span> -->
+	            </tr>
+	        </table>
+	    </el-collapse-item>
+	    </el-collapse>
+	    <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+            	<el-button size="mini" type="primary" @click="send">Send</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

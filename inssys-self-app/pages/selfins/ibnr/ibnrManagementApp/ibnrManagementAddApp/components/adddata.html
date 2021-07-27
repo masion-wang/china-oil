@@ -1,0 +1,189 @@
+<div style="margin-top: 20px">
+  <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+    <!-- 已添加数据 -->
+    <span style="font-size: 14px; font-weight: 500; margin-left: 40px">{{'zbAddeddata'| translate}}</span>
+    <span style="float: right; margin-right: 40px">
+      <!-- 导出清单 -->
+      <el-button class="gv-btn gv-btn-primary" type="primary" v-if="pass" @click="downLoad">{{'exportManifest' |
+        translate}}
+      </el-button>
+      <!-- 新增 -->
+      <el-button v-if="!pass" class="gv-btn gv-btn-primary" type="primary" @click="adddata">{{'gBtnCreate' | translate}}
+      </el-button>
+    </span>
+  </div>
+  <div class="subCollapse">
+    <el-table class="centerTable" :data="recognizeeTableList">
+      <!-- 分入/分出 -->
+      <el-table-column :label="'zbInwardOutward'| translate" prop="riInward">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('InAndOut', scope.row.riInward)}}
+        </template>
+      </el-table-column>
+      <!-- 业务类型 -->
+      <el-table-column :label="'businessType' | translate" prop="businessType">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('businesType', scope.row.businessType)}}
+        </template>
+      </el-table-column>
+      <!-- 保监险种 -->
+      <el-table-column :label="'zbIAClass' | translate" prop="iaClassCode">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.iaClassCode" :disabled='true'>
+            <el-option v-for="item in iaClasslist" :key="item.codeCode" :label="item.codeName" :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <!-- 出险年份 -->
+      <el-table-column :label="'zbYearYear' | translate" prop="yearOfAccident">
+        <template slot-scope="scope">
+          {{scope.row.yearOfAccident}}
+        </template>
+      </el-table-column>
+      <!-- 挂账日期 -->
+      <el-table-column :label="'zbA/CDate' | translate" prop="acDate">
+        <template slot-scope="scope">
+          <el-date-picker disabled="true" v-model="scope.row.acDate" type="date" format="dd-MM-yyyy"
+            value-format="dd-MM-yyyy">
+        </template>
+      </el-table-column>
+      <!-- 币别 -->
+      <el-table-column :label="'currency'| translate" prop="currency">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('Currency', scope.row.currency)}}
+        </template>
+      </el-table-column>
+      <!-- 金额 -->
+      <el-table-column :label="'payment'| translate" prop="amount">
+        <template slot-scope="scope">
+          {{scope.row.amount| money(true, 2)}}
+        </template>
+      </el-table-column>
+      <!-- 自保险种 -->
+      <el-table-column :label="'selfInsurance'| translate" prop="riskCode">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('RiskType', scope.row.riskCode)}}
+        </template>
+      </el-table-column>
+      <!-- 上游/下游 -->
+      <el-table-column :label="'upstreamDownstream' | translate" prop="stream">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('StreamType', scope.row.stream)}}
+        </template>
+      </el-table-column>
+      <!-- 机构 -->
+      <el-table-column :label="'institute' | translate" prop="branch">
+        <template slot-scope="scope">
+          {{scope.row.branch}}
+        </template>
+      </el-table-column>
+      <!-- 交易类型 -->
+      <el-table-column :label="'zbTransaction' | translate" prop="transaction">
+        <template slot-scope="scope"> {{scope.row.transaction}}</template>
+      </el-table-column>
+      <!-- 操作 -->
+      <el-table-column :label="'supOperation' | translate" prop="itemNo" width="160px" v-if="!pass">
+        <template slot-scope="scope">
+          <!--修改-->
+          <el-button size="mini" type="primary" @click="btnModeify(scope.row,scope.$index)">
+            {{'btnModeify'| translate}}
+          </el-button>
+          <!--删除-->
+          <el-button size="mini" type="primary" icon="el-icon-minus" class="gv-btn-warning"
+            @click='remove(scope.$index,"amortization")'>
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+  <!--新增IBNR  -->
+  <el-dialog append-to-body :close-on-click-modal="false" :title="'gTitleOperation'| translate"
+    :visible.sync="dialogFormVisible" width="70%" :before-close="handleClose">
+    <gv-form :model="form" ref="formName">
+      <div class="gv-row">
+        <!--挂账日期-->
+        <gv-form-item requires key-name="zbA/CDate" prop="acDate" isThree="true" :rules="formrules.acDate">
+          <el-date-picker v-model="form.acDate" type="date" format="dd-MM-yyyy" value-format="dd-MM-yyyy">
+          </el-date-picker>
+        </gv-form-item>
+        <!-- 机构-->
+        <gv-form-item key-name="company" isThree="true" prop="branch">
+          <el-input maxlength="100" v-model="form.branch"></el-input>
+        </gv-form-item>
+        <!--交易类型-->
+        <gv-form-item requires key-name="zbTransaction" prop="transaction" isThree="true"
+          :rules="formrules.transaction">
+          <el-input maxlength="100" v-model="form.transaction"></el-input>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--出险年份-->
+        <gv-form-item requires key-name="zbYearYear" prop="yearOfAccident" :rules="formrules.yearOfAccident"
+          isThree="true">
+          <el-date-picker v-model="form.yearOfAccident" type="year" format="yyyy" value-format="yyyy">
+          </el-date-picker>
+        </gv-form-item>
+        <!-- 业务类型-->
+        <gv-form-item requires key-name="documentVoBusinessType" isThree="true" prop="businessType"
+          :rules="formrules.businessType">
+          <gv-select size="mini" code-type="businesType" v-model="form.businessType" code-name="codeCode"
+            label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!--分入/分出-->
+        <gv-form-item key-name="zbInwardOutward" prop="riInward" isThree="true" requires :rules="formrules.riInward">
+          <gv-select size="mini" code-type="InAndOut" v-model="form.riInward" code-name="codeCode"
+            label-name="codeName">
+          </gv-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--自保险种-->
+        <gv-form-item requires key-name="selfInsurance" prop="riskCode" isThree="true">
+          <gv-select @row-select="changeRiskType" size="mini" code-type="RiskType" v-model="form.riskCode"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 上游/下游-->
+        <gv-form-item key-name="upstreamDownstream" isThree="true" prop="stream">
+          <gv-select code-type="StreamType" v-model="form.stream" size="mini" code-name="codeCode"
+            label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!--保监险种-->
+        <gv-form-item key-name="zbIAClass" prop="iaClassCode" isThree="true">
+          <el-select v-model="form.iaClassCode" :disabled='reskcode'
+            :placeholder="'gSelect' | translate('Please Select')">
+            <el-option v-for="item in iaClasslist" :key="item.codeCode" :label="item.codeName" :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!--金额-->
+        <gv-form-item key-name="payment" requires isThree="true">
+          <el-row>
+            <el-col :span="10">
+              <el-form-item prop="currency" style="margin-bottom: 0" :rules="formrules.currency">
+                <!-- 币别 -->
+                <gv-select size="mini" code-type="Currency" v-model="form.currency" code-name="codeCode"
+                  label-name="codeName"></gv-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="13" :offset="1">
+              <el-form-item prop="amount" style="margin-bottom: 0" :rules="formrules.amount">
+                <!-- 金额 -->
+                <gv-input maxlength="16" :thou="true" v-model="form.amount"></gv-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </gv-form-item>
+      </div>
+    </gv-form>
+    <!-- 保存取消按钮 -->
+    <div slot="footer" class="dialog-footer">
+      <!-- 保存 -->
+      <el-button type="primary" @click="baocun()" v-if="dialogTitle">{{'gBtnSave'| translate}}</el-button>
+      <!-- 修改 -->
+      <el-button v-else type="primary" @click="change()">{{'btnModeify'| translate}}</el-button>
+    </div>
+  </el-dialog>
+</div>

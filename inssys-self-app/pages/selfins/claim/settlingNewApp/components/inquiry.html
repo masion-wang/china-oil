@@ -1,0 +1,169 @@
+<section>
+  <gv-filter-table ref="table" @on-list-btn="onListBtn" :table="table" :before-validate="beforeValidate">
+    <template v-slot:search="scope">
+      <div class="gv-row">
+        <!-- 自保保单号 -->
+        <gv-form-item key-name="selfinsurancepolicyno" isThree="true" prop="policyNo">
+          <el-input v-model="scope.search.policyNo"> </el-input>
+        </gv-form-item>
+        <!-- 原保单号 -->
+        <gv-form-item key-name="originalWarrantyNumber" isThree="true" prop="cedingPolicyNo">
+          <el-input v-model="scope.search.cedingPolicyNo"> </el-input>
+        </gv-form-item>
+        <!-- 新保/续保 -->
+        <gv-form-item key-name="newRenewedInsurance" isThree="true" prop="renewalSign">
+          <gv-select size="mini" clearable filterable code-type="ResumeRemark" v-model="scope.search.renewalSign"
+            code-name="codeCode" label-name="codeName">
+          </gv-select>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 项目打印名称 -->
+        <gv-form-item key-name="projectPrintName" isThree="true" prop="projectName">
+          <el-input v-model="scope.search.projectName"> </el-input>
+        </gv-form-item>
+        <!-- 自保险种 -->
+        <gv-form-item key-name="selfInsurance" isThree="true" prop="riskCode">
+          <gv-select v-model="scope.search.riskCode" size="mini" code-type="RiskType" clearable filterable
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 原保险人 -->
+        <gv-form-item key-name="originalInsurer" isThree="true" prop="cedingCompanyCode">
+          <gv-select2 size="mini" filterable clearable po-name="ggSupplierMsg" code-name="supplierCode"
+            label-name="supplierChineseName" v-model="scope.search.cedingCompanyCode"></gv-select2>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 保险起期 -->
+        <gv-form-item key-name="proposalCommonStartDate" isThree="true" class="forInput">
+          <div style="display: flex">
+            <!-- 保险起期 的起期-->
+            <el-date-picker style="flex: 1" v-model="scope.search.effectiveDateStart" format="dd-MM-yyyy"
+              value-format="dd-MM-yyyy" type="date" :placeholder="'nyr' | translate">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker style="flex: 1" format="dd-MM-yyyy" v-model="scope.search.effectiveDateEnd"
+              value-format="dd-MM-yyyy" type="date" :placeholder="'nyr' | translate">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+        <!-- 保险止期 -->
+        <gv-form-item key-name="expiryDateInsurance" isThree="true">
+          <div style="display: flex">
+            <el-date-picker style="flex: 1" v-model="scope.search.expiryDateStart" value-format="dd-MM-yyyy" type="date"
+              format="dd-MM-yyyy" :placeholder="'nyr' | translate">
+            </el-date-picker>
+            <div style="width: 10px; text-align: center; line-height: 32px">
+              -
+            </div>
+            <el-date-picker style="flex: 1" format="dd-MM-yyyy" v-model="scope.search.expiryDateEnd"
+              value-format="dd-MM-yyyy" type="date" :placeholder="'nyr' | translate">
+            </el-date-picker>
+          </div>
+        </gv-form-item>
+        <!-- 承包年度 -->
+        <gv-form-item key-name="Contractyear" isThree="true" prop="underWritingYear">
+          <el-date-picker v-model="scope.search.underWritingYear" type="year">
+          </el-date-picker>
+        </gv-form-item>
+      </div>
+      <div class="gv-row">
+        <!-- 经办人 -->
+        <gv-form-item key-name="agent" isThree="true" prop="handle">
+          <el-input v-model="scope.search.handle"> </el-input>
+        </gv-form-item>
+        <!-- 保单状态 -->
+        <gv-form-item key-name="policyStatus" isThree="true" prop="policyStatus" requires>
+          <gv-select disabled size="mini" code-type="PolicyStatus" v-model="scope.search.policyStatus"
+            code-name="codeCode" label-name="codeName"></gv-select>
+        </gv-form-item>
+        <!-- 出险时间 -->
+        <gv-form-item key-name="lossTime" isThree="true" prop="lossDateTime" requires>
+          <el-date-picker type="datetime" v-model="scope.search.lossDateTime" format="dd-MM-yyyy HH:mm:ss"
+            value-format="dd-MM-yyyy HH:mm:ss" :placeholder="'nyr' | translate">
+          </el-date-picker>
+        </gv-form-item>
+      </div>
+    </template>
+    <!--工具条-->
+    <template v-slot:toolbar="scope">
+      <!-- <span style="font-size: 14px; font-weight: 500"
+        >{{'Queryresults'|translate('Query results')}}</span
+      > -->
+      <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="removeMulti2()">{{'previousEndorsements'
+        | translate}}</el-button>
+    </template>
+  </gv-filter-table>
+  <!--自保保单号详情 -->
+  <el-dialog :title="'policyDetails'| translate" :visible.sync="projectVisible" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px" append-to-body>
+    <expense-detail ref="expenseDetail" @close="projectVisible = false"></expense-detail>
+  </el-dialog>
+  <!--  历次批单 @close='closedialog("fromclause")'-->
+  <el-dialog :title="'previousEndorsements' | translate('Previous endorsements')" :visible.sync="licipidan" width="80%"
+    :close-on-click-modal="false" append-to-body>
+    <div style="padding: 10px; border: 0">
+      <el-table :data="tableData1" class="insureAppTableByWS" @cell-click="handlelicyNoAndVers">
+        <!-- 批单号 -->
+        <el-table-column :label="'zbLotNumberL'| translate" prop="policyNoAndVersionNo">
+          <template scope="scope">
+            <span style="color: rgb(76, 121, 243); cursor: pointer">{{scope.row.policyNoAndVersionNo}}</span>
+          </template>
+        </el-table-column>
+        <!--自保险种-->
+        <el-table-column :label="'selfInsurance'| translate" prop="riskCode">
+          <template slot-scope="scope">
+            <span>{{Vue.gvUtil.translationData('RiskType',
+              scope.row.riskCode)}}</span>
+          </template>
+        </el-table-column>
+        <!-- 项目打印名称 -->
+        <el-table-column :label="'projectPrintName'| translate" prop="projectName">
+        </el-table-column>
+        <!-- 保险期限 -->
+        <el-table-column :label="'proposalDateInterval'| translate" prop="effectiveDate">
+        </el-table-column>
+        <!-- 新保/续保 -->
+        <el-table-column :label="'newRenewedInsurance'| translate" prop="renewalSign">
+          <template slot-scope="scope">
+            <span>{{Vue.gvUtil.translationData('ResumeRemark',
+              scope.row.renewalSign)}}</span>
+          </template>
+        </el-table-column>
+        <!-- 原保险人 -->
+        <el-table-column :label="'originalInsurer'| translate" prop="cedingCompany">
+        </el-table-column>
+        <!-- 保费变化量 -->
+        <el-table-column :label="'premiumVariance'| translate" prop="totalDue">
+        </el-table-column>
+        <!-- 保单状态 -->
+        <el-table-column :label="'policyStatus'| translate" prop="policyStatus">
+          <template slot-scope="scope">
+            <span>{{Vue.gvUtil.translationData('PolicyStatus',
+              scope.row.policyStatus)}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div>
+        <el-pagination style="margin-top: 10px; margin-bottom: 10px" @size-change="handleSizeChanges1"
+          @current-change="handleCurrentChangePages1" :page-sizes="[2, 20, 30, 50]" :current-page="pageNo1+1"
+          :page-size="pageSize1" :page-count="pageaA" layout="total, sizes, prev, pager, next, jumper" :total="total1">
+        </el-pagination>
+      </div>
+    </div>
+  </el-dialog>
+  <!-- 查看批单详情 -->
+  <el-dialog :title="'policyDetails'| translate" :visible.sync="previousenDorsementsVisible" width="90%" top="7vh"
+    :close-on-click-modal="false" class="dialogPadding10px" append-to-body>
+    <expense-detail2 ref="previousen2" @close="previousenDorsementsVisible = false"></expense-detail2>
+    <template slot="footer">
+      <!-- 关闭 -->
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" type="primary" @click="previousenDorsementsVisible = false">{{'gBtnClose'
+          | translate}}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</section>

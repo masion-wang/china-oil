@@ -1,0 +1,40 @@
+<section>
+    <el-form class="table-line" ref="otherResultsForm" :model="otherResultsForm" :inline="true" :rules="rules"  @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'breakDownCodeEditData' | translate('Benefit Code Edit Data')" name="1" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <!-- 规则 -->
+                        <gv-form-label keyName="ruleName" defaultName="Rule" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="rule" :width="5">
+                            <gv-select size="mini" optionsSet="1" codeType="Validind" :readonly="isReadonly" v-model="otherResultsForm.rule"></gv-select>
+                        </gv-form-input>
+                        <!-- 状态 -->
+                        <gv-form-label keyName="ruleStatus" defaultName="Status" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="status">
+                            <gv-select size="mini" :readonly="isReadonly" optionsSet="1" codeType="Validind" v-model="otherResultsForm.status"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label :width="8"></gv-form-label>
+                    </tr>
+                </table>
+            </el-collapse-item>
+            <!--条件因子-->
+            <el-collapse-item :title="'gTitleOtherResultsFactor' | translate('Conditional Factor')" name="2" class="table-line">
+                <gv-form-engine ref="otherResultsFactor" :data="otherResultsFactorVo" taskCode="RULE_OTHER_RESULTS_FACTOR" :readonly="isReadonly"></gv-form-engine>
+            </el-collapse-item>
+            <!--结果集-->
+            <el-collapse-item :title="'gTitleOtherResultsFactorTable' | translate('Factor Table')" name="3" class="table-line">
+                <gv-form-engine ref="otherResultsFactorTable" :data="otherResultsFactorTableVo" taskCode="RULE_OTHER_RESULTS_FACTOR_TABLE" :readonly="isReadonly"></gv-form-engine>
+            </el-collapse-item>
+        <div class="block mrgt5 toolbar-btn">
+            <el-form-item>
+                <!--保存-->
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <!--清除-->
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('otherResultsForm')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <!--返回-->
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

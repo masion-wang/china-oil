@@ -1,0 +1,165 @@
+<section>
+  <!--查询条件-->
+  <gv-form :table="table" class="gv-query-table">
+    <div class="clearfix query-title" style="
+          padding: 5px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        选择保单
+      </h1>
+    </div>
+    <div class="gv-row" class="gv-content">
+      <!-- 项目 -->
+      <gv-form-item key-name="项目" isThree="true" prop="projectName">
+        <el-select v-model="table.projectCode" filterable clearable class="selectWidth" @change="changeproject">
+          <!--value对应name label对应code+name key对应code-->
+          <el-option v-for="item in projectNamelist" :value="item.projectCode"
+            :label="item.projectCode+'-'+item.projectName" :key="item.projectCode">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+      <!-- 方案 :disabled="isReadonly"-->
+      <gv-form-item key-name="方案" isThree="true" prop="programme">
+        <el-select v-model="table.schemeCode" :placeholder="assetTypePlaceholder" filterable clearable
+          class="selectWidth">
+          <el-option v-for="item in cedingFindScheme" :value="item.schemeCode"
+            :label="item.schemeCode+'-'+item.schemeName" :key="item.schemeCode">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+      <!-- 原保险人 requires -->
+      <gv-form-item key-name="原保险人" isThree="true" prop="supplierName">
+        <gv-select2 size="mini" catalog='0' valid='1' filterable clearable po-name="ggSupplierMsg"
+          code-name="supplierCode" label-name="supplierChineseName" label-name-ex="supplierCode"
+          v-model="table.supplierName"></gv-select2>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!-- 保险起期  -->
+      <gv-form-item key-name="保险起期" isThree="true" prop="period">
+        <!-- <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="table.period"
+          type="daterange" class="datetimer" :start-placeholder="'startDate'|translate('Start Date')"
+          :end-placeholder="'endDate'|translate('End Date')">
+        </el-date-picker> -->
+        <div style="display: flex">
+          <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="table.startDate"
+            type="date" style="width:50%" class="datetimer" :start-placeholder="'startDate'|translate('Start Date')"
+            :end-placeholder="'endDate'|translate('End Date')">
+          </el-date-picker>
+          <div style="width: 10px; text-align: center; line-height: 32px">
+            -
+          </div>
+          <el-date-picker size="small" format="dd-MM-yyyy" value-format="dd-MM-yyyy" v-model="table.endDate" type="date"
+            style="width:50%" class="datetimer" :start-placeholder="'startDate'|translate('Start Date')"
+            :end-placeholder="'endDate'|translate('End Date')">
+          </el-date-picker>
+        </div>
+      </gv-form-item>
+      <!-- 原保单号 豪哥新字段-->
+      <gv-form-item key-name="原保单号" isThree="true" prop="policyNo">
+        <el-input v-model="table.policyNo"> </el-input>
+      </gv-form-item>
+      <!-- 原险种 -->
+      <gv-form-item key-name="原险种" isThree="true" prop="riskCode">
+        <el-select @change="choosecedingRisk" ref="cedingRiskName" v-model="table.riskCode" filterable clearable
+          class="selectWidth">
+          <el-option v-for="item in cedingRiskNamelist" :value="item.mappingRisk"
+            :label="item.mappingRisk+'-'+item.mappingRiskName" :key="item.id">
+          </el-option>
+        </el-select>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!-- 主共/从共 -->
+      <gv-form-item key-name="主共/从共" isThree="true" prop="flag" requires>
+        <gv-select v-model="table.flag" size="mini" code-type="IsMaster" @change="choose" code-name="codeCode"
+          label-name="codeName"></gv-select>
+      </gv-form-item>
+      <gv-form-item isThree="true"> </gv-form-item>
+      <gv-form-item isThree="true"></gv-form-item>
+    </div>
+    <div class="query-more">
+      <div class="query-bottom" style="height: 54px; line-height: 35px">
+        <div class="pull-left"></div>
+        <div class="pull-right">
+          <el-button class="el-button gv-btn gv-btn-primary el-button--primary" @click="seachlist">查询</el-button>
+          <el-button class="el-button gv-btn gv-btn-warning el-button--default" @click="reset">重置</el-button>
+        </div>
+      </div>
+    </div>
+  </gv-form>
+
+
+  <!-- 查询结果 -->
+  <gv-form class="gv-query-table">
+    <div class="clearfix query-title" style="
+          padding: 5px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <h1 style="font-size: 10pt; font-family: Arial; font-weight: 700">
+        {{'Queryresults'|translate('Query results')}}
+      </h1>
+      <div style="float: right">
+        <el-button v-if="this.risk=='OOPD'||this.risk=='CARD'||this.risk=='CARU'"
+          class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click="multiAdd">
+          {{ 'gBtnCreate' | translate('New')}}</el-button>
+      </div>
+    </div>
+    <el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" stripe
+      row-key="planCode" @selection-change="handleSelectionChange">
+      <!-- 多选 -->
+      <el-table-column v-if="this.risk=='OOPD'||this.risk=='CARD'||this.risk=='CARU'" type="selection"
+        :reserve-selection="true" width="70">
+      </el-table-column>
+      <!-- 项目 projectName-->
+      <el-table-column label="项目" prop="projectCode"> </el-table-column>
+      <!-- 原保险人 -->
+      <el-table-column label="原保险人" prop="cedingCompany"> </el-table-column>
+      <!-- 原保单号 -->
+      <el-table-column label="原保单号" prop="policyVersion"> </el-table-column>
+      <!-- 原险种 -->
+      <el-table-column label="原险种" prop="cedingRiskName"> </el-table-column>
+      <!-- 币别 :formatter="stateFormat" -->
+      <el-table-column label="币别" prop="currency" width="90">
+        <template slot-scope="scope">
+          <span>{{Vue.gvUtil.translationData('Currency', scope.row.currency)}}</span>
+        </template>
+      </el-table-column>
+      <!-- 共保比例 -->
+      <el-table-column label="共保比例 %" prop="coinsuranceRate" width="120">
+      </el-table-column>
+      <!-- 自保比例 -->
+      <el-table-column label="自保比例 %" prop="selfInsuranceRate" width="120">
+      </el-table-column>
+      <!-- 主共／从共 -->
+      <el-table-column label="主共／从共" width="120" prop="coinsuranceType">
+        <template slot-scope="scope">
+          <span>{{Vue.gvUtil.translationData('IsMaster', scope.row.coinsuranceType)}}</span>
+        </template>
+      </el-table-column>
+      <!-- 自保是否同共保方分摊  :formatter="stateFormat3"-->
+      <el-table-column label="自保是否同共保方分摊" prop="isShare">
+        <template slot-scope="scope">
+          <span>{{Vue.gvUtil.translationData('ShareType', scope.row.isShare)}}</span>
+        </template>
+      </el-table-column>
+      <!-- 操作 -->
+      <el-table-column label="操作">
+        <!-- 增加 -->
+        <template slot-scope="scope">
+          <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary" @click='add(scope.row)'>
+            {{ 'gBtnCreate' | translate('New')}}</el-button>
+      </el-table-column>
+      </template>
+    </el-table>
+    <el-pagination style="float: right" @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange"
+      :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      :total="tableData.length" :current-page.sync="currentPage">
+    </el-pagination>
+  </gv-form>
+</section>

@@ -1,0 +1,119 @@
+<!-- 保单信息组件 -->
+<div>
+  <el-table
+    :data="tableData"
+    default-expand-all
+    row-class-name="policyAssetRow"
+    style="width: 100%">
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-table
+          :data="props.row.gcClaimPolicyList"
+          style="width: 100%">
+          <!-- 保单号 -->
+          <el-table-column
+            prop="policyNo"
+            :label="'policyNo' | translate">
+          </el-table-column>
+          <!-- 险种 -->
+          <el-table-column
+            prop="riskName"
+            width="150"
+            :label="'riskCode' | translate">
+          </el-table-column>
+          <!-- 初步估损金额 -->
+          <el-table-column
+            :label="'preliminarLossAmount' | translate">
+            <template slot-scope="scope">
+              <el-row>
+                <el-col :span="10">
+                  <gv-select size="mini" code-type="Currency" v-model="scope.row.preliminaryLossCurrency" :disabled="isReadonly"></gv-select>
+                </el-col>
+                <el-col :span="14">
+                  <gv-input class="gv-input" :thou="true" v-model="scope.row.preliminaryLossAmount" num-len="2" :readonly="isReadonly"></gv-input>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+          <!-- 初步估损金额备注 -->
+          <el-table-column
+            prop="time"
+            :label="'lossAmount' | translate">
+            <template slot-scope="scope">
+              <el-input type="textarea" maxlength="2000" :rows="1" placeholder="备注" v-model="scope.row.preliminaryLossRemark" :disabled="isReadonly"></el-input>
+            </template>
+          </el-table-column>
+          <!-- 赔案号 -->
+          <el-table-column
+            prop="claimNo"
+            :label="'claimNo' | translate"
+            width="250">
+          </el-table-column>
+          <!-- 赔案状态 -->
+          <el-table-column
+            prop="claimStatus"
+            width="100"
+            :label="'claimStatus' | translate">
+            <template slot-scope="scope">
+              {{Vue.gvUtil.translationData('ClaimStatus', scope.row.claimStatus)}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="!isReadonly"
+            width="80px"
+            :label="'gTitleOperation' | translate">
+            <template slot-scope="scope">
+              <el-button type="primary" class="gv-btn-warning gv-btn-xs" @click="deletePolicy(props.$index, scope.$index)">-</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-table-column>
+    <!-- 资产大类 -->
+    <el-table-column
+      prop="assetCategory"
+      :label="'assetCategory' | translate">
+      <template slot-scope="scope">
+        {{Vue.gvUtil.translationData('AssetCategory', scope.row.assetCategory)}}
+      </template>
+    </el-table-column>
+    <!-- 资产编码 -->
+    <el-table-column
+      prop="assetCode"
+      :label="'assetCode' | translate">
+    </el-table-column>
+    <!-- 资产名称 -->
+    <el-table-column
+      prop="assetName"
+      :label="'AssetName' | translate">
+    </el-table-column>
+    <!-- <el-table-column
+      prop="assetOwnership"
+      label="资产归属">
+    </el-table-column> -->
+    <!--  -->
+    <el-table-column
+      :label="'operation' | translate"
+      width="220">
+      <template slot-scope="scope">
+        <el-button type="primary" class="gv-btn-primary gv-btn-xs" @click="openAssetDialog(scope.row)">{{'assetDetail' | translate}}</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+  <el-dialog class="dialogPadding dialogBig" :title="'assetDetail' | translate" :visible.sync="assetDetailDialog" append-to-body>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick" class="assetTabs" @tab-add='tabAdd'
+        @tab-remove='tabRemove'>
+        <el-tab-pane :label="item.tabLabel" v-for='(item,i) in dataList' :key='i' :name="item.id">
+            <gv-valid-table :ref='"form"+item.id' :table='item.formData' required paging isSerial>
+                <gv-valid-column v-if="showTable" v-for='(v,index) in item.headList' :key='index' :prop='v' :isReadonly="true"
+                    :rules='item.rules'></gv-valid-column>
+                <el-table-column :label="'sumInsured' | translate" prop="expectPremium" width="200">
+                  <template slot-scope="scope">
+                      <span>{{scope.row.expectPremium | money(true, 2) }}</span>
+                  </template>
+                </el-table-column>
+            </gv-valid-table>
+        </el-tab-pane>
+    </el-tabs>
+  </el-dialog>
+</div>

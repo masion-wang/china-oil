@@ -1,0 +1,88 @@
+<div style="margin-top: 20px">
+  <div style="background-color: #f4f5f9; height: 45px; line-height: 45px">
+    <!-- //冲销数据 -->
+    <span style="font-size: 14px; font-weight: 500; margin-left: 40px"
+      >{{'zbSterilisationdata'| translate}}</span
+    >
+  </div>
+  <div class="subCollapse">
+    <el-table class="centerTable" :data="recognizeeTableList">
+      <!-- 分入/分出 -->
+      <el-table-column :label="'zbInwardOutward'| translate" prop="riInward">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('InAndOut', scope.row.riInward)}}
+        </template>
+      </el-table-column>
+      <!-- 业务类型 -->
+      <el-table-column :label="'businessType' | translate" prop="businessType">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('businesType', scope.row.businessType)}}
+        </template>
+      </el-table-column>
+      <!-- 保监险种 -->
+      <el-table-column :label="'zbIAClass' | translate" prop="iaClassCode">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.iaClassCode" :disabled='true'>
+            <el-option v-for="item in iaClasslist" :key="item.codeCode" :label="item.codeName" :value="item.codeCode">
+            </el-option>
+          </el-select>
+        </template></el-table-column
+      >
+      <!-- 出险年份 -->
+      <el-table-column :label="'zbYearYear' | translate" prop="yearOfAccident">
+        <template slot-scope="scope">
+          {{scope.row.yearOfAccident}}
+        </template></el-table-column
+      >
+      <!-- 挂账日期 -->
+      <el-table-column :label="'zbA/CDate' | translate" prop="acDate">
+        <template slot-scope="scope">
+          <el-date-picker
+          disabled="true"
+          v-model="scope.row.acDate"
+          type="date"
+          format="dd-MM-yyyy"
+          value-format="dd-MM-yyyy"
+        >
+        </template>
+      </el-table-column>
+      <!-- 币别 -->
+      <el-table-column :label="'currency'| translate" prop="currency">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('Currency', scope.row.currency)}}
+        </template></el-table-column
+      >
+      <!-- 金额 -->
+      <el-table-column :label="'payment'| translate" prop="amount">
+        <template slot-scope="scope">
+          {{scope.row.amount | money(true, 2)}}
+        </template></el-table-column
+      >
+      <!-- 自保险种 -->
+      <el-table-column :label="'selfInsurance'| translate" prop="riskCode">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('RiskType', scope.row.riskCode)}}
+        </template>
+      </el-table-column>
+      <!-- 上游/下游 -->
+      <el-table-column :label="'upstreamDownstream' | translate" prop="stream">
+        <template slot-scope="scope">
+          {{Vue.gvUtil.translationData('StreamType', scope.row.stream)}}
+        </template></el-table-column
+      >
+      <!-- 机构 -->
+      <el-table-column :label="'institute' | translate" prop="branch">
+        <template slot-scope="scope">
+          {{scope.row.branch}}
+        </template></el-table-column
+      >
+      <!-- 交易类型 -->
+      <el-table-column :label="'zbTransaction' | translate" prop="transaction">
+        <template slot-scope="scope"> {{scope.row.transaction}}</template>
+      </el-table-column>
+      <el-table-column width="160px"  :label="'supOperation' | translate" v-if="!pass" > 
+        <template slot-scope="scope"> 无</template>
+      </el-table-column>
+    </el-table>
+  </div>
+</div>

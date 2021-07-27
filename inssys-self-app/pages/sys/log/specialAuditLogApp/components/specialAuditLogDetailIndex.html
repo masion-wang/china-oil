@@ -1,0 +1,44 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleBasics' | translate" name="1" class="table-line">
+            <table class="tp-table" cellpadding="0" cellspacing="0">
+                <tr>
+                    <gv-form-label keyName="saaTaskVoTaskName" defaultName="Api Name" :width="3"></gv-form-label>
+                    <gv-form-input :width="5">
+                        <el-input size="mini" readonly v-model="form.apiName"></el-input>
+                    </gv-form-input>
+                    <gv-form-label keyName="logAuditRequestVoRequestUrl" defaultName="Request Url" :width="3"></gv-form-label>
+                    <gv-form-input :width="5">
+                        <el-input size="mini" readonly v-model="form.url"></el-input>
+                    </gv-form-input>
+                    <gv-form-label keyName="sysUserVoUserCode" defaultName="User Code" :width="3"></gv-form-label>
+                    <gv-form-input :width="5">
+                        <el-input size="mini" readonly v-model="form.userCode"></el-input>
+                    </gv-form-input>
+                </tr>
+                <tr>
+                    <gv-form-label keyName="specialAuditLogVersion" defaultName="Version" ></gv-form-label>
+                    <gv-form-input>
+                        <el-input size="mini" readonly v-model="form.version"></el-input>
+                    </gv-form-input>
+                    <gv-form-label keyName="specialAuditLogBusinessNo" defaultName="Business No" ></gv-form-label>
+                    <gv-form-input>
+                        <el-input size="mini" readonly v-model="form.businessNo"></el-input>
+                    </gv-form-input>
+                    <gv-form-label keyName="logAuditRequestVoRequestDate" defaultName="Request Date" ></gv-form-label>
+                    <gv-form-input>
+                        <el-date-picker size="mini" :disabled="true" v-model="form.operateTime" type="datetime"
+                        ></el-date-picker>
+                    </gv-form-input>
+                    
+                </tr>
+                <tr>
+                    <gv-form-label keyName="specialAuditLogRequestData" defaultName="Request Data" ></gv-form-label>
+                    <gv-form-input  colspan="3">
+                        <el-input size="mini" type="textarea" readonly v-model="form.requestData" :autosize="{ minRows: 2, maxRows: 10}"></el-input>
+                    </gv-form-input>
+                </tr>
+            </table>
+        </el-collapse-item>
+    </el-collapse>
+</section>

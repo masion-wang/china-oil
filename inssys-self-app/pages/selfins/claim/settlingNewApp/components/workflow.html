@@ -1,0 +1,18 @@
+<el-row v-for="(item,index) in gwNextNodeExecutorsList">
+  <el-checkbox-group v-model="checkboxGroup">
+    <el-checkbox
+      style="background-color: #ecf5ff"
+      :label="item.checked2"
+      border
+    >
+      <div class="userinfo-pop">
+        <div class="avatar-box" style="float: left; margin-top: -5px">
+          <img src="../../../../../dist/img/userpic.png" />
+        </div>
+      </div>
+      <div style="margin-left: 28px">
+        {{item.checked1}} &nbsp;&nbsp;{{item.checked2}}
+      </div>
+    </el-checkbox>
+  </el-checkbox-group>
+</el-row>

@@ -1,0 +1,96 @@
+<!-- 保单录入页面 -->
+<section>
+  <!--录入保单-->
+  <el-row :gutter="20">
+    <div>
+      <el-col :span="24" class="projectecol">
+        <el-form ref="policyForm" :inline="true">
+          <el-row>
+            <el-col :span="24">
+              <el-collapse v-model="activeNames">
+                <!-- 基础信息 -->
+                <!-- <el-collapse-item id="baseInfo" name="baseInfo" :title="'保单信息'"> -->
+                <base-info @vaild-event2="getValid2" @vaild-event="getValid" @open-event="getDialogShow"
+                  @fromChild="getChild" ref="baseInfo" :vo="baseInfo" :objFromSelectpolicyApp="objFromSelectpolicyApp"
+                  :pageId="pageId" :isReadonly="isReadonly">
+                </base-info>
+
+                <!-- </el-collapse-item> -->
+                <!-- 费用信息 -->
+                <el-collapse-item id="paymentPlanInfo" name="paymentPlanInfo" :title="'费用信息'" v-if="payment">
+                  <payment-plan ref="paymentPlanInfo" :vo="paymentPlanInfo" :isReadonly="isReadonly"
+                    :isJointStock="isJointStock" :pageId="pageId"></payment-plan>
+                </el-collapse-item>
+                <!-- 文档资料 :readonly="isReadonly"  disabled="true" :readonly="status2=='Approve'||status2=='Look'"-->
+                <el-collapse-item id="docListInfo" name="docListInfo" style="margin-bottom: 80px; margin-top: 5px"
+                  :title="'filedata' | translate('List of documents')">
+                  <upload-file ref="uploadFile" type="07" :vo.sync="docList"></upload-file>
+                </el-collapse-item>
+
+                <!-- 审核信息 -->
+                <!-- <el-collapse-item id="auditInfo" name="auditInfo" :title="'审核信息'" v-if="pageType == 'audit'">
+                  <audit ref="auditInfo"></audit>
+                </el-collapse-item> -->
+              </el-collapse>
+              <div :span="24" class="ia-im-bottomDiv1">
+                <!-- 审核轨迹 -->
+                <!-- <el-button class="gv-btn gv-btn-primary gv-btn-xs" type="primary">审核轨迹</el-button>  v-if="status2!='Approve'||status2!='Look'" status2!='Approve'||-->
+                <!-- 保存 -->
+                <!-- <el-button class="gv-btn gv-btn-save" type="primary" @click="save"
+                  v-if="status2!='Look'&&status2!='Approve'">
+                  {{'gBtnSave' | translate}}</el-button> -->
+                <!-- 提交 -->
+                <!-- <el-button class="gv-btn gv-btn-submit" type="primary" @click="submit"
+                  v-if="status2!='Look'&&status2!='Approve'">
+                  {{'gSubmit' | translate}}</el-button> -->
+                <!-- 审核通过 -->
+                <el-button class="gv-btn gv-btn-submit" type="primary" @click="goAudit('01')"
+                  v-if="pageType == 'audit'">
+                  {{'gPass' | translate}}</el-button>
+                <!-- 审核不通过 -->
+                <el-button class="gv-btn gv-btn-warning" type="primary" @click="goAudit('06')"
+                  v-if="pageType == 'audit'">
+                  {{'gNotPass' | translate}}</el-button>
+                <!-- 返回 -->
+                <el-button class="gv-btn-back" type="primary" v-if="pageType == 'detail'">
+                  {{ 'gBtnReturn' | translate('Return') }}</el-button>
+                <!-- 补录文档资料 back -->
+                <el-button v-if="$route.query.pageType == 'back'" class="gv-btn gv-btn-primary" type="primary"
+                  @click="UPfile()">补录文档资料</el-button>
+
+              </div>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-col>
+    </div>
+  </el-row>
+  <!--查询页面  :close-on-click-modal="false"  :isReadonly="isReadonly" :maxHeight="350" :vo="paymentPlanDetailList" -->
+  <el-dialog :visible.sync="isShow" @close="getclose" width="80%" class="diyDialog" append-to-body>
+    <template slot="title">
+      <h1 class="gv-panel-title">
+        <i class="icon icon-saleinfo"></i>原保单查询
+      </h1>
+    </template>
+    <selectpolicy-app :risk="risk" :vailfFourBrother="vailfFourBrother" :guPolicyVoList2="guPolicyVoList"
+      @fromselect-event="getobjFromSelectpolicyApp" id="paymentPlanInfo" name="paymentPlanInfo" ref="selectpolicyApp">
+    </selectpolicy-app>
+    <template slot="footer">
+      <div style="text-align: center">
+        <el-button class="gv-btn gv-btn-back" style="z-index: 100" type="primary" @click="getclose">关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!--未知-->
+  <el-dialog title="操作成功" :visible.sync="showinsureDialog" width="30%">
+    <el-row>
+      <span>投保单号码：</span>
+      <span class="copyItem"></span>
+    </el-row>
+    <template slot="footer">
+      <el-button class="copyBtn" type="primary" size="medium" @click="showinsureDialog=false">
+        {{'gBtnConfirm' | translate}}
+      </el-button>
+    </template>
+  </el-dialog>
+</section>

@@ -1,0 +1,16 @@
+<section>
+
+<!--添加校验 :rules='rules.startDate' -->
+  <el-form-item class="startEndDate" :prop="propPath"  ref='creditReportItem' :rules='required ? rules.startDate : ""'>
+    <el-row type='flex' justify='center'>
+      <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" type="date" placeholder="开始日期"
+        :picker-options="pickerOptionsStart" @change="changeDate('0', $event)" v-model="table.startDate" class="during"
+        style="width: 120px;"></el-date-picker>
+      <span style="position: relative; top: 3px;right: 0px;padding: 0 5px;">-</span>
+      <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" type="date" :picker-options="pickerOptionsEnd"
+        @change="changeDate('1' , $event)" placeholder="结束日期" v-model="table.endDate" class="during"
+        style="width: 120px;">
+      </el-date-picker>
+    </el-row>
+  </el-form-item>
+</section>

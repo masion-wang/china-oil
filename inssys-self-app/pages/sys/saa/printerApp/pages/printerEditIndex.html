@@ -1,0 +1,78 @@
+<section>
+    <el-form class="table-line" ref="form" id="" :model="form" :inline="true" :rules="rules" label-width="149px" @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate" name="1">
+                <table class="tp-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="sysPrinterVoPrinterIp" defaultName="Printer Ip" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="printerIp">
+                            <el-input size="mini" maxlength="15" :readonly="query.type !== 'add'" v-model="form.printerIp"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="sysPrinterVoPrinterName" defaultName="Printer Name" requires :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="printerName">
+                            <el-input size="mini" maxlength="60" :readonly="isReadonly" v-model="form.printerName"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="gValidStatus" defaultName="Valid Status" :width="3" requires></gv-form-label>
+                        <gv-form-input :width="5" prop="validInd">
+                            <gv-select size="mini" optionsSet="2" codeType="ValidInd" :disabled="isReadonly" v-model="form.validInd"></gv-select>
+                        </gv-form-input>
+
+                    </tr>
+                    <tr>
+                        <gv-form-label v-if="query.type =='edit'" keyName="sysPrinterVoIsBroken" defaultName="Is Broken" requires :width="3"></gv-form-label>
+                        <gv-form-input v-if="query.type =='edit'" :width="5" prop="isBroken">
+                            <gv-select @change="isOpenDialog()" size="mini" optionsSet="2" codeType="YesOrNo" :disabled="isReadonly" v-model="form.isBroken"></gv-select>
+                            </el-select>
+                        </gv-form-input>
+
+                        <gv-form-label keyName="sysPrinterVopPrinterSlot" defaultName="Printer Slot" requires :width="3"></gv-form-label>
+                        <gv-form-input prop="printerSlotCodeList" colspan='3'>
+                            <el-checkbox-group v-model="form.printerSlotCodeList">
+                                <el-checkbox :disabled="isReadonly" v-for="printerSlot in printerSlotList" :key="printerSlot.printerCode" :label="printerSlot.printerCode">{{printerSlot.printerName}}</el-checkbox>
+                            </el-checkbox-group>
+                        </gv-form-input>
+                    </tr>
+                </table>
+            </el-collapse-item>
+            <el-collapse-item v-if="isDisplay" :title="'sysPrinterVoPrinterTransferTitle' | translate" name="2">
+                <el-table :data="form.saaUserPrinterVos" border>
+                    <el-table-column type="index" :label="'SequenceNo'| translate('Sequence No')" width="70"></el-table-column>
+                    <el-table-column label-class-name="require-star" :label="'sysUserVoDocumentType'| translate('Document Type')">
+                        <template scope="scope">
+                            <gv-form-input :prop="'saaUserPrinterVos.' + scope.$index + '.documentTypeCode'">
+                                <el-input readonly size="mini" maxlength="60" v-model="scope.row.documentTypeCode"></el-input>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label-class-name="require-star" :label="'sysUserVoPrinter'| translate('Printer')">
+                        <template scope="scope">
+                            <gv-form-input :prop="'saaUserPrinterVos.' + scope.$index + '.printerIp'">
+                                <gv-auto-complete @row-select="selectTransferPrinter" :is-readonly="isReadonly" :pre-query-data="printerPreQuery" context-name="system"
+                                    url="/saa/printer/dbclick" code-name="printerIp" label-name="printerIp,printerName" v-model="scope.row.printerIp"
+                                    :index="scope.$index"></gv-auto-complete>
+                            </gv-form-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label-class-name="require-star" :label="'sysUserVoPrinterSlot'| translate('Printer Slot')">
+                        <template slot-scope="scope">
+                            <gv-form-input :prop="'saaUserPrinterVos.' + scope.$index + '.printerSlotId'">
+                                <el-select v-model="scope.row.printerSlotId">
+                                    <el-option v-for="item in scope.row.slotSelectResVos" :key="item.printerSlotId" :label="item.value" :value="item.printerSlotId">
+                                    </el-option>
+                                </el-select>
+                            </gv-form-input>
+                    </el-table-column>
+                </el-table>
+                </template>
+            </el-collapse-item>
+
+        </el-collapse>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <el-button size="mini" v-if="query.type!='view'" @click="onResetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

@@ -1,0 +1,22 @@
+<section>
+    <gv-table ref="table" @on-list-btn="onListBtn" :table="table" :before-validate="beforeValidate">
+        <template v-slot:search="scope">
+            <div class="gv-row">
+                <gv-form-item key-name="saaTaskVoTaskCode" prop="taskCode">
+                    <el-input size="mini" v-model.trim="scope.search.taskCode"></el-input>
+                </gv-form-item>
+                <gv-form-item key-name="saaTaskVoTaskName" prop="taskEName">
+                    <el-input size="mini" v-model.trim="scope.search.taskEName"></el-input>
+                </gv-form-item>
+                <gv-form-item key-name="gValidStatus" prop="validInd">
+                    <gv-select size="mini" optionsSet="1" codeType="Validind" v-model="scope.search.validInd">
+                            </gv-select>
+                </gv-form-item>
+            </div>
+        </template>
+        <!--工具条-->
+        <template v-slot:toolbar="scope">
+            <el-button size="mini" type="primary" @click="onHandleAdd()">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+        </template>
+    </gv-table>
+</section>

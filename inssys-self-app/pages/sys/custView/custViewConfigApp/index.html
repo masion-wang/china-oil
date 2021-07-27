@@ -1,0 +1,61 @@
+<section>
+    <el-collapse v-model="mixinObject.activeNames">
+        <el-collapse-item :title="'gTitleSearchData' | translate('Search Data')" name="1">
+            <el-form :inline="true" ref="custViewConfigVoFilter" :model="custViewConfigVoFilter" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="custViewCode" defaultName="Cust View Code" :width="3"></gv-form-label>
+                        <gv-form-input prop="custViewCode" :width="5">
+                            <el-input size="mini" v-model.trim="custViewConfigVoFilter.custViewCode"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="custTempleType" defaultName="Temple Type" :width="3"></gv-form-label>
+                        <gv-form-input prop="templeType" :width="5">
+                            <el-input size="mini" v-model.trim="custViewConfigVoFilter.templeType"></el-input>
+                        </gv-form-input>
+                        <gv-form-label :width="8"></gv-form-label>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="6" class="pdtb2">
+                            <el-button size="mini" type="primary" @click="onGetList()">{{ 'gBtnSearch' | translate('Search') }}</el-button>
+                            <el-button size="mini" @click="onResetForm('custViewConfigVoFilter')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    <!--工具条-->
+    <div class="table-toolbar">
+        <el-button size="mini" type="primary" @click="onHandleEdit(null, 'add')">{{ 'gBtnCreate' | translate('Create') }}</el-button>
+    </div>
+    <!--列表-->
+    <template>
+        <el-table :data="custViewConfigVoList" highlight-current-row border stripe >
+            <el-table-column prop="custViewCode" sortable :label="'custViewCode' | translate('Traditional Cust View Code')">
+            </el-table-column>
+            <el-table-column prop="templeType" sortable :label="'custTempleType' | translate('Temple Type')">
+            </el-table-column>
+            <el-table-column prop="title" sortable :label="'custTitle' | translate('Cust Title')">
+            </el-table-column>
+            <el-table-column prop="type" sortable :label="'custType' | translate('Cust Type')">
+            </el-table-column>
+            <el-table-column prop="validInd" :label="'gValidStatus' | translate('Valid Status')" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onHandleDel(scope.row)" size="mini" :icon="scope.row.validInd=='1'?'el-icon-check':'el-icon-close'"></el-button>
+                </template>
+            </el-table-column>
+            <el-table-column :label="'gTitleOperation' | translate('Operation')" width="220">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-if="scope.row.validInd == '1'" type="primary" @click="onHandleEdit(scope.row, 'edit')">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button v-else size="mini" type="primary" @click="onHandleEdit(scope.row, 'edit')" style="visibility:hidden">{{ 'gBtnEdit' | translate('Edit') }}</el-button>
+                    <el-button size="mini" type="primary" @click="onHandleEdit(scope.row, 'view')">{{ 'gBtnView' | translate('View') }}</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+    <!--分页-->
+    <div class="toolbar-btn toolbar-pagination">
+        <el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" :page-sizes="[10, 20, 30, 50]" :page-size="mixinObject.searchSet.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="mixinObject.searchSet.total" :current-page.sync="mixinObject.searchSet.currentPage">
+        </el-pagination>
+    </div>
+</section>

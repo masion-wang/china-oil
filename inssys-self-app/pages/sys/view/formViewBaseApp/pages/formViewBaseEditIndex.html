@@ -1,0 +1,72 @@
+<section>
+    <el-form class="table-line" ref="form" :model="form" :rules="rules" :inline="true"  @submit.prevent="onSubmit">
+        <el-collapse v-model="mixinObject.activeNames">
+            <el-collapse-item :title="'gTitleBasics' | translate" name="1" class="table-line">
+                <table class="tp-table"  cellpadding="0" cellspacing="0">
+                    <tr>
+                        <gv-form-label keyName="pubViewObjectVoViewObjectForm" requires defaultName="View Object Form" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="viewObjectForm">
+                            <el-input size="mini" maxlength="100" :readonly="query.type != 'add'" v-model="form.viewObjectForm"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoViewObjectVo" defaultName="View Object Vo" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="viewObjectVo">
+                            <el-input size="mini" maxlength="100" :readonly="isReadonly" v-model="form.viewObjectVo"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoModelCode" requires defaultName="Model Code" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="modelCode">
+                            <el-input size="mini" maxlength="50" :readonly="isReadonly" v-model="form.modelCode"></el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="pubViewObjectVoFormTitleKey" requires defaultName="View Object Name" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="formTitleKey">
+                            <el-input size="mini" maxlength="100" :readonly="isReadonly" v-model="form.formTitleKey"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoRemark" defaultName="Remark" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="remark">
+                            <el-input size="mini" maxlength="255" :readonly="isReadonly" v-model="form.remark"></el-input>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoWidth" defaultName="Width" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="width">
+                            <el-input size="mini" maxlength="5" :readonly="isReadonly" v-model="form.width"></el-input>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="pubViewObjectVoValidInd" defaultName="Valid Ind" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="validInd">
+                            <gv-select size="mini" optionsSet="2" codeType="Validind" :disabled="isReadonly" v-model="form.validInd"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoBtnAdd" defaultName="Add Btn." :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="btnAdd">
+                            <gv-select size="mini" options-set="2" codeType="BtnOptions" :disabled="isReadonly" v-model="form.btnAdd"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoArrangement" defaultName="Arrangement" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="width">
+                            <gv-select size="mini" options-set="2" codeType="ArrangementOptions" :disabled="isReadonly" v-model="form.arrangement"></gv-select>
+                        </gv-form-input>
+                    </tr>
+                    <tr>
+                        <gv-form-label keyName="pubViewObjectVoBtnDelete" defaultName="Delete Btn." :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="btnDelete">
+                            <gv-select size="mini" options-set="2" codeType="BtnOptions" :disabled="isReadonly" v-model="form.btnDelete"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label keyName="pubViewObjectVoConfigType" defaultName="Config Type" :width="3"></gv-form-label>
+                        <gv-form-input :width="5" prop="configType">
+                            <gv-select size="mini" options-set="2" codeType="ViewObjectType" :disabled="isReadonly" v-model="form.configType"></gv-select>
+                        </gv-form-input>
+                        <gv-form-label colspan="2"></gv-form-label>
+                    </tr>
+                </table>
+            </el-collapse-item>
+        <div class="block mrgt5 toolbar-btn txt-center">
+            <el-form-item>
+                <!--保存-->
+                <el-button size="mini" v-if="query.type!='view'" type="primary" @click.native="onSubmit()">{{ 'gBtnSave' | translate('Save') }}</el-button>
+                <!--清除-->
+                <el-button size="mini" v-if="query.type!='view'" @click="resetForm('form')">{{ 'gBtnClear' | translate('Clear') }}</el-button>
+                <!--返回-->
+                <el-button size="mini" @click="returnPage()">{{ 'gBtnClose' | translate('Close') }}</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+</section>

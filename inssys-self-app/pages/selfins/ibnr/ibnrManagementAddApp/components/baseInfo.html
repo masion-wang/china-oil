@@ -1,0 +1,91 @@
+<!-- 保单基本信息组件 -->
+<div>
+  <gv-form :model="baseInfo" ref="baseInfos">
+    <!-- 表单 -->
+    <div class="gv-row" style="padding-top: 20px">
+      <!--批量任务号-->
+      <gv-form-item key-name="zbBatchNo" prop="batchNo" isThree="true">
+        {{baseInfo.batchNo}}
+      </gv-form-item>
+      <!-- 状态-->
+      <gv-form-item key-name="state" isThree="true" prop="status">
+        {{Vue.gvUtil.translationData('IbnrStatus',baseInfo.status)}}
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--冲销挂账日期-->
+      <gv-form-item
+        key-name="zbReserveA/CDate"
+        prop="reverseDate"
+        isThree="true"
+        :rules="baseInforules.reverseDate"
+        requires
+      >
+        <el-date-picker
+          :readonly="pass"
+          v-model="baseInfo.reverseDate"
+          type="date"
+          format="dd-MM-yyyy"
+          value-format="dd-MM-yyyy"
+        >
+        </el-date-picker>
+      </gv-form-item>
+      <!--挂账日期范围-->
+      <gv-form-item key-name="zbA/CDateRange" isThree="true">
+        <div style="display: flex">
+          <el-form-item
+          prop='lossDateTimeStart'
+            style="flex: 1; margin: 0; text-align: center; line-height: 32px;"
+          >
+           <span style="font-size: 14px;">01-01-2000</span> 
+          </el-form-item>
+          <div style="width: 10px; text-align: center; line-height: 32px">
+            -
+          </div>
+          <el-form-item
+            prop="lossDateTimeEnd"
+            style="flex: 1; margin: 0; text-align: center; line-height: 32px"
+          >
+            {{baseInfo.lossDateTimeEnd}}
+          </el-form-item>
+        </div>
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建人-->
+      <gv-form-item key-name="founder" prop="createdBy" isThree="true">
+        {{baseInfo.createdBy}}
+      </gv-form-item>
+      <!--修改人-->
+      <gv-form-item key-name="modifiedBy" prop="amendedBy" isThree="true">
+        {{baseInfo.amendedBy}}
+      </gv-form-item>
+      <!--审核人-->
+      <gv-form-item key-name="reviewer" prop="approvedBy" isThree="true">
+        {{baseInfo.approvedBy}}
+      </gv-form-item>
+    </div>
+    <div class="gv-row">
+      <!--创建时间-->
+      <gv-form-item key-name="creationTime" prop="createdDate" isThree="true">
+        {{baseInfo.createdDate}}
+      </gv-form-item>
+      <!--修改时间-->
+      <gv-form-item
+        key-name="modificationTime"
+        prop="amendedDate"
+        isThree="true"
+      >
+        {{baseInfo.amendedDate}}
+      </gv-form-item>
+      <!--审核通过日期-->
+      <gv-form-item
+        key-name="dateOfApproval"
+        prop="approvedDate"
+        isThree="true"
+      >
+        {{baseInfo.approvedDate}}
+      </gv-form-item>
+    </div>
+  </gv-form>
+</div>

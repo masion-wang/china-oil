@@ -1,0 +1,1062 @@
+/* Insurance arrangements 保险安排（一级菜单）*/
+/* Insurance plan management 保险计划管理（二级菜单） */
+.plantable .el-input__inner, .el-textarea__inner, .el-range-input{
+    background-color: white;
+}
+.planpanel .el-input__inner, .el-textarea__inner, .el-range-input{
+    background-color: white;
+}
+.gv-cell .el-input__inner, .el-textarea__inner, .el-range-input{
+    /* background-color: white; */
+}
+.gvdivtop .el-input__inner{
+    background-color: white !important;
+}
+.planpanel .el-input__inner{
+    background-color: white !important;
+}
+.planpanel .el-select .el-input .el-input__inner{
+    border: 1px solid #82B0D6 !important;
+}
+/* .gvplantable input, textarea, select{
+    font-weight: normal !important;
+} */
+/* .gvplantable th>.cell, table thead td {
+  font-size: 12px;
+  font-weight: normal;
+  color: #303133;
+} */
+.planquery{
+    font-weight: normal;
+    color: #303133;
+    width: 100%;
+    height: 40px;
+    text-align: left;
+    margin-top: 35px;
+}
+.planfirstspan{
+    font-size: 12px;
+    margin-left: 5px;
+}
+.planquerydiv{
+    border-bottom: 1px solid #E5E7EA;
+    width: 100%;
+    height: 60px;
+    /* 到时height改为50 */
+    font-weight: normal;
+    color: #303133;
+}
+.querydiv{
+    width: 101%;
+    padding-left: 0px;
+}
+/* .gvplantable .el-table__footer-wrapper, .el-table__header-wrapper{
+    margin-left: -3px;
+    width: 100%;
+    border-bottom: 0.5px solid #F7F8F9;
+    margin-top: -1px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #303133;
+} */
+/* .gvplantable .el-input__inner{
+    background-color: white !important;
+    border: 1px solid #85B2D7 !important;
+} */
+.projectcontent,
+.gv-query-table .el-input__inner, .el-textarea__inner, .el-range-input{
+    height: 32px;
+}
+.input100 .el-textarea__inner{
+    height: 100px;
+}
+
+/* .gvplantable .cell{
+    margin: 0px;
+    padding: 1px;
+    font-size: 12px;
+} */
+/* .gvplantable .el-checkbox__input{
+    padding-left: 4px;
+} */
+
+/* .plantable . */
+.projectimg{
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: 2px;
+    right: 28px;
+}
+.el-table__row,
+.cell{
+    text-align: center;
+}
+/* .projectquery
+.el-table__row,
+.cell{
+    text-align: left;
+} */
+.projectquery .el-table .cell{
+    padding-left: 0px;
+}
+.PlanTableRight,
+.gv-panel-box{
+    padding: 0px;
+}
+
+.dbclick .el-form-item__content{
+    width: 100%;
+}
+
+.tool .el-input__inner{
+    height: 30px;
+}
+
+.cellfou .el-select{
+    width: 100%;
+}
+.cellfou .el-col-4 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-11 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-15 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-13 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-8 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-7 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-1 .el-input__inner{
+    height: 30px;
+}
+.cellfou .el-col-2 .el-input__inner{
+    height: 30px;
+}
+
+.flag .el-input__inner{
+    height: 30px;
+}
+.flag{
+    margin-left: 25px;
+    padding-left: 6px;
+}
+
+.selfdbclick .el-input__inner{
+    width: 93%;
+    height: 30px;
+    background-color: #FCFCFC;
+    border: 1px solid #D0E6F5;
+}
+.inputcopy .el-form-item--small{
+    height: 35px;
+}
+
+.inputcopy .el-form-item__content{
+    width: 100%;
+}
+
+#inputcolor .el-input__inner, .el-textarea__inner, .el-range-input {
+    background-color: #FCFCFC;
+    border: 1px solid #D0E6F5;
+}
+#inputcolor .el-input--suffix{
+    border: 1px solid #D0E6F5;
+    border-radius: 5px;
+}
+
+#inputinit .gv-cell .el-select .el-input__inner[readonly], textarea[readonly] {
+    background-color: white;
+}
+#inputyear .gv-cell .is-required .el-input__inner{
+    border:1px solid #D0E6F5;
+}
+#inputcreate .gv-cell .is-required .el-input__inner{
+    border:1px solid #D0E6F5;
+}
+#inputdate .gv-cell .is-required .el-input__inner{
+    border:1px solid #D0E6F5;
+}
+.xzflag{
+    border: 1px solid #D0E6F5;
+    border-radius: 5px;
+}
+.planpanel .gv-panel-box{
+    /* height: 520px; */
+    
+}
+.PlanTableRight .el-tabs__content{
+    padding: 0px;
+    
+}
+.PlanTableRight .el-collapse-item__header{
+    width: 100%;
+}
+.plandialog .gv-panel-box{
+    height: 420px;
+}
+.dialogtext .el-dialog__header{
+    background: #f4f5f9;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+}
+.dialogtext .el-dialog__title{
+    font-weight: normal;
+    font-size: 14px;
+}
+.topicinfo .plandialog{
+    padding: 20px !important;
+    margin-top: -18px;
+}
+.topicinfo .dialog-footer{
+    margin-top: -20px;
+}
+.dialogtext .el-dialog__headerbtn{
+    margin-top: -12px;
+}
+.ps .el-form-item__content{
+    width:30%
+}
+
+.gvdivtop{
+    width: 100%;
+    height: 60px;
+    margin-top: -20px;
+}
+.gvdivtop .el-input__inner{
+    height: 30px;
+    border: 1px solid #DBDBDB;
+}
+.gvdivtop .el-button--default{
+    height: 30px;
+}
+.gvdivtop .demo-input-suffix{
+    width: 100%;
+    height: 30px;
+    text-align: left;
+    margin-top: 35px;
+}
+.gvdivtop .demo-input-suffix span{
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: normal;
+    color: #303133;
+}
+.gvrowinput{
+    width: 100%;
+    height: 50px;
+    text-align: justify;
+    background-color: #F5F7FA;
+}
+
+/* 修改项目编制页面-基础数据 */
+.elinput{
+    position: relative;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.formbasic .el-input__inner{
+    border: 1px solid #82B0D6;
+    background-color: #EEF7FF;
+}
+#projectcode{
+    background-color: white;
+    border: 1px solid #D0E6F5;
+}
+.disableinput{
+    border: 1px solid #D0E6F5;
+    background-color: #FCFCFC;
+    border-radius: 5px;
+}
+.disableinput .el-input__inner{
+    background-color: #FCFCFC !important;
+}
+
+.forInput .gv-cell .el-select .el-input__inner[readonly], textarea[readonly]{
+    border: 1px solid #82B0D6;
+    background-color: #EEF7FF;
+}
+/* .forInput .centerInput{
+
+} */
+.sub_title{
+    color: #458AC9;
+    font-size: 16px;
+}
+.title_notes{
+    margin-left: 10px;
+    color: #A7AFB7;
+    font-size: 12px;
+}
+.title_notes i{
+
+    color: #F5AB00;
+}
+#salesPlace div{
+    text-align: right;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: #EEF1F6;  
+    padding-right: 0.5%;
+}    
+.formbasic .gv-row{
+    background-color: #fff;
+    color: #303133;
+    transition: .3s;
+    padding-right: 3%;
+    width: 100%;
+}
+
+#projectcopy{
+    margin-bottom: 5px;
+    height: 75px;
+    padding-top: 20px;
+}
+#projectcopy{
+    margin-bottom: 5px;
+}
+.forInput element.style{
+    width: 8.5;
+}
+.formbasic .gv-row button{
+    height: 32px;
+    position: relative;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.projectdbclick .dblclick .el-input--mini .el-input__inner{
+    height: 32px;
+    line-height: 32px;
+    background-color: white;
+    border: 1px solid #D0E6F5 !important;
+    padding: 3px 10px;
+}
+.formbasic .el-row .el-col .el-form-item{
+    width: 100%;
+}
+.formbasic .el-row .el-col .el-form-item .el-form-item__content{
+    margin-top: -30px;
+    padding-left: 12.7%;
+    padding-right: 9px;
+    width: 100%;
+}
+.formbasic .el-row .el-col .el-form-item .el-form-item__content .dblclick{
+    display: inline-block;
+    width: 100%;
+}
+
+#supdbclick .el-form-item__content{
+    margin-left: 95px;
+    margin-top: -30px;
+    width: 92%;
+}
+.formbasic .el-row .el-col .el-form-item .el-form-item__label{
+    font-weight: normal;
+    font-size: 12px;
+    color: #303133;
+    padding-left: 7.3%;
+    width: 100%;
+    text-align: left;
+    padding-right: 5px; 
+}
+#supdbclick .el-form-item__label{
+    margin-left: 33px;
+}
+.formbasic .gv-row .el-col-offset-1{
+    border: 1px solid yellow;
+    width: 100%;
+    margin: 0px;
+}
+.formbasic .el-tabs{
+    width: 100%;
+}
+.filetable .gv-panel-box .gv-content{
+    width: 100%;
+}
+.formbasic{
+    background-color: #EEF1F6;
+}
+.filetable{
+    background-color: #EEF1F6;
+}
+.filetable .gv-panel-box{
+    background-color: #EEF1F6;
+}
+.row-bg {
+    padding: 0px 0;
+    background-color: white;
+    height: 35px;
+  }
+#signselect .gv-cell{
+    width: 100% !important;
+}
+#signselect .gv-cell .el-form-item .el-form-item__content{
+    padding: 0px;
+}
+.row-bg .el-select{
+    width: 100%;
+    border-radius: 5px;
+    height: 32px;
+}
+.row-bg .el-select .el-input .el-input__inner{
+    height: 32px;
+    border: 1px solid #82B0D6 !important;
+}
+.signcol{
+    display: inline-block;
+    left: 22%;
+    position: relative;
+    padding-right: 8%;
+    padding-left: 2.5%;
+    top: -30px;
+}
+.row-bg .el-col-20 .el-col-7 .el-input .el-input__inner{
+    height: 32px;
+}
+.inputtitle{
+    width: 100%;
+    text-align: right;
+    height: 30px;
+    line-height: 30px;
+}
+.gvinput{
+    width: 100%;
+    text-align: right;
+    height: 30px;
+    line-height: 30px;
+}
+.gvinput2{
+    width: 100%;
+    text-align: center;
+    height: 30px;
+    line-height: 1200%;
+}
+.cellfou .el-col .el-textarea .el-textarea__inner{
+    background-color: white;
+}
+.cellfou .el-col .dblclick .el-input .el-input__inner{
+    background-color: white;
+    border: 1px solid #D0E6F5 !important;
+}
+.flaginput .gv-cell .el-form-item .el-form-item__content .el-select .el-input .el-input__inner{
+    background-color: white;
+}
+.planpanel .gv-panel-box .gv-content{
+    padding-top: 0px;
+}
+/* .planpanel{
+    height:520px;
+} */
+.planqueryecol{
+    text-align: center;
+    height:580px;
+}
+/* 修改项目编制页面-基础数据 */
+
+/* 修改项目初始化页面 */
+.coverinput{
+    width: 350px;
+    position: relative;
+    display: inline-block;
+    left: 290px;
+    top: -40px;
+}
+#inituwyear .el-form-item .el-form-item__label{
+    margin-top: 5px;
+}
+#inituwyear .el-input__inner{
+    background-color: white;
+    height: 30px;
+    width: 200px;
+  }
+#checktext .gv-panel-box .gv-content{
+    padding-top: 0px;
+}
+.tabletitle .el-table td, 
+.el-table th.is-leaf{
+    background-color: white;
+}
+table th.must div:before {
+    content: '*';
+    color: #ff1818;
+}
+table th.reqiuer div:before {
+    content: '*';
+    color: #ff1818;
+}
+
+/* 修改项目初始化页面 */
+/* 修改项目查询页面 */
+.queryinput .gv-cell .el-select .el-input__inner[readonly], textarea[readonly]{
+    background-color: white;
+}
+.signcol .el-select .el-input .el-input__inner{
+    background-color: #EEF7FF;
+    border: 1px solid #D0E6F5 !important;
+}
+.timeinput .el-col .el-input .el-input__inner{
+    background-color: white;
+}
+.projectquery .el-table th>.cell, table thead td{
+    font-weight: normal;
+    font-size: 12px;
+    color: #303133;
+}
+
+/* 修改项目查询页面 */
+.gvfiletable .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+    /* padding-left: 0px !important; */
+}
+.gvfiletable{
+    width: 100%;
+}
+.planpage .el-input__inner{
+    background-color: white;
+}
+.gvrowinput .el-col-16 button{
+    border: 1px solid #DBDBDB;
+    color: #458AC9;
+    margin:5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+.gvrowinput .el-col-8 button{
+    border: 1px solid #DBDBDB;
+    margin:5px 0px;
+    color: #458AC9;
+}
+.gvrowinput .el-col-8{
+    text-align: right;
+    padding-right: 20px !important;
+}
+.topicinfo .el-table th>.cell, table thead td {
+    font-size: 12px;
+    font-weight: normal;
+    color: #303133;
+}
+.inituwyear{
+    width: 450px;
+}
+.initbutton{
+    border: 1px solid #DBDBDB;
+    color: #458AC9;
+}
+.initcoll{
+    background-color: white;
+    margin-bottom: 10px;
+    height: 38px;
+}
+.initform{
+    margin-top: -5px;
+}
+.fileRight{
+    float: right;
+    margin-right: 5px;
+    margin-top: -30px;
+ }
+.PlanTableRight .el-tabs--border-card{
+    -webkit-box-shadow: 0 0px 0px 0 rgba(0,0,0,0), 0 0 0px 0 rgba(0,0,0,0);
+    box-shadow: 0 0px 0px 0 rgba(0,0,0,0), 0 0 0px 0 rgba(0,0,0,0);
+    
+}
+
+.projectbutton{
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+    text-align: center;
+    padding: 8px 0px;
+    /* overflow: hidden; */
+    background-color: #F2F2F4;
+    border: 1px solid #dfe6ec;
+    padding: 10px;
+
+}
+
+.projectbtnthree{
+    background-color: white;
+    color: black;
+}
+.file_header{
+    background-color: #EEF1F6;
+    text-align: right;
+    padding-right: 0.5%;
+}
+.filetable .gv-content{
+    padding: 0px;
+}
+.projectecol .el-collapse-item__content{
+    padding: 0px;
+}
+.projectCom{
+    background-color: #EEF1F6;
+    /* text-align: right; */
+    padding-right: 0.5%;
+    padding: 5px 0;
+}
+.filetable .gv-panel-box{
+    margin-bottom: 0px;
+}
+.checkstatus .el-textarea__inner{
+    height: 100px;
+}
+/*zcy*/
+
+.fileLeft{
+    float: left;
+ }
+ 
+ .PlanTree{
+    width: 180px;
+    height:580px;
+    position: absolute;
+    margin-left: -15px;
+ }
+ .PlanTableRight{
+    float: right;
+    width: 100%;
+ }
+ .topright{
+   float: right;
+ }
+ .PremLeft{
+   float: left;
+ }
+ .PremRight{
+   float: right;
+ }
+ 
+ 
+ .during{
+    float: left;
+ }
+ 
+ .dialogtext .el-textarea__inner{
+   
+   height: 35px;
+   width: 100%;
+   margin-top: 37px;
+ }
+ .inputbasic .el-textarea__inner{
+   height: 100px;
+   width: 100%;
+   margin-top: -30px;
+ }
+ .dialogtext .nodialog .el-textarea__inner{
+   
+   height: 50px;
+   width: 300px;
+   margin-left: 180px;
+   margin-top: -70px;
+ }
+ .dialogtext .el-form-item__content{
+   
+   width: 150px;
+ }
+ #remark{
+   height: 35px;
+ }
+ #contentdescript,#insure{
+   background-color: white;
+ }
+.ia_im_area .el-textarea__inner{
+    height: 100px;
+}
+.ia_im_init{
+    width: 100%;
+    padding: 15px;
+}
+.ia_im_init .gv-panel-title{
+    margin: 0px 0 8px 0;
+}
+.ia_im_initbutton{
+    border: 0.5px solid #E5E7EA;
+    height: 50px;
+    background-color: #F7F8F9;
+    margin-top: -16px;
+}
+.ia_im_planCom{
+    padding-bottom: 10px;
+}
+.ia_im_tree{
+    width: 100%;
+    height: 630px;
+    position:absolute;
+    z-index:999;
+    background-color: white;
+}
+.ia_im_details{
+    text-align: right;
+    padding-right: 10px;
+}
+.ia_im_planquery{
+    margin-bottom: 10px;
+}
+.ia_im_during{
+    display: inline-block;
+    position: relative;
+    left: 10px;
+    top: -21px;
+}
+.ia_im_describ{
+    padding-left: 12.7% !important;
+    padding-right: 5.4% !important;
+    width: 99.2%;
+    display: inline-block;
+    position: relative;
+    top: -28px;
+}
+
+.ia_im_filebutton{
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+.ia_im_suffix{
+    border-bottom: 1px solid #E5E7EA;
+    width: 100%;
+    height: 45px;
+}
+.ia_im_planbutsel{
+    border: 1px solid #DBDBDB;
+    color: #458AC9;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+.ia_im_model{
+    border: 1px solid #DBDBDB;
+    color: #458AC9;
+    margin-top: 10px;
+}
+.ia_im_durproquery{
+    display: inline-block;
+    position: relative;
+    left: 10px;top: -16px;
+}
+/* .ia_im_date{
+    padding-left: 8px;
+    display: inline-block;
+    position: relative;
+    top: -25px;
+} */
+.ia_im_time .el-input__inner{
+    position: relative;
+    display: inline-block;
+    top: -25px;
+}
+.projectecol .el-tabs__content{
+    padding: 0px;
+}
+.signcol .el-checkbox__inner{
+    width: 18px;
+    height: 18px;
+}
+.signcheckbox{
+    padding-right: 30%;
+    padding-left: 10%;
+}
+.flaginput .el-checkbox__inner{
+    width: 18px;
+    height: 18px;
+}
+.ia_im_init .el-input__inner, .el-textarea__inner, .el-range-input{
+    background: white;
+    border: 1px solid #82B0D6 !important;
+}
+.ia_im_init .el-input__inner{
+    font-weight: normal;
+    color: #303133;
+}
+
+.container{
+    margin-bottom: 65px !important;
+}
+
+.ia-im-bottomDiv{
+    width: 85%;
+    height: 50px;
+    z-index: 2000;
+    overflow: hidden;
+    bottom: 0px;
+    text-align: center;
+    background-color: #F2F2F4;
+    border: 1px solid #dfe6ec;
+    padding: 10px;
+    position: fixed;
+}
+.ia-im-bottomDiv1{
+    width: 100%;
+    margin: 0 auto;
+    height: 50px;
+    z-index: 1000;
+    overflow: hidden;
+    bottom: 0px;
+    left: 0px;
+    /* left: 0px;
+    right: 0; */
+    text-align: center;
+    background-color: #F2F2F4;
+    border: 1px solid #dfe6ec;
+    padding: 10px;
+    /* position: sticky; */
+    position: fixed;
+}
+.ia-im-bottomDivTop{
+    width:97%;
+}
+.ia-im-collapseTitle{
+    width:20px;height:20px;vertical-align:middle;margin-right:10px
+}
+
+.centerTable  .el-input__inner,
+.centerInput  .el-input__inner {
+    text-align: center!important;
+}
+.subCollapse .el-collapse-item__content {
+    border-right: none; 
+    border-left: none; 
+    border-bottom: none; 
+}
+.el-table td, .el-table th {
+    /* padding: 5px 10px; */
+    min-width: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
+    text-align: left;
+}
+.tableSelectH .el-input__inner{
+    height: 32px!important
+}
+.dialogPadding .el-dialog__header {
+    padding: 20px 20px 0px;
+}
+.dialogPadding .el-dialog__body {
+    padding: 0px 20px 30px;
+    color: #606266;
+    font-size: 14px;
+    word-break: break-all;
+}
+.dialogWidth37 .el-dialog {
+    width: 37%;
+}
+.dialogWidthSubmit .el-dialog {
+    width: 27%;
+}
+.dialogWidthSubmitBig .el-dialog {
+    width: 77%;
+}
+.dialogBig .el-dialog {
+    position: relative;
+    margin: 0 auto 50px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    box-sizing: border-box;
+    width: 95%;
+}
+.ia-im-collapse .el-collapse-item__content {
+    border: none;     
+   
+    padding: 0px 0px;
+}
+.ia-im-collapse .table-line {
+    width: 100%;
+    background: #fff;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.ia-im-topMenu{
+    border: 1px solid #F4F5F9;
+    background-color: #F4F5F9;
+    border-radius: 6px!important;
+    height: 40px;    
+}
+.ia-im-topMenuItem{
+    float: left;
+    padding:10px 0px 10px 20px;
+    font-size: 14px;
+    color:#303133;
+    height: 40px; 
+}
+.ia-im-topMenuItem span{
+    font-size: 14px;
+    padding-bottom: 9px;
+}
+
+.topMenuIcon {
+    font-size: 25px;
+    vertical-align: middle;
+}
+.ia-im-topMenuL{
+    margin-left: 20px;
+    margin-right: 10px;
+    border: 1px solid #F4F5F9;
+    background-color: #FFF;
+    border-radius: 6px!important;
+    height: 40px;
+    width: 20%;    
+}
+.ia-im-topMenuItemL{
+   
+    border-top: 1px solid #EBEEF5;
+    background-color: #FFF;
+    border-radius: 6px!important;
+    padding:10px 0px 10px 20px;
+    font-size: 14px;
+    
+    height: 40px;   
+ 
+}
+.taskLink:hover{
+    cursor: pointer!important;
+    
+}
+li.ia-im-topMenuItemL:hover{
+    cursor: pointer!important;
+    background-color: #cfd0d3e5;
+    
+ 
+}
+
+li.ia-im-topMenuItem:hover{
+    cursor: pointer!important;
+    /* background-color: #cfd0d3e5; */
+    color: #2897ff;
+ 
+}
+.ia_im_blueBorder span{
+    font-size: 14px;
+    padding-bottom: 9px;
+    border-bottom: 2px solid #409EFF;
+}
+.ia_im_topmenufixed{
+    position: sticky;
+    top:0px;
+    /* z-index: 2000; */
+}
+.topmenu_stepArrow{
+    width:18px;
+    height:18px;
+    border-top:1.5px solid rgb(190,192,199);
+    border-right: 1.5px solid rgb(190,192,199);
+    transform: rotate(45deg);
+    float:right;
+    margin-right:3px;
+}
+.tableNoTopBorder .el-table--border{
+    border-right: none;
+    border-bottom: none;
+    border-top: none;
+}
+.aa .el-form-item__content{
+    width:50%;
+    line-height: 40px;
+}
+.aa .el-form-item__label {
+    line-height: 44px;
+    padding:0 0 0 0;
+}
+.centerTable  td div{
+    line-height: 20px;
+} 
+.subCollapse .el-collapse-item__header {
+    background: #FFF;
+    border:none;
+}
+.cardNoTopBor{
+    border-top:none
+}
+.dialogFormItem .el-form-item__content{
+    margin-left:0px!important
+}
+
+
+.el-input-number.is-controls-right .el-input-number__decrease {
+    right: 1px;
+    bottom: 1px;
+    top: auto;
+    left: auto;
+    border-right: none;
+    border-left: 1px solid #DCDFE6;
+    border-radius: 0 0 4px;
+    height: 15px;
+    margin-bottom: 3px;
+}
+
+.el-input-number.is-controls-right .el-input-number__decrease, .el-input-number.is-controls-right .el-input-number__increase {
+    height: 15px;
+    line-height: 15px;
+    margin-top: 3px;
+}
+.outerForm{
+    margin:8px 0px 0px 0px
+}
+
+.vaildFromSelect .el-select .el-input .el-select__caret {
+     background-color: #EEF6FF;
+     z-index: 999;
+     /* border-top: 1px solid rgb(208, 230, 245);
+     border-bottom: 1px solid rgb(208, 230, 245); */
+     height:30px;
+   
+}
+    
+.qxw100 {
+    width: 100%;
+}
+.qxw100 .el-form-item__content {
+    width: 100%;
+}
+.policyAssetRow {
+    background: #f5f7fa!important;
+}
+    
+
+
+/* .ia_im_init .el-table__row, .cell{
+    padding: 0px !important;
+} */
+.planquerydiv .el-input__inner{
+    font-weight: normal;
+    color: #303133;
+}
+.showAllRemindDialog .toolbar-pagination {
+    margin-top: -3px;
+    border-top-width: 0px;
+    margin-bottom: 0px;
+}
+.dialogForm .el-dialog__body {
+    padding: 0 12px 50px;
+}
+.emailupload .el-upload-list__item:first-child {
+    margin-top: 5px;
+}
+.dialogStand .el-dialog__body {
+    padding: 0px 20px 20px 20px;
+    color: #606266;
+    font-size: 14px;
+    word-break: break-all;
+}
+.mt20 {
+    margin-top: 20px;
+}
+.classMarginL{
+    margin-left:20px
+}
+
+/* Insurance arrangements 保险安排（一级菜单）*/
+/* Insurance plan management 保险计划管理（二级菜单） */
